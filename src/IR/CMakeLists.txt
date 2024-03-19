@@ -19,4 +19,4 @@ llvm_map_components_to_libnames(
         irreader
 )
 
-target_link_libraries(ir ${LLVM_LIBS})
+target_link_libraries(ir ${LLVM_LIBS} utils)

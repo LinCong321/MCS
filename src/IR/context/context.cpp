@@ -1,4 +1,5 @@
 #include "context.h"
+#include "utils/logger.h"
 
 namespace mcs {
     Context& Context::getInstance() {
@@ -20,6 +21,7 @@ namespace mcs {
 
     bool Context::popBlock() {
         if (blocks_.empty()) {
+            LOG_ERROR("Cannot pop block because blocks_ is empty.");
             return false;
         }
         blocks_.pop();
@@ -27,7 +29,12 @@ namespace mcs {
     }
 
     bool Context::setCurrentReturnValue(llvm::Value* value) {
-        if (blocks_.empty() || blocks_.top() == nullptr) {
+        if (blocks_.empty()) {
+            LOG_ERROR("Cannot set current return value because blocks_ is empty.");
+            return false;
+        }
+        if (blocks_.top() == nullptr) {
+            LOG_ERROR("Cannot set current return value because blocks_.top() is nullptr.");
             return false;
         }
         blocks_.top()->setReturnValue(value);

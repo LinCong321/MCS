@@ -1,18 +1,20 @@
 #include <iostream>
 #include "func_def.h"
-#include "utils/utils.h"
+#include "utils/logger.h"
+#include "ast_utils/utils.h"
 #include "IR/context/context.h"
 
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instructions.h"
 
+
 namespace mcs {
     llvm::Value* FuncDef::codeGen() {
         if (!checkAllMemberPtr()) {
+            LOG_ERROR("There is a nullptr in member pointers.");
             return nullptr;
         }
-
         std::vector<llvm::Type*> argTypes;
 
         const auto functionType = llvm::FunctionType::get(getType(*funcType_), llvm::ArrayRef(argTypes), false);

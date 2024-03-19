@@ -1320,5 +1320,5 @@ yyreturnlab:
 
 
 void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s) {
-	std::cerr << "Error: " << s << '\n';
+	std::cerr << "Error: " << s << std::endl;
 }

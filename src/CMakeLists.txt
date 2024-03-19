@@ -1,9 +1,10 @@
 project(src)
 
-set(SRC_DIR ${PROJECT_SOURCE_DIR})
-set(AST_DIR ${SRC_DIR}/AST)
-set(IR_DIR  ${SRC_DIR}/IR)
-set(LAP_DIR ${SRC_DIR}/LAP)
+set(SRC_DIR     ${PROJECT_SOURCE_DIR})
+set(AST_DIR     ${SRC_DIR}/AST)
+set(IR_DIR      ${SRC_DIR}/IR)
+set(LAP_DIR     ${SRC_DIR}/LAP)
+set(UTILS_DIR   ${SRC_DIR}/utils)
 
 include_directories(${SRC_DIR})
 
@@ -16,3 +17,4 @@ target_link_libraries(compiler lexer_parser)
 add_subdirectory(AST)
 add_subdirectory(IR)
 add_subdirectory(LAP)
+add_subdirectory(utils)
