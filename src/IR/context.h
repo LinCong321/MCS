@@ -2,7 +2,7 @@
 
 #include <stack>
 #include <memory>
-#include "basic_block.h"
+#include "code_block.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/LLVMContext.h"
 
@@ -24,8 +24,8 @@ namespace mcs {
         ~Context() { delete module_; }
         
     private:
-        llvm::LLVMContext                        context_;
-        llvm::Module*                            module_;
-        std::stack<std::unique_ptr<BasicBlock>>  blocks_;
+        llvm::LLVMContext                       context_;
+        llvm::Module*                           module_;
+        std::stack<std::unique_ptr<CodeBlock>>  blocks_;
     };
 }

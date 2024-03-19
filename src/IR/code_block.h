@@ -4,12 +4,12 @@
 #include "llvm/IR/BasicBlock.h"
 
 namespace mcs {
-    class BasicBlock {
+    class CodeBlock {
     public:
-        explicit BasicBlock(llvm::BasicBlock* basicBlock) : basicBlock_(basicBlock),
-                                                            returnValue_(nullptr),
-                                                            symbolTable_() {}
-        ~BasicBlock() = default;
+        explicit CodeBlock(llvm::BasicBlock* basicBlock) : basicBlock_(basicBlock),
+                                                           returnValue_(nullptr),
+                                                           symbolTable_() {}
+        ~CodeBlock() = default;
         
     public:
         llvm::BasicBlock* getBasicBlock() const;

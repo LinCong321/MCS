@@ -15,7 +15,7 @@ namespace mcs {
     }
 
     void Context::pushBlock(llvm::BasicBlock* basicBlock) {
-        blocks_.push(std::make_unique<BasicBlock>(basicBlock));
+        blocks_.push(std::make_unique<CodeBlock>(basicBlock));
     }
 
     bool Context::popBlock() {

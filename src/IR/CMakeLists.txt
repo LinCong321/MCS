@@ -1,4 +1,4 @@
-set(SOURCE_FILES basic_block.cpp context.cpp)
+set(SOURCE_FILES code_block.cpp context.cpp)
 
 find_package(LLVM REQUIRED CONFIG)
 include_directories(${LLVM_INCLUDE_DIRS})

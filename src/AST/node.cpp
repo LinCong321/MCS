@@ -62,7 +62,7 @@ namespace mcs {
     }
 
     const char* FuncDef::getId() const {
-        return id_ != nullptr ? funcType_->c_str() : nullptr;
+        return id_ != nullptr ? id_->c_str() : nullptr;
     }
 
     llvm::Value* Block::codeGen() {
