@@ -1,7 +1,7 @@
 #include "comp_unit.h"
 
 namespace mcs {
-    llvm::Value *CompUnit::codeGen() {
+    llvm::Value* CompUnit::codeGen() {
         return checkAllMemberPtr() ? funcDef_->codeGen() : nullptr;
     }
 

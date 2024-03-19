@@ -6,6 +6,8 @@ namespace mcs {
     class Block : public Node {
     public:
         Block(Node* stmt) : stmt_(stmt) {}
+        ~Block() = default;
+    public:
         llvm::Value* codeGen() override;
         bool checkAllMemberPtr() const override;
     private:

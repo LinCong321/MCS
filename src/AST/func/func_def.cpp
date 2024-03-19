@@ -1,3 +1,4 @@
+#include <iostream>
 #include "func_def.h"
 #include "utils/utils.h"
 #include "IR/context/context.h"
@@ -8,15 +9,18 @@
 
 namespace mcs {
     llvm::Value* FuncDef::codeGen() {
+        if (!checkAllMemberPtr()) {
+            return nullptr;
+        }
 
         std::vector<llvm::Type*> argTypes;
 
         const auto functionType = llvm::FunctionType::get(getType(*funcType_), llvm::ArrayRef(argTypes), false);
 
-        const auto linkage = *id_ == "main" ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
+        const auto linkage = (*id_ == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
         const auto function = llvm::Function::Create(functionType, linkage, *id_, Context::getInstance().getModule());
-        const auto basicBlock = llvm::BasicBlock::Create(Context::getInstance().getContext(), "entry", function);
 
+        const auto basicBlock = llvm::BasicBlock::Create(Context::getInstance().getContext(), "entry", function);
         Context::getInstance().pushBlock(basicBlock);
 
         block_->codeGen();

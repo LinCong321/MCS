@@ -1,3 +1,3 @@
-int xxx() {
+int main() {
     return 114514;
 }

@@ -14,19 +14,19 @@ namespace mcs {
         
     public:
         llvm::LLVMContext& getContext();
-        llvm::Module*& getModule();
+        llvm::Module& getModule();
         void pushBlock(llvm::BasicBlock* basicBlock);
         bool popBlock();
         bool setCurrentReturnValue(llvm::Value* value);
         llvm::Value* getCurrentReturnValue() const;
         
     private:
-        Context() : context_(), module_(new llvm::Module("main", context_)), blocks_() {}
-        ~Context() { delete module_; }
+        Context() : context_(), module_("main", context_), blocks_() {}
+        ~Context() = default;
         
     private:
         llvm::LLVMContext                       context_;
-        llvm::Module*                           module_;
+        llvm::Module                            module_;
         std::stack<std::unique_ptr<CodeBlock>>  blocks_;
     };
 }

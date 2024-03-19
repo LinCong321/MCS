@@ -3,12 +3,7 @@
 #include "LAP/parser/parser.hpp"
 
 void printIR() {
-    const auto module = mcs::Context::getInstance().getModule();
-    if (module == nullptr) {
-        std::cout << "The module is nullptr!\n";
-    } else {
-        module->print(llvm::outs(), nullptr);
-    }
+    mcs::Context::getInstance().getModule().print(llvm::outs(), nullptr);
 }
 
 int main() {

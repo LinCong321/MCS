@@ -10,7 +10,7 @@ namespace mcs {
         return context_;
     }
 
-    llvm::Module*& Context::getModule() {
+    llvm::Module& Context::getModule() {
         return module_;
     }
 
