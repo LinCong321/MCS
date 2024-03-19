@@ -7,6 +7,10 @@ set(
         utils/utils.cpp
 )
 
-add_library(AST ${SOURCE_FILES})
+include_directories(${AST_DIR})
 
-target_link_libraries(AST IR)
+add_library(ast ${SOURCE_FILES})
+
+target_include_directories(ast PRIVATE ${IR_DIR})
+
+target_link_libraries(ast ir)

@@ -1,6 +1,6 @@
 #include "stmt.h"
-#include "IR/context.h"
-#include "AST/utils/utils.h"
+#include "IR/context/context.h"
+#include "utils/utils.h"
 #include "llvm/IR/Constants.h"
 
 namespace mcs {

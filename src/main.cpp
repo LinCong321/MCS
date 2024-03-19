@@ -1,6 +1,6 @@
 #include <iostream>
-#include "IR/context.h"
-#include "lexer_parser/parser.hpp"
+#include "IR/context/context.h"
+#include "LAP/parser/parser.hpp"
 
 void printIR() {
     const auto module = mcs::Context::getInstance().getModule();

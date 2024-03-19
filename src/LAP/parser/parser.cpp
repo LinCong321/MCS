@@ -67,7 +67,7 @@
 
 
 /* First part of user prologue.  */
-#line 7 "/home/lincong/桌面/MCS/src/lexer_parser/parser.y"
+#line 7 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
 
 
 #include <iostream>
@@ -77,7 +77,7 @@ extern int yylex();
 void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s);
 
 
-#line 81 "/home/lincong/桌面/MCS/src/lexer_parser/parser.cpp"
+#line 81 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -1093,37 +1093,37 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* CompUnit: FuncDef  */
-#line 40 "/home/lincong/桌面/MCS/src/lexer_parser/parser.y"
+#line 40 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
                                 { ast = std::make_unique<mcs::CompUnit>((yyvsp[0].node)); }
-#line 1099 "/home/lincong/桌面/MCS/src/lexer_parser/parser.cpp"
+#line 1099 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
   case 3: /* FuncDef: FuncType ID '(' ')' Block  */
-#line 43 "/home/lincong/桌面/MCS/src/lexer_parser/parser.y"
+#line 43 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
                                                   { (yyval.node) = new mcs::FuncDef((yyvsp[-4].strVal), (yyvsp[-3].strVal), (yyvsp[0].node)); }
-#line 1105 "/home/lincong/桌面/MCS/src/lexer_parser/parser.cpp"
+#line 1105 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
   case 4: /* FuncType: INT  */
-#line 46 "/home/lincong/桌面/MCS/src/lexer_parser/parser.y"
+#line 46 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
                             { (yyval.strVal) = new std::string("int"); }
-#line 1111 "/home/lincong/桌面/MCS/src/lexer_parser/parser.cpp"
+#line 1111 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
   case 5: /* Block: '{' Stmt '}'  */
-#line 49 "/home/lincong/桌面/MCS/src/lexer_parser/parser.y"
+#line 49 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
                                      { (yyval.node) = new mcs::Block((yyvsp[-1].node)); }
-#line 1117 "/home/lincong/桌面/MCS/src/lexer_parser/parser.cpp"
+#line 1117 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
   case 6: /* Stmt: RETURN Number ';'  */
-#line 52 "/home/lincong/桌面/MCS/src/lexer_parser/parser.y"
+#line 52 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
                                           { (yyval.node) = new mcs::RetStmt((yyvsp[-1].intVal)); }
-#line 1123 "/home/lincong/桌面/MCS/src/lexer_parser/parser.cpp"
+#line 1123 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
 
-#line 1127 "/home/lincong/桌面/MCS/src/lexer_parser/parser.cpp"
+#line 1127 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
 
       default: break;
     }
@@ -1316,7 +1316,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 58 "/home/lincong/桌面/MCS/src/lexer_parser/parser.y"
+#line 58 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
 
 
 void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s) {

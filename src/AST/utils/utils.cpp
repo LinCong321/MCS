@@ -1,5 +1,5 @@
-#include "AST/utils/utils.h"
-#include "IR/context.h"
+#include "utils/utils.h"
+#include "IR/context/context.h"
 
 namespace mcs {
     llvm::Type* getType(const std::string& type) {

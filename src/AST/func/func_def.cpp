@@ -1,6 +1,6 @@
 #include "func_def.h"
-#include "IR/context.h"
-#include "AST/utils/utils.h"
+#include "utils/utils.h"
+#include "IR/context/context.h"
 
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Function.h"
