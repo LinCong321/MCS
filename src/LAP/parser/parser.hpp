@@ -93,10 +93,11 @@ union YYSTYPE
 
 	float		    floatVal;
 	int		        intVal;
+	mcs::CompUnit*  compUnit;
 	mcs::Node*		node;
 	std::string*	strVal;
 
-#line 100 "/home/lincong/桌面/MCS/src/LAP/parser/parser.hpp"
+#line 101 "/home/lincong/桌面/MCS/src/LAP/parser/parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

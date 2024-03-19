@@ -5,12 +5,15 @@
 namespace mcs {
     class CompUnit : public Node {
     public:
-        CompUnit(Node* funcDef) : funcDef_(funcDef) {}
+        CompUnit(Node* node);
         ~CompUnit() = default;
+
     public:
+        void pushBack(Node* node);
         llvm::Value* codeGen() override;
         bool checkAllMemberPtr() const override;
+
     private:
-        std::unique_ptr<Node> funcDef_;
+        std::vector<std::unique_ptr<Node>> units_;
     };
 }

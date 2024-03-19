@@ -24,7 +24,6 @@ namespace mcs {
             LOG_ERROR("Cannot get LLVM type because the given type (aka ", type, ") is not in the type list.");
             return nullptr;
         }
-
         switch (it->second) {
             case TypeList::INT:
                 return llvm::Type::getInt32Ty(Context::getInstance().getContext());
@@ -33,7 +32,7 @@ namespace mcs {
             case TypeList::VOID:
                 return llvm::Type::getVoidTy(Context::getInstance().getContext());
             default:
-                LOG_ERROR("Cannot get LLVM type because case in switch is insufficient.");
+                LOG_ERROR("Cannot get LLVM type because there are not enough cases in switch.");
                 return nullptr;
         }
     }

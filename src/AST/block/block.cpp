@@ -1,4 +1,5 @@
 #include "block.h"
+#include "utils/logger.h"
 
 namespace mcs {
     llvm::Value* Block::codeGen() {
@@ -7,6 +8,7 @@ namespace mcs {
 
     bool Block::checkAllMemberPtr() const {
         if (stmt_ == nullptr) {
+            LOG_ERROR("stmt_ is nullptr.");
             return false;
         }
         return true;

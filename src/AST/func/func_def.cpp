@@ -8,7 +8,6 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instructions.h"
 
-
 namespace mcs {
     llvm::Value* FuncDef::codeGen() {
         if (!checkAllMemberPtr()) {
@@ -38,12 +37,15 @@ namespace mcs {
 
     bool FuncDef::checkAllMemberPtr() const {
         if (funcType_ == nullptr) {
+            LOG_ERROR("funcType_ is nullptr.");
             return false;
         }
         if (id_ == nullptr) {
+            LOG_ERROR("id_ is nullptr.");
             return false;
         }
         if (block_ == nullptr) {
+            LOG_ERROR("block_ is nullptr.");
             return false;
         }
         return true;

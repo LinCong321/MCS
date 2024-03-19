@@ -19,6 +19,7 @@ void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s);
 %union {
 	float		    floatVal;
 	int		        intVal;
+	mcs::CompUnit*  compUnit;
 	mcs::Node*		node;
 	std::string*	strVal;
 }
@@ -31,13 +32,22 @@ void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s);
 %token<intVal>		INT_CONST
 %token<floatVal>	FLOAT_CONST
 
-%type<node>		    FuncDef Block Stmt
+%type<compUnit>		CompUnit
+%type<node>         FuncDef Block Stmt
 %type<strVal>		FuncType
 %type<intVal>		Number
 
 %%
 
-CompUnit	: 	FuncDef { ast = std::make_unique<mcs::CompUnit>($1); }
+Start       :   CompUnit { ast = std::unique_ptr<mcs::Node>($1); }
+
+CompUnit	:   FuncDef { $$ = new mcs::CompUnit($1); }
+            |   CompUnit FuncDef {
+                    if ($1 == nullptr) {
+                        yyerror(ast, "CompUnit is nullptr.");
+                    }
+                    $1->pushBack($2);
+            }
 		    ;
 		
 FuncDef		: 	FuncType ID '(' ')' Block { $$ = new mcs::FuncDef($1, $2, $5); }
