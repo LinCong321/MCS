@@ -3,8 +3,8 @@ set(
         block/block.cpp
         comp_unit/comp_unit.cpp
         func/func_def.cpp
-        pub/utils.cpp
         stmt/stmt.cpp
+        utils/utils.cpp
 )
 
 add_library(AST ${SOURCE_FILES})
