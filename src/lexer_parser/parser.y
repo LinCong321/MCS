@@ -1,6 +1,6 @@
 %code requires {
 
-#include "AST/node.h"
+#include "AST/nodes.h"
 
 }
 

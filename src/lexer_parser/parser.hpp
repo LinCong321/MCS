@@ -48,7 +48,7 @@ extern int yydebug;
 #line 1 "/home/lincong/桌面/MCS/src/lexer_parser/parser.y"
 
 
-#include "AST/node.h"
+#include "AST/nodes.h"
 
 
 #line 55 "/home/lincong/桌面/MCS/src/lexer_parser/parser.hpp"
