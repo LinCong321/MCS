@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_HOME_LINCONG_COMPILER_MCS_SRC_LEXER_PARSER_PARSER_HPP_INCLUDED
-# define YY_YY_HOME_LINCONG_COMPILER_MCS_SRC_LEXER_PARSER_PARSER_HPP_INCLUDED
+#ifndef YY_YY_HOME_LINCONG_MCS_SRC_LEXER_PARSER_PARSER_HPP_INCLUDED
+# define YY_YY_HOME_LINCONG_MCS_SRC_LEXER_PARSER_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -45,13 +45,13 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/parser.y"
+#line 1 "/home/lincong/桌面/MCS/src/lexer_parser/parser.y"
 
 
 #include "AST/node.h"
 
 
-#line 55 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/parser.hpp"
+#line 55 "/home/lincong/桌面/MCS/src/lexer_parser/parser.hpp"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -89,14 +89,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/parser.y"
+#line 19 "/home/lincong/桌面/MCS/src/lexer_parser/parser.y"
 
 	float		    floatVal;
 	int		        intVal;
 	mcs::Node*		node;
 	std::string*	strVal;
 
-#line 100 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/parser.hpp"
+#line 100 "/home/lincong/桌面/MCS/src/lexer_parser/parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -111,4 +111,4 @@ extern YYSTYPE yylval;
 int yyparse (std::unique_ptr<mcs::Node>& ast);
 
 
-#endif /* !YY_YY_HOME_LINCONG_COMPILER_MCS_SRC_LEXER_PARSER_PARSER_HPP_INCLUDED  */
+#endif /* !YY_YY_HOME_LINCONG_MCS_SRC_LEXER_PARSER_PARSER_HPP_INCLUDED  */

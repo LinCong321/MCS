@@ -1,6 +1,6 @@
-#line 2 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.cpp"
+#line 2 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.cpp"
 
-#line 4 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.cpp"
+#line 4 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -611,14 +611,14 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
-#line 4 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 1 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
+#line 4 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 
 #include "parser.hpp"
 
-#line 620 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.cpp"
+#line 620 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.cpp"
 
-#line 622 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.cpp"
+#line 622 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.cpp"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -836,10 +836,10 @@ YY_DECL
 		}
 
 	{
-#line 15 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 15 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 
 
-#line 843 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.cpp"
+#line 843 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -909,140 +909,140 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 17 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 17 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 {}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 18 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 18 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 {}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 19 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 19 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { BEGIN(COMMENT); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 20 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 20 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { BEGIN(INITIAL); }
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 21 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 21 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 {}
 	YY_BREAK
 case YY_STATE_EOF(COMMENT):
-#line 22 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 22 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return 0; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 24 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 24 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return BREAK; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 25 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 25 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return CONST; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 26 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 26 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return CONTINUE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 27 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 27 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return ELSE; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 28 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 28 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return FLOAT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 29 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 29 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return IF; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 30 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 30 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return INT; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 31 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 31 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return RETURN; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 32 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 32 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return VOID; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 33 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 33 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return WHILE; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 35 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 35 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return LE; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 36 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 36 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return GE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 37 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 37 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return EQ; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 38 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 38 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return NE; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 39 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 39 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return AND; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 40 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 40 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return OR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 42 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 42 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { yylval.strVal = new std::string(yytext); return ID; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 43 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 43 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { yylval.intVal = std::stoi(yytext, nullptr, 0); return INT_CONST; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 44 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 44 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { yylval.floatVal = std::stof(yytext); return FLOAT_CONST; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 46 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 46 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 { return yytext[0]; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 48 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 48 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 ECHO;
 	YY_BREAK
-#line 1046 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.cpp"
+#line 1046 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2059,5 +2059,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 48 "/home/lincong/桌面/compiler/MCS/src/lexer_parser/lexer.l"
+#line 48 "/home/lincong/桌面/MCS/src/lexer_parser/lexer.l"
 
