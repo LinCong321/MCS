@@ -24,7 +24,6 @@ namespace {
 
 namespace mcs {
     llvm::Value* CompUnit::codeGen() {
-        std::cout << "CompUnit generating...\n";
         if (funcDef_ == nullptr) {
             return nullptr;
         }
@@ -32,7 +31,6 @@ namespace mcs {
     }
 
     llvm::Value* FuncDef::codeGen() {
-        std::cout << "FuncDef generating...\n";
         std::vector<llvm::Type*> argTypes;
         
         const auto functionType = llvm::FunctionType::get(getType(funcType_),
@@ -63,8 +61,11 @@ namespace mcs {
         return function;
     }
 
+    const char* FuncDef::getId() const {
+        return id_ != nullptr ? funcType_->c_str() : nullptr;
+    }
+
     llvm::Value* Block::codeGen() {
-        std::cout << "Block generating...\n";
         if (stmt_ == nullptr) {
             return nullptr;
         }
@@ -72,7 +73,6 @@ namespace mcs {
     }
 
     llvm::Value* RetStmt::codeGen() {
-        std::cout << "RetStmt generating...\n";
         const auto returnValue = llvm::ConstantInt::get(getType(std::make_unique<std::string>("int")),
                                                         retVal_,
                                                         true);

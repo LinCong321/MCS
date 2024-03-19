@@ -14,7 +14,7 @@ namespace mcs {
     class CompUnit : public Node {
     public:
         CompUnit(Node* funcDef) : funcDef_(funcDef) {}
-        virtual llvm::Value* codeGen() override;
+        llvm::Value* codeGen() override;
     private:
         std::unique_ptr<Node> funcDef_;
     };
@@ -22,10 +22,8 @@ namespace mcs {
     class FuncDef : public Node {
     public:
         FuncDef(std::string* funcType, std::string* id, Node* block) : funcType_(funcType), id_(id), block_(block) {}
-        virtual llvm::Value* codeGen() override;
-        const char* getId() const {
-            return id_ != nullptr ? funcType_->c_str() : nullptr;
-        }
+        llvm::Value* codeGen() override;
+        const char* getId() const;
     private:
         std::unique_ptr<std::string> funcType_;
         std::unique_ptr<std::string> id_;
@@ -35,7 +33,7 @@ namespace mcs {
     class Block : public Node {
     public:
         Block(Node* stmt) : stmt_(stmt) {}
-        virtual llvm::Value* codeGen() override;
+        llvm::Value* codeGen() override;
     private:
         std::unique_ptr<Node> stmt_;
     };
@@ -45,7 +43,7 @@ namespace mcs {
     class RetStmt : public Stmt {
     public:
         RetStmt(int retVal) : retVal_(retVal) {}
-        virtual llvm::Value* codeGen() override;
+        llvm::Value* codeGen() override;
     private:
         int retVal_;
     };
