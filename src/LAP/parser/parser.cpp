@@ -136,7 +136,7 @@ enum yysymbol_kind_t
   YYSYMBOL_Start = 28,                     /* Start  */
   YYSYMBOL_CompUnit = 29,                  /* CompUnit  */
   YYSYMBOL_FuncDef = 30,                   /* FuncDef  */
-  YYSYMBOL_FuncType = 31,                  /* FuncType  */
+  YYSYMBOL_BType = 31,                     /* BType  */
   YYSYMBOL_Block = 32,                     /* Block  */
   YYSYMBOL_BlockItem = 33,                 /* BlockItem  */
   YYSYMBOL_Stmt = 34,                      /* Stmt  */
@@ -549,7 +549,7 @@ static const char *const yytname[] =
   "CONTINUE", "ELSE", "FLOAT", "IF", "INT", "RETURN", "VOID", "WHILE",
   "LE", "GE", "EQ", "NE", "AND", "OR", "ID", "INT_CONST", "FLOAT_CONST",
   "'('", "')'", "'{'", "'}'", "';'", "$accept", "Start", "CompUnit",
-  "FuncDef", "FuncType", "Block", "BlockItem", "Stmt", "Number", YY_NULLPTR
+  "FuncDef", "BType", "Block", "BlockItem", "Stmt", "Number", YY_NULLPTR
 };
 
 static const char *
@@ -1124,13 +1124,13 @@ yyreduce:
 #line 1125 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
-  case 5: /* FuncDef: FuncType ID '(' ')' Block  */
+  case 5: /* FuncDef: BType ID '(' ')' Block  */
 #line 54 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
-                                          { (yyval.node) = new mcs::FuncDef((yyvsp[-4].strVal), (yyvsp[-3].strVal), (yyvsp[0].node)); }
+                                       { (yyval.node) = new mcs::FuncDef((yyvsp[-4].strVal), (yyvsp[-3].strVal), (yyvsp[0].node)); }
 #line 1131 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
-  case 6: /* FuncType: INT  */
+  case 6: /* BType: INT  */
 #line 57 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
                     { (yyval.strVal) = new std::string("int"); }
 #line 1137 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"

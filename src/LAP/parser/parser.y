@@ -33,7 +33,7 @@
 
 %type<compUnit>     CompUnit
 %type<node>         FuncDef Block Stmt
-%type<strVal>       FuncType
+%type<strVal>       BType
 %type<blockItem>    BlockItem
 %type<intVal>       Number
 
@@ -51,10 +51,10 @@ CompUnit    :   FuncDef { $$ = new mcs::CompUnit($1); }
                 }
             ;
 		
-FuncDef     :   FuncType ID '(' ')' Block { $$ = new mcs::FuncDef($1, $2, $5); }
+FuncDef     :   BType ID '(' ')' Block { $$ = new mcs::FuncDef($1, $2, $5); }
             ;
 		
-FuncType    :   INT { $$ = new std::string("int"); }
+BType       :   INT { $$ = new std::string("int"); }
             ;
 		
 Block       :   '{' BlockItem '}' { $$ = $2; }

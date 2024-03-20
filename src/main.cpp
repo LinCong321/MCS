@@ -3,7 +3,12 @@
 #include "IR/context/context.h"
 #include "LAP/parser/parser.hpp"
 
-void printIR() {
+void codeGen(const std::unique_ptr<mcs::Node>& ast) {
+    if (ast == nullptr) {
+        LOG_ERROR("ast is nullptr.");
+        return;
+    }
+    ast->codeGen();
     mcs::Context::getInstance().getModule().print(llvm::outs(), nullptr);
 }
 
@@ -11,11 +16,6 @@ int main() {
     freopen("../../test/test.cpp", "r", stdin);
     std::unique_ptr<mcs::Node> ast;
     yyparse(ast);
-    if (ast == nullptr) {
-        LOG_ERROR("ast is nullptr.");
-        return 0;
-    }
-    ast->codeGen();
-    printIR();
+    codeGen(ast);
     return 0;
 }

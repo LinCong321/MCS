@@ -9,9 +9,11 @@ namespace mcs {
     public:
         explicit BlockItem(Node* node);
         ~BlockItem() override = default;
+
     public:
         llvm::Value* codeGen() override;
         void pushBack(Node* node);
+
     private:
         std::vector<std::unique_ptr<Node>> items_;
     };

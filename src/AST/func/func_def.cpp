@@ -14,9 +14,9 @@ namespace mcs {
             LOG_ERROR("There is a nullptr in member pointers.");
             return nullptr;
         }
-        std::vector<llvm::Type*> argTypes;
 
-        const auto functionType = llvm::FunctionType::get(strToType(*funcType_), llvm::ArrayRef(argTypes), false);
+        std::vector<llvm::Type*> argTypes;
+        const auto functionType = llvm::FunctionType::get(strToType(*retType_), llvm::ArrayRef(argTypes), false);
 
         const auto linkage = (*id_ == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
         const auto function = llvm::Function::Create(functionType, linkage, *id_, Context::getInstance().getModule());
@@ -36,8 +36,8 @@ namespace mcs {
     }
 
     bool FuncDef::checkAllMemberPtr() const {
-        if (funcType_ == nullptr) {
-            LOG_ERROR("funcType_ is nullptr.");
+        if (retType_ == nullptr) {
+            LOG_ERROR("retType_ is nullptr.");
             return false;
         }
         if (id_ == nullptr) {

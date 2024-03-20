@@ -5,9 +5,9 @@
 namespace mcs {
     class FuncDef : public Node {
     public:
-        FuncDef(std::string* funcType, std::string* id, Node* block) : funcType_(funcType),
-                                                                       id_(id),
-                                                                       block_(block) {}
+        FuncDef(std::string* retType, std::string* id, Node* block) : retType_(retType),
+                                                                      id_(id),
+                                                                      block_(block) {}
         ~FuncDef() override = default;
 
     public:
@@ -15,7 +15,7 @@ namespace mcs {
         bool checkAllMemberPtr() const;
 
     private:
-        std::unique_ptr<std::string> funcType_;
+        std::unique_ptr<std::string> retType_;
         std::unique_ptr<std::string> id_;
         std::unique_ptr<Node> block_;
     };

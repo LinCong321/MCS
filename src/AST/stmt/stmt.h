@@ -9,8 +9,10 @@ namespace mcs {
     public:
         explicit RetStmt(int retVal) : retVal_(retVal) {}
         ~RetStmt() override = default;
+
     public:
         llvm::Value* codeGen() override;
+
     private:
         int retVal_;
     };
