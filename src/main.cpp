@@ -1,4 +1,3 @@
-#include <iostream>
 #include "utils/logger.h"
 #include "IR/context/context.h"
 #include "LAP/parser/parser.hpp"
