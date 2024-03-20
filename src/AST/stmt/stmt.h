@@ -11,7 +11,6 @@ namespace mcs {
         ~RetStmt() = default;
     public:
         llvm::Value* codeGen() override;
-        bool checkAllMemberPtr() const override;
     private:
         int retVal_;
     };

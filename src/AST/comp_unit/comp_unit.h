@@ -9,9 +9,8 @@ namespace mcs {
         ~CompUnit() = default;
 
     public:
-        void pushBack(Node* node);
         llvm::Value* codeGen() override;
-        bool checkAllMemberPtr() const override;
+        void pushBack(Node* node);
 
     private:
         std::vector<std::unique_ptr<Node>> units_;

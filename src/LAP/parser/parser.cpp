@@ -67,15 +67,15 @@
 
 
 /* First part of user prologue.  */
-#line 7 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
+#line 5 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
 
+    #include <iostream>
+    #include "parser.hpp"
 
-#include <iostream>
-#include "parser.hpp"
-	
-extern int yylex();
-void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s);
-
+    extern int yylex();
+    extern int yylineno;
+    extern const char* yytext;
+    void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s);
 
 #line 81 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
 
@@ -138,8 +138,9 @@ enum yysymbol_kind_t
   YYSYMBOL_FuncDef = 30,                   /* FuncDef  */
   YYSYMBOL_FuncType = 31,                  /* FuncType  */
   YYSYMBOL_Block = 32,                     /* Block  */
-  YYSYMBOL_Stmt = 33,                      /* Stmt  */
-  YYSYMBOL_Number = 34                     /* Number  */
+  YYSYMBOL_BlockItem = 33,                 /* BlockItem  */
+  YYSYMBOL_Stmt = 34,                      /* Stmt  */
+  YYSYMBOL_Number = 35                     /* Number  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -467,16 +468,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  6
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   11
+#define YYLAST   15
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  27
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  8
+#define YYNNTS  9
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  9
+#define YYNRULES  11
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  19
+#define YYNSTATES  21
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   276
@@ -527,7 +528,8 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    42,    42,    44,    45,    53,    56,    59,    62,    65
+       0,    42,    42,    44,    45,    54,    57,    60,    63,    64,
+      73,    76
 };
 #endif
 
@@ -547,7 +549,7 @@ static const char *const yytname[] =
   "CONTINUE", "ELSE", "FLOAT", "IF", "INT", "RETURN", "VOID", "WHILE",
   "LE", "GE", "EQ", "NE", "AND", "OR", "ID", "INT_CONST", "FLOAT_CONST",
   "'('", "')'", "'{'", "'}'", "';'", "$accept", "Start", "CompUnit",
-  "FuncDef", "FuncType", "Block", "Stmt", "Number", YY_NULLPTR
+  "FuncDef", "FuncType", "Block", "BlockItem", "Stmt", "Number", YY_NULLPTR
 };
 
 static const char *
@@ -557,7 +559,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-21)
+#define YYPACT_NINF (-20)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -571,8 +573,9 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -9,   -21,     1,    -9,   -21,   -17,   -21,   -21,   -19,   -18,
-     -20,    -4,   -21,   -13,   -16,   -21,   -15,   -21,   -21
+      -8,   -20,     2,    -8,   -20,   -16,   -20,   -20,   -18,   -17,
+     -19,    -3,   -20,   -12,   -10,   -20,   -20,   -15,   -20,   -20,
+     -20
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -581,19 +584,20 @@ static const yytype_int8 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,     6,     0,     2,     3,     0,     1,     4,     0,     0,
-       0,     0,     5,     0,     0,     9,     0,     7,     8
+       0,     0,     5,     0,     0,     8,    11,     0,     7,     9,
+      10
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -21,   -21,   -21,     5,   -21,   -21,   -21,   -21
+     -20,   -20,   -20,     6,   -20,   -20,   -20,    -4,   -20
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     2,     3,     4,     5,    12,    14,    16
+       0,     2,     3,     4,     5,    12,    14,    15,    17
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -601,14 +605,14 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       1,     6,     8,     9,    11,    10,    13,    15,     7,    17,
-       0,    18
+      13,     1,     6,     8,     9,    11,    10,    13,    16,     7,
+      19,    20,     0,     0,     0,    18
 };
 
 static const yytype_int8 yycheck[] =
 {
-       9,     0,    19,    22,    24,    23,    10,    20,     3,    25,
-      -1,    26
+      10,     9,     0,    19,    22,    24,    23,    10,    20,     3,
+      14,    26,    -1,    -1,    -1,    25
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -616,19 +620,22 @@ static const yytype_int8 yycheck[] =
 static const yytype_int8 yystos[] =
 {
        0,     9,    28,    29,    30,    31,     0,    30,    19,    22,
-      23,    24,    32,    10,    33,    20,    34,    25,    26
+      23,    24,    32,    10,    33,    34,    20,    35,    25,    34,
+      26
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    27,    28,    29,    29,    30,    31,    32,    33,    34
+       0,    27,    28,    29,    29,    30,    31,    32,    33,    33,
+      34,    35
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     1,     2,     5,     1,     3,     3,     1
+       0,     2,     1,     1,     2,     5,     1,     3,     1,     2,
+       3,     1
 };
 
 
@@ -1096,13 +1103,13 @@ yyreduce:
   case 2: /* Start: CompUnit  */
 #line 42 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
                          { ast = std::unique_ptr<mcs::Node>((yyvsp[0].compUnit)); }
-#line 1100 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
+#line 1107 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
   case 3: /* CompUnit: FuncDef  */
 #line 44 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
-                            { (yyval.compUnit) = new mcs::CompUnit((yyvsp[0].node)); }
-#line 1106 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
+                        { (yyval.compUnit) = new mcs::CompUnit((yyvsp[0].node)); }
+#line 1113 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
   case 4: /* CompUnit: CompUnit FuncDef  */
@@ -1110,38 +1117,57 @@ yyreduce:
                                  {
                     if ((yyvsp[-1].compUnit) == nullptr) {
                         yyerror(ast, "CompUnit is nullptr.");
+                        return 0;
                     }
                     (yyvsp[-1].compUnit)->pushBack((yyvsp[0].node));
-            }
-#line 1117 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
+                }
+#line 1125 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
   case 5: /* FuncDef: FuncType ID '(' ')' Block  */
-#line 53 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
-                                                  { (yyval.node) = new mcs::FuncDef((yyvsp[-4].strVal), (yyvsp[-3].strVal), (yyvsp[0].node)); }
-#line 1123 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
+#line 54 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
+                                          { (yyval.node) = new mcs::FuncDef((yyvsp[-4].strVal), (yyvsp[-3].strVal), (yyvsp[0].node)); }
+#line 1131 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
   case 6: /* FuncType: INT  */
-#line 56 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
-                            { (yyval.strVal) = new std::string("int"); }
-#line 1129 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
+#line 57 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
+                    { (yyval.strVal) = new std::string("int"); }
+#line 1137 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
-  case 7: /* Block: '{' Stmt '}'  */
-#line 59 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
-                                     { (yyval.node) = new mcs::Block((yyvsp[-1].node)); }
-#line 1135 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
+  case 7: /* Block: '{' BlockItem '}'  */
+#line 60 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
+                                  { (yyval.node) = (yyvsp[-1].blockItem); }
+#line 1143 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
-  case 8: /* Stmt: RETURN Number ';'  */
-#line 62 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
-                                          { (yyval.node) = new mcs::RetStmt((yyvsp[-1].intVal)); }
-#line 1141 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
+  case 8: /* BlockItem: Stmt  */
+#line 63 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
+                     { (yyval.blockItem) = new mcs::BlockItem((yyvsp[0].node)); }
+#line 1149 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
+    break;
+
+  case 9: /* BlockItem: BlockItem Stmt  */
+#line 64 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
+                               {
+                    if ((yyvsp[-1].blockItem) == nullptr) {
+                        yyerror(ast, "BlockItem is nullptr.");
+                        return 0;
+                    }
+                    (yyvsp[-1].blockItem)->pushBack((yyvsp[0].node));
+                }
+#line 1161 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
+    break;
+
+  case 10: /* Stmt: RETURN Number ';'  */
+#line 73 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
+                                  { (yyval.node) = new mcs::RetStmt((yyvsp[-1].intVal)); }
+#line 1167 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
 
-#line 1145 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
+#line 1171 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
 
       default: break;
     }
@@ -1334,9 +1360,10 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 68 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
+#line 79 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
 
 
 void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s) {
-	std::cerr << "Error: " << s << std::endl;
+    std::cerr << "Error: \"" << s << "\" occurs at line " << yylineno
+              << " on symbol \"" << yytext << "\"." << std::endl;
 }

@@ -1,17 +1,15 @@
 %code requires {
-
-#include "AST/nodes.h"
-
+    #include "AST/nodes.h"
 }
 
 %{
+    #include <iostream>
+    #include "parser.hpp"
 
-#include <iostream>
-#include "parser.hpp"
-	
-extern int yylex();
-void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s);
-
+    extern int yylex();
+    extern int yylineno;
+    extern const char* yytext;
+    void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s);
 %}
 
 %parse-param { std::unique_ptr<mcs::Node>& ast }
@@ -19,6 +17,7 @@ void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s);
 %union {
     float           floatVal;
     int             intVal;
+    mcs::BlockItem* blockItem;
     mcs::CompUnit*  compUnit;
     mcs::Node*      node;
     std::string*    strVal;
@@ -35,6 +34,7 @@ void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s);
 %type<compUnit>     CompUnit
 %type<node>         FuncDef Block Stmt
 %type<strVal>       FuncType
+%type<blockItem>    BlockItem
 %type<intVal>       Number
 
 %%
@@ -45,9 +45,10 @@ CompUnit    :   FuncDef { $$ = new mcs::CompUnit($1); }
             |   CompUnit FuncDef {
                     if ($1 == nullptr) {
                         yyerror(ast, "CompUnit is nullptr.");
+                        return 0;
                     }
                     $1->pushBack($2);
-            }
+                }
             ;
 		
 FuncDef     :   FuncType ID '(' ')' Block { $$ = new mcs::FuncDef($1, $2, $5); }
@@ -56,7 +57,17 @@ FuncDef     :   FuncType ID '(' ')' Block { $$ = new mcs::FuncDef($1, $2, $5); }
 FuncType    :   INT { $$ = new std::string("int"); }
             ;
 		
-Block       :   '{' Stmt '}' { $$ = new mcs::Block($2); }
+Block       :   '{' BlockItem '}' { $$ = $2; }
+            ;
+
+BlockItem   :   Stmt { $$ = new mcs::BlockItem($1); }
+            |   BlockItem Stmt {
+                    if ($1 == nullptr) {
+                        yyerror(ast, "BlockItem is nullptr.");
+                        return 0;
+                    }
+                    $1->pushBack($2);
+                }
             ;
 		
 Stmt        :   RETURN Number ';' { $$ = new mcs::RetStmt($2); }
@@ -68,5 +79,6 @@ Number      :   INT_CONST
 %%
 
 void yyerror(std::unique_ptr<mcs::Node>& ast, const char* s) {
-	std::cerr << "Error: " << s << std::endl;
+    std::cerr << "Error: \"" << s << "\" occurs at line " << yylineno
+              << " on symbol \"" << yytext << "\"." << std::endl;
 }

@@ -2,15 +2,22 @@
 #include "utils/logger.h"
 
 namespace mcs {
-    llvm::Value* Block::codeGen() {
-        return checkAllMemberPtr() ? stmt_->codeGen() : nullptr;
+    BlockItem::BlockItem(Node* node) : items_() {
+        pushBack(node);
     }
 
-    bool Block::checkAllMemberPtr() const {
-        if (stmt_ == nullptr) {
-            LOG_ERROR("stmt_ is nullptr.");
-            return false;
+    llvm::Value* BlockItem::codeGen() {
+        for (const auto& item : items_) {
+            if (item == nullptr) {
+                LOG_ERROR("There is a nullptr in items_");
+                return nullptr;
+            }
+            item->codeGen();
         }
-        return true;
+        return nullptr;
+    }
+
+    void BlockItem::pushBack(Node* node) {
+        items_.push_back(std::unique_ptr<Node>(node));
     }
 }

@@ -1,12 +1,10 @@
 %option noyywrap yylineno
 
 %{
-
-#include "parser/parser.hpp"
-
+    #include "parser/parser.hpp"
 %}
 
-%s      COMMENT
+%s          COMMENT
 
 ID          [a-zA-Z_][a-zA-Z0-9_]*
 INT_CONST   [1-9][0-9]*|0[0-7]*|0[xX][0-9a-fA-F]+

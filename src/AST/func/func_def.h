@@ -12,7 +12,7 @@ namespace mcs {
 
     public:
         llvm::Value* codeGen() override;
-        bool checkAllMemberPtr() const override;
+        bool checkAllMemberPtr() const;
 
     private:
         std::unique_ptr<std::string> funcType_;

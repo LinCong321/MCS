@@ -9,8 +9,4 @@ namespace mcs {
         Context::getInstance().setCurrentReturnValue(returnValue);
         return returnValue;
     }
-
-    bool RetStmt::checkAllMemberPtr() const {
-        return true;
-    }
 }

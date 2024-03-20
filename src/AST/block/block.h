@@ -3,14 +3,16 @@
 #include "node/node.h"
 
 namespace mcs {
-    class Block : public Node {
+    class Block : public Node {};
+
+    class BlockItem : public Block {
     public:
-        Block(Node* stmt) : stmt_(stmt) {}
-        ~Block() = default;
+        BlockItem(Node* node);
+        ~BlockItem() = default;
     public:
         llvm::Value* codeGen() override;
-        bool checkAllMemberPtr() const override;
+        void pushBack(Node* node);
     private:
-        std::unique_ptr<Node> stmt_;
+        std::vector<std::unique_ptr<Node>> items_;
     };
 }

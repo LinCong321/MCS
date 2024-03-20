@@ -47,11 +47,9 @@ extern int yydebug;
 /* "%code requires" blocks.  */
 #line 1 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
 
+    #include "AST/nodes.h"
 
-#include "AST/nodes.h"
-
-
-#line 55 "/home/lincong/桌面/MCS/src/LAP/parser/parser.hpp"
+#line 53 "/home/lincong/桌面/MCS/src/LAP/parser/parser.hpp"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -89,15 +87,16 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
+#line 17 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
 
-	float		    floatVal;
-	int		        intVal;
-	mcs::CompUnit*  compUnit;
-	mcs::Node*		node;
-	std::string*	strVal;
+    float           floatVal;
+    int             intVal;
+    mcs::BlockItem* blockItem;
+    mcs::CompUnit*  compUnit;
+    mcs::Node*      node;
+    std::string*    strVal;
 
-#line 101 "/home/lincong/桌面/MCS/src/LAP/parser/parser.hpp"
+#line 100 "/home/lincong/桌面/MCS/src/LAP/parser/parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
