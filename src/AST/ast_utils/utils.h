@@ -3,5 +3,5 @@
 #include "llvm/IR/Type.h"
 
 namespace mcs {
-    llvm::Type* getType(const std::string& type);
+    llvm::Type* strToType(const std::string& type);
 }

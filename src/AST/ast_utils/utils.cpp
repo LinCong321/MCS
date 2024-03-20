@@ -18,7 +18,7 @@ namespace {
 }
 
 namespace mcs {
-    llvm::Type* getType(const std::string& type) {
+    llvm::Type* strToType(const std::string& type) {
         const auto it = str2Type.find(type);
         if (it == str2Type.end()) {
             LOG_ERROR("Cannot get LLVM type because the given type (aka ", type, ") is not in the type list.");

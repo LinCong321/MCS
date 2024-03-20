@@ -11,7 +11,7 @@ namespace mcs {
                      "() has already returned, so this return statement is unreachable!");
             return nullptr;
         }
-        const auto returnValue = llvm::ConstantInt::get(getType("int"), retVal_, true);
+        const auto returnValue = llvm::ConstantInt::get(strToType("int"), retVal_, true);
         Context::getInstance().setCurrentReturnValue(returnValue);
         return returnValue;
     }
