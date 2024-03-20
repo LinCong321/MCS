@@ -7,8 +7,8 @@ namespace mcs {
 
     class RetStmt : public Stmt {
     public:
-        RetStmt(int retVal) : retVal_(retVal) {}
-        ~RetStmt() = default;
+        explicit RetStmt(int retVal) : retVal_(retVal) {}
+        ~RetStmt() override = default;
     public:
         llvm::Value* codeGen() override;
     private:

@@ -8,7 +8,7 @@ namespace mcs {
         FuncDef(std::string* funcType, std::string* id, Node* block) : funcType_(funcType),
                                                                        id_(id),
                                                                        block_(block) {}
-        ~FuncDef() = default;
+        ~FuncDef() override = default;
 
     public:
         llvm::Value* codeGen() override;

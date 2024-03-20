@@ -5,8 +5,8 @@
 namespace mcs {
     class CompUnit : public Node {
     public:
-        CompUnit(Node* node);
-        ~CompUnit() = default;
+        explicit CompUnit(Node* node);
+        ~CompUnit() override = default;
 
     public:
         llvm::Value* codeGen() override;

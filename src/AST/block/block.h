@@ -7,8 +7,8 @@ namespace mcs {
 
     class BlockItem : public Block {
     public:
-        BlockItem(Node* node);
-        ~BlockItem() = default;
+        explicit BlockItem(Node* node);
+        ~BlockItem() override = default;
     public:
         llvm::Value* codeGen() override;
         void pushBack(Node* node);
