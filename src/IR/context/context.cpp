@@ -42,9 +42,26 @@ namespace mcs {
     }
 
     llvm::Value* Context::getCurrentReturnValue() const {
-        if (blocks_.empty() || blocks_.top() == nullptr) {
+        if (blocks_.empty()) {
+            LOG_ERROR("Cannot get current return value because blocks_ is empty.");
+            return nullptr;
+        }
+        if (blocks_.top() == nullptr) {
+            LOG_ERROR("Cannot get current return value because blocks_.top() is nullptr.");
             return nullptr;
         }
         return blocks_.top()->getReturnValue();
+    }
+
+    std::string Context::getCurrentFunctionName() const {
+        if (blocks_.empty()) {
+            LOG_ERROR("Cannot get current function name because blocks_ is empty.");
+            return {};
+        }
+        if (blocks_.top() == nullptr) {
+            LOG_ERROR("Cannot get current function name because blocks_.top() is nullptr.");
+            return {};
+        }
+        return blocks_.top()->getFunctionName();
     }
 }

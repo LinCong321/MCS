@@ -15,6 +15,7 @@ namespace mcs {
         llvm::BasicBlock* getBasicBlock() const;
         void setReturnValue(llvm::Value* value);
         llvm::Value* getReturnValue() const;
+        std::string getFunctionName() const;
 
     private:
         llvm::BasicBlock*                   basicBlock_;

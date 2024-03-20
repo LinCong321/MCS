@@ -19,6 +19,7 @@ namespace mcs {
         bool popBlock();
         bool setCurrentReturnValue(llvm::Value* value);
         llvm::Value* getCurrentReturnValue() const;
+        std::string getCurrentFunctionName() const;
         
     private:
         Context() : context_(), module_("main", context_), blocks_() {}

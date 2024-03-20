@@ -27,5 +27,5 @@ namespace mcs {
 }
 
 #define LOG_ERROR(...)  logger(mcs::LogLevel::ERROR, __FILE__, __FUNCTION__,  __VA_ARGS__)
-#define LOG_WARN(...)   logger(mcs::LogLevel::WARN, __FILE__, __FUNCTION__,  __VA_ARGS__)
+#define LOG_WARN(...)   logger(mcs::LogLevel::WARNING, __FILE__, __FUNCTION__,  __VA_ARGS__)
 #define LOG_INFO(...)   logger(mcs::LogLevel::INFO, __FILE__, __FUNCTION__,  __VA_ARGS__)
