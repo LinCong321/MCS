@@ -14,6 +14,9 @@ namespace mcs {
         llvm::Value* codeGen() override;
 
     private:
+        bool checkAllMemberPtr() const;
+
+    private:
         std::unique_ptr<Node>   lhs_;
         char                    op_;
         std::unique_ptr<Node>   rhs_;

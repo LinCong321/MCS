@@ -78,8 +78,8 @@ Exp         :   AddExp { $$ = $1; }
             ;
 
 AddExp      :   MulExp              { $$ = $1; }
-		    |   AddExp '+' MulExp   { $$ = new mcs::BinaryExp($1, '+', $3); }
-		    |   AddExp '-' MulExp   { $$ = new mcs::BinaryExp($1, '-', $3); }
+            |   AddExp '+' MulExp   { $$ = new mcs::BinaryExp($1, '+', $3); }
+            |   AddExp '-' MulExp   { $$ = new mcs::BinaryExp($1, '-', $3); }
             ;
 
 MulExp      :   UnaryExp            { $$ = $1; }

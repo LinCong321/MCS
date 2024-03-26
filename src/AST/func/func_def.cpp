@@ -10,7 +10,7 @@
 namespace mcs {
     llvm::Value* FuncDef::codeGen() {
         if (!checkAllMemberPtr()) {
-            LOG_ERROR("There is a nullptr in member pointers.");
+            LOG_ERROR("Cannot generate code because there is a nullptr in member pointers.");
             return nullptr;
         }
 

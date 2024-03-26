@@ -1214,13 +1214,13 @@ yyreduce:
 
   case 15: /* AddExp: AddExp '+' MulExp  */
 #line 81 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
-                                            { (yyval.node) = new mcs::BinaryExp((yyvsp[-2].node), '+', (yyvsp[0].node)); }
+                                    { (yyval.node) = new mcs::BinaryExp((yyvsp[-2].node), '+', (yyvsp[0].node)); }
 #line 1219 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
   case 16: /* AddExp: AddExp '-' MulExp  */
 #line 82 "/home/lincong/桌面/MCS/src/LAP/parser/parser.y"
-                                            { (yyval.node) = new mcs::BinaryExp((yyvsp[-2].node), '-', (yyvsp[0].node)); }
+                                    { (yyval.node) = new mcs::BinaryExp((yyvsp[-2].node), '-', (yyvsp[0].node)); }
 #line 1225 "/home/lincong/桌面/MCS/src/LAP/parser/parser.cpp"
     break;
 
