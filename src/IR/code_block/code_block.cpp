@@ -3,10 +3,6 @@
 #include "llvm/IR/Function.h"
 
 namespace mcs {
-    void CodeBlock::setReturnValue(llvm::Value* value) {
-        returnValue_ = value;
-    }
-
     llvm::Value* CodeBlock::getReturnValue() const {
         return returnValue_;
     }
@@ -22,5 +18,13 @@ namespace mcs {
             return {};
         }
         return parent->getName().str();
+    }
+
+    void CodeBlock::setReturnValue(llvm::Value* value) {
+        returnValue_ = value;
+    }
+
+    llvm::BasicBlock *CodeBlock::getBasicBlock() const {
+        return basicBlock_;
     }
 }

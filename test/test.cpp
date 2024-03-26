@@ -1,8 +1,7 @@
 int f() {
-    return 0;
-    return 1;
+    return 1.0 / 2;
 }
 
 int main() {
-    return 114514;
+    return 0;
 }

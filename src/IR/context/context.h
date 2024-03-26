@@ -12,13 +12,14 @@ namespace mcs {
         static Context& getInstance();
         
     public:
-        llvm::LLVMContext& getContext();
-        llvm::Module& getModule();
-        void pushBlock(llvm::BasicBlock* basicBlock);
         bool popBlock();
-        bool setCurrentReturnValue(llvm::Value* value);
+        llvm::Module& getModule();
+        llvm::LLVMContext& getContext();
+        llvm::BasicBlock* getCurrentBlock();
         llvm::Value* getCurrentReturnValue() const;
         std::string getCurrentFunctionName() const;
+        void pushBlock(llvm::BasicBlock* basicBlock);
+        bool setCurrentReturnValue(llvm::Value* value);
         
     private:
         Context() : context_(), module_("main", context_), blocks_() {}

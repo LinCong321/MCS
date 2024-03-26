@@ -12,9 +12,10 @@ namespace mcs {
         ~CodeBlock() = default;
         
     public:
-        void setReturnValue(llvm::Value* value);
         llvm::Value* getReturnValue() const;
         std::string getFunctionName() const;
+        void setReturnValue(llvm::Value* value);
+        llvm::BasicBlock* getBasicBlock() const;
 
     private:
         llvm::BasicBlock*                   basicBlock_;

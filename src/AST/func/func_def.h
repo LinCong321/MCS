@@ -12,11 +12,13 @@ namespace mcs {
 
     public:
         llvm::Value* codeGen() override;
+
+    private:
         bool checkAllMemberPtr() const;
 
     private:
-        std::unique_ptr<std::string> retType_;
-        std::unique_ptr<std::string> id_;
-        std::unique_ptr<Node> block_;
+        std::unique_ptr<std::string>    retType_;
+        std::unique_ptr<std::string>    id_;
+        std::unique_ptr<Node>           block_;
     };
 }

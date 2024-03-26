@@ -12,9 +12,9 @@ namespace {
     };
 
     std::unordered_map<std::string, TypeList> str2Type = {
-            {"int",     TypeList::INT},
-            {"float",   TypeList::FLOAT},
-            {"void",    TypeList::VOID},
+        {"int",     TypeList::INT},
+        {"float",   TypeList::FLOAT},
+        {"void",    TypeList::VOID},
     };
 }
 

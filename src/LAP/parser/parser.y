@@ -32,10 +32,9 @@
 %token<floatVal>    FLOAT_CONST
 
 %type<compUnit>     CompUnit
-%type<node>         FuncDef Block Stmt
+%type<node>         FuncDef Block Stmt Exp AddExp MulExp UnaryExp Number
 %type<strVal>       BType
 %type<blockItem>    BlockItem
-%type<intVal>       Number
 
 %%
 
@@ -70,10 +69,30 @@ BlockItem   :   Stmt { $$ = new mcs::BlockItem($1); }
                 }
             ;
 		
-Stmt        :   RETURN Number ';' { $$ = new mcs::RetStmt($2); }
+Stmt        :   ';'             { $$ = new mcs::Stmt(); }
+            |   Exp ';'         { $$ = $1; }
+            |   RETURN Exp ';'  { $$ = new mcs::RetStmt($2); }
+            ;
+
+Exp         :   AddExp { $$ = $1; }
+            ;
+
+AddExp      :   MulExp              { $$ = $1; }
+		    |   AddExp '+' MulExp   { $$ = new mcs::BinaryExp($1, '+', $3); }
+		    |   AddExp '-' MulExp   { $$ = new mcs::BinaryExp($1, '-', $3); }
+            ;
+
+MulExp      :   UnaryExp            { $$ = $1; }
+            |   MulExp '*' UnaryExp { $$ = new mcs::BinaryExp($1, '*', $3); }
+            |   MulExp '/' UnaryExp { $$ = new mcs::BinaryExp($1, '/', $3); }
+            |   MulExp '%' UnaryExp { $$ = new mcs::BinaryExp($1, '%', $3); }
+            ;
+
+UnaryExp    :   Number { $$ = $1; }
             ;
 		
-Number      :   INT_CONST
+Number      :   INT_CONST   { $$ = new mcs::IntNum($1); }
+            |   FLOAT_CONST { $$ = new mcs::FloatNum($1); }
             ;
 
 %%
