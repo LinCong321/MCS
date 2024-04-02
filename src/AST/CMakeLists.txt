@@ -1,12 +1,11 @@
 set(
         SOURCE_FILES
-        exp/exp.cpp
-        stmt/stmt.cpp
         block/block.cpp
+        comp_unit/comp_unit.cpp
+        exp/binary_exp.cpp
         func/func_def.cpp
         number/number.cpp
-        ast_utils/utils.cpp
-        comp_unit/comp_unit.cpp
+        stmt/stmt.cpp
 )
 
 include_directories(${AST_DIR})

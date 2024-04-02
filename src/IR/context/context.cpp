@@ -36,6 +36,23 @@ namespace mcs {
         return blocks_.top()->getBasicBlock();
     }
 
+    void Context::pushBlock(llvm::BasicBlock* basicBlock) {
+        blocks_.push(std::make_unique<CodeBlock>(basicBlock));
+    }
+
+    bool Context::setCurrentReturnValue(llvm::Value* value) {
+        if (blocks_.empty()) {
+            LOG_ERROR("Cannot set current return value because blocks_ is empty.");
+            return false;
+        }
+        if (blocks_.top() == nullptr) {
+            LOG_ERROR("Cannot set current return value because blocks_.top() is nullptr.");
+            return false;
+        }
+        blocks_.top()->setReturnValue(value);
+        return true;
+    }
+
     llvm::Value* Context::getCurrentReturnValue() const {
         if (blocks_.empty()) {
             LOG_ERROR("Cannot get current return value because blocks_ is empty.");
@@ -58,22 +75,5 @@ namespace mcs {
             return {};
         }
         return blocks_.top()->getFunctionName();
-    }
-
-    void Context::pushBlock(llvm::BasicBlock* basicBlock) {
-        blocks_.push(std::make_unique<CodeBlock>(basicBlock));
-    }
-
-    bool Context::setCurrentReturnValue(llvm::Value* value) {
-        if (blocks_.empty()) {
-            LOG_ERROR("Cannot set current return value because blocks_ is empty.");
-            return false;
-        }
-        if (blocks_.top() == nullptr) {
-            LOG_ERROR("Cannot set current return value because blocks_.top() is nullptr.");
-            return false;
-        }
-        blocks_.top()->setReturnValue(value);
-        return true;
     }
 }

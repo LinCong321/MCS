@@ -1,6 +1,6 @@
 #include "func_def.h"
 #include "utils/logger.h"
-#include "ast_utils/utils.h"
+#include "IR/type/cast.h"
 #include "IR/context/context.h"
 
 #include "llvm/IR/Type.h"
@@ -15,7 +15,7 @@ namespace mcs {
         }
 
         std::vector<llvm::Type*> argTypes;
-        const auto functionType = llvm::FunctionType::get(strToType(*retType_), llvm::ArrayRef(argTypes), false);
+        const auto functionType = llvm::FunctionType::get(getCastedType(*retType_), llvm::ArrayRef(argTypes), false);
 
         const auto linkage = (*id_ == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
         const auto function = llvm::Function::Create(functionType, linkage, *id_, Context::getInstance().getModule());

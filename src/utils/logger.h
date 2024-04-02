@@ -9,10 +9,8 @@ namespace mcs {
         INFO = 3,
     };
 
-    std::string logLevelToStr(LogLevel logLevel);
-
     std::string timeToStr();
-
+    std::string logLevelToStr(LogLevel logLevel);
     std::string fileToStr(const std::string& file);
 
     template <class... Args>

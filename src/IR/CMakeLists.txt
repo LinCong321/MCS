@@ -4,6 +4,8 @@ set(
         SOURCE_FILES
         code_block/code_block.cpp
         context/context.cpp
+        type/cast.cpp
+        type/type.cpp
 )
 
 include_directories(${IR_DIR})

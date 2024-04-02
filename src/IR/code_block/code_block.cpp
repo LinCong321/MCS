@@ -24,7 +24,7 @@ namespace mcs {
         returnValue_ = value;
     }
 
-    llvm::BasicBlock *CodeBlock::getBasicBlock() const {
+    llvm::BasicBlock* CodeBlock::getBasicBlock() const {
         return basicBlock_;
     }
 }
