@@ -6,6 +6,8 @@
 #include "llvm/IR/InstrTypes.h"
 
 namespace mcs {
+    // ----------------------------------------get casted type----------------------------------------
+
     llvm::Type* getCastedType(const std::string& type) {
         switch (strToType(type)) {
             case Type::INT:
@@ -20,12 +22,15 @@ namespace mcs {
         }
     }
 
+    // ----------------------------------------get casted value----------------------------------------
+
     llvm::Value* getIntValue(llvm::Value* value) {
         switch (getTypeOfValue(value)) {
             case Type::INT:
                 return value;
             case Type::FLOAT:
-                return llvm::CastInst::Create(llvm::CastInst::FPToSI, value, getCastedType("int"), "");
+                return llvm::CastInst::Create(llvm::CastInst::FPToSI, value, getCastedType("int"), "",
+                                              Context::getInstance().getCurrentBlock());
             default:
                 LOG_ERROR("Cannot get int value because there are not enough cases in switch.");
                 return nullptr;
@@ -35,8 +40,8 @@ namespace mcs {
     llvm::Value* getFloatValue(llvm::Value* value) {
         switch (getTypeOfValue(value)) {
             case Type::INT:
-                return value;
-                //return llvm::CastInst::Create(llvm::CastInst::SIToFP, value, getCastedType("float"), "");
+                return llvm::CastInst::Create(llvm::CastInst::SIToFP, value, getCastedType("float"), "",
+                                              Context::getInstance().getCurrentBlock());
             case Type::FLOAT:
                 return value;
             default:

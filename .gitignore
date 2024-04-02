@@ -1,2 +1,5 @@
 .idea/
 cmake*
+LAP/lexer/*.cpp
+LAP/parser/*.cpp
+LAP/parser/*.hpp

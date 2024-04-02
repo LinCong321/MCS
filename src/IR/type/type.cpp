@@ -20,7 +20,7 @@ namespace mcs {
     Type strToType(const std::string& str) {
         const auto it = str2Type.find(str);
         if (it == str2Type.end()) {
-            LOG_ERROR("Cannot cast str to type because the given str (aka ", str, ") is not in the type list.");
+            LOG_ERROR("Cannot cast str to type because the given str (aka \"", str, "\") is not in the type list.");
             return Type::UNKNOWN;
         }
         return it->second;
