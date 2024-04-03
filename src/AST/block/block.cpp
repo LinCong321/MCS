@@ -6,10 +6,10 @@ namespace mcs {
         pushBack(node);
     }
 
-    llvm::Value* BlockItem::codeGen() {
+    llvm::Value* BlockItem::codeGen() const {
         for (const auto& item : items_) {
             if (item == nullptr) {
-                LOG_ERROR("There is a nullptr in items_");
+                LOG_ERROR("Unable to generate code because there is a nullptr in items_");
                 return nullptr;
             }
             item->codeGen();
@@ -18,6 +18,6 @@ namespace mcs {
     }
 
     void BlockItem::pushBack(Node* node) {
-        items_.push_back(std::unique_ptr<Node>(node));
+        items_.emplace_back(node);
     }
 }

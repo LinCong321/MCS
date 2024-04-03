@@ -1,21 +1,22 @@
 #include "func_def.h"
+
 #include "utils/logger.h"
-#include "IR/type/cast.h"
 #include "IR/context/context.h"
+#include "pub/code_gen_helper.h"
 
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
-    llvm::Value* FuncDef::codeGen() {
-        if (!checkAllMemberPtr()) {
-            LOG_ERROR("Cannot generate code because there is a nullptr in member pointers.");
+    llvm::Value* FuncDef::codeGen() const {
+        if (!checkAllMemberPointers()) {
+            LOG_ERROR("Unable to generate code because there is a nullptr in member pointers.");
             return nullptr;
         }
 
         std::vector<llvm::Type*> argTypes;
-        const auto functionType = llvm::FunctionType::get(getCastedType(*retType_), llvm::ArrayRef(argTypes), false);
+        const auto functionType = llvm::FunctionType::get(strToType(*retType_), llvm::ArrayRef(argTypes), false);
 
         const auto linkage = (*id_ == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
         const auto function = llvm::Function::Create(functionType, linkage, *id_, Context::getInstance().getModule());
@@ -34,7 +35,7 @@ namespace mcs {
         return function;
     }
 
-    bool FuncDef::checkAllMemberPtr() const {
+    bool FuncDef::checkAllMemberPointers() const {
         if (retType_ == nullptr) {
             LOG_ERROR("retType_ is nullptr.");
             return false;

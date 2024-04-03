@@ -6,6 +6,6 @@ namespace mcs {
     class Node {
     public:
         virtual ~Node() = default;
-        virtual llvm::Value* codeGen() = 0;
+        virtual llvm::Value* codeGen() const = 0;
     };
 }

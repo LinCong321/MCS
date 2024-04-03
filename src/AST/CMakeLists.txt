@@ -5,7 +5,10 @@ set(
         exp/binary_exp.cpp
         func/func_def.cpp
         number/number.cpp
+        pub/code_gen_helper.cpp
         stmt/stmt.cpp
+        var/var_def.cpp
+        var/var_def_list.cpp
 )
 
 include_directories(${AST_DIR})

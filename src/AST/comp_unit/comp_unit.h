@@ -1,6 +1,6 @@
 #pragma once
 
-#include "node/node.h"
+#include "pub/node.h"
 
 namespace mcs {
     class CompUnit : public Node {
@@ -9,7 +9,9 @@ namespace mcs {
         ~CompUnit() override = default;
 
     public:
-        llvm::Value* codeGen() override;
+        llvm::Value* codeGen() const override;
+
+    public:
         void pushBack(Node* node);
 
     private:

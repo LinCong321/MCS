@@ -4,7 +4,7 @@ set(
         SOURCE_FILES
         code_block/code_block.cpp
         context/context.cpp
-        type/cast.cpp
+        scope/scope.cpp
         type/type.cpp
 )
 

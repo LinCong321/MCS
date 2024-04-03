@@ -1,5 +1,6 @@
 int f() {
-    return 1.0 / 2;
+    int x = 1, y = 2;
+    return 0;
 }
 
 int main() {

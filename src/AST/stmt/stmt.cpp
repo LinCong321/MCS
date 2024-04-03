@@ -2,13 +2,24 @@
 #include "utils/logger.h"
 #include "IR/context/context.h"
 
+namespace {
+    bool checkReturned() {
+        if (mcs::Context::getInstance().getCurrentReturnValue() != nullptr) {
+            LOG_WARN("The function ", mcs::Context::getInstance().getCurrentFunctionName(),
+                     "() has already returned, so this return statement is unreachable!");
+            return true;
+        }
+        return false;
+    }
+}
+
 namespace mcs {
-    llvm::Value* Stmt::codeGen() {
+    llvm::Value* Stmt::codeGen() const {
         return nullptr;
     }
 
-    llvm::Value* RetStmt::codeGen() {
-        if (checkReturned() || !checkAllMemberPtr()) {
+    llvm::Value* RetStmt::codeGen() const {
+        if (checkReturned() || !checkAllMemberPointers()) {
             return nullptr;
         }
         const auto returnValue = retVal_->codeGen();
@@ -16,16 +27,7 @@ namespace mcs {
         return returnValue;
     }
 
-    bool RetStmt::checkReturned() {
-        if (Context::getInstance().getCurrentReturnValue() != nullptr) {
-            LOG_WARN("The function ", Context::getInstance().getCurrentFunctionName(),
-                     "() has already returned, so this return statement is unreachable!");
-            return true;
-        }
-        return false;
-    }
-
-    bool RetStmt::checkAllMemberPtr() const {
+    bool RetStmt::checkAllMemberPointers() const {
         if (retVal_ == nullptr) {
             LOG_INFO("The function ", Context::getInstance().getCurrentFunctionName(), "() has no return value.");
             return false;

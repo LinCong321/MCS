@@ -10,12 +10,17 @@ namespace mcs {
                                                            returnValue_(nullptr),
                                                            symbolTable_() {}
         ~CodeBlock() = default;
-        
+
+    public:
+        void setReturnValue(llvm::Value* value);
+        bool insertSymbol(const std::string& symbol, llvm::Value* value);
+
     public:
         llvm::Value* getReturnValue() const;
         std::string getFunctionName() const;
-        void setReturnValue(llvm::Value* value);
         llvm::BasicBlock* getBasicBlock() const;
+        bool checkExist(const std::string& symbol) const;
+        llvm::Value* getVariable(const std::string& symbol) const;
 
     private:
         llvm::BasicBlock*                   basicBlock_;

@@ -2,7 +2,7 @@
 
 #include "exp.h"
 #include "IR/type/type.h"
-#include "llvm/IR/Instructions.h"
+#include "llvm/IR/Instruction.h"
 
 namespace mcs {
     class BinaryExp : public Exp {
@@ -11,10 +11,10 @@ namespace mcs {
         ~BinaryExp() override = default;
 
     public:
-        llvm::Value* codeGen() override;
+        llvm::Value* codeGen() const override;
 
     private:
-        bool checkAllMemberPtr() const;
+        bool checkAllMemberPointers() const;
         llvm::Instruction::BinaryOps getOperation(Type type) const;
 
     private:

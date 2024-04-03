@@ -1,6 +1,6 @@
 #pragma once
 
-#include "node/node.h"
+#include "pub/node.h"
 
 namespace mcs {
     class FuncDef : public Node {
@@ -11,10 +11,10 @@ namespace mcs {
         ~FuncDef() override = default;
 
     public:
-        llvm::Value* codeGen() override;
+        llvm::Value* codeGen() const override;
 
     private:
-        bool checkAllMemberPtr() const;
+        bool checkAllMemberPointers() const;
 
     private:
         std::unique_ptr<std::string>    retType_;

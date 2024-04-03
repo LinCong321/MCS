@@ -1,11 +1,11 @@
 #pragma once
 
-#include "node/node.h"
+#include "pub/node.h"
 
 namespace mcs {
     class Stmt : public Node {
     public:
-        llvm::Value* codeGen() override;
+        llvm::Value* codeGen() const override;
     };
 
     class RetStmt : public Stmt {
@@ -14,11 +14,10 @@ namespace mcs {
         ~RetStmt() override = default;
 
     public:
-        llvm::Value* codeGen() override;
+        llvm::Value* codeGen() const override;
 
     private:
-        static bool checkReturned();
-        bool checkAllMemberPtr() const;
+        bool checkAllMemberPointers() const;
 
     private:
         std::unique_ptr<Node> retVal_;

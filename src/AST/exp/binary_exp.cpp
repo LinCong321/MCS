@@ -1,14 +1,15 @@
 #include "binary_exp.h"
 
 #include "utils/logger.h"
-#include "IR/type/cast.h"
 #include "IR/context/context.h"
+#include "pub/code_gen_helper.h"
+
 #include "llvm/IR/InstrTypes.h"
 
 namespace {
     constexpr std::string_view emptyString;
 
-    std::unordered_map<char, llvm::Instruction::BinaryOps> char2SOp = {
+    const std::unordered_map<char, llvm::Instruction::BinaryOps> char2SOp = {
         {'+',   llvm::Instruction::Add},
         {'-',   llvm::Instruction::Sub},
         {'*',   llvm::Instruction::Mul},
@@ -16,23 +17,23 @@ namespace {
         {'%',   llvm::Instruction::SRem},
     };
 
-    std::unordered_map<char, llvm::Instruction::BinaryOps> char2FOp = {
+    const std::unordered_map<char, llvm::Instruction::BinaryOps> char2FOp = {
         {'+',   llvm::Instruction::FAdd},
         {'-',   llvm::Instruction::FSub},
         {'*',   llvm::Instruction::FMul},
         {'/',   llvm::Instruction::FDiv},
     };
 
-    std::unordered_map<mcs::Type, std::unordered_map<char, llvm::Instruction::BinaryOps>> type2Map = {
+    const std::unordered_map<mcs::Type, std::unordered_map<char, llvm::Instruction::BinaryOps>> type2Map = {
         {mcs::Type::INT,    char2SOp},
         {mcs::Type::FLOAT,  char2FOp},
     };
 }
 
 namespace mcs {
-    llvm::Value* BinaryExp::codeGen() {
-        if (!checkAllMemberPtr()) {
-            LOG_ERROR("Cannot generate code because there is a nullptr in member pointers.");
+    llvm::Value* BinaryExp::codeGen() const {
+        if (!checkAllMemberPointers()) {
+            LOG_ERROR("Unable to generate code because there is a nullptr in member pointers.");
             return nullptr;
         }
 
@@ -50,7 +51,7 @@ namespace mcs {
                                             Context::getInstance().getCurrentBlock());
     }
 
-    bool BinaryExp::checkAllMemberPtr() const {
+    bool BinaryExp::checkAllMemberPointers() const {
         if (lhs_ == nullptr) {
             LOG_ERROR("lhs_ is nullptr.");
             return false;
@@ -65,13 +66,13 @@ namespace mcs {
     llvm::Instruction::BinaryOps BinaryExp::getOperation(Type type) const {
         const auto opMap = type2Map.find(type);
         if (opMap == type2Map.end()) {
-            LOG_ERROR("Cannot get operation because the given type (aka ", type, ") is not in the type list.");
+            LOG_ERROR("Unable to get operation because the given type (aka ", type, ") is not in the type list.");
             return {};
         }
 
         const auto it = opMap->second.find(op_);
         if (it == opMap->second.end()) {
-            LOG_ERROR("Cannot get operation because the given op (aka \'", op_, "\' is not in the op list.");
+            LOG_ERROR("Unable to get operation because the given op (aka \'", op_, "\' is not in the op list.");
             return {};
         }
 

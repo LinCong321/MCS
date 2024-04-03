@@ -1,6 +1,6 @@
 #pragma once
 
-#include "node/node.h"
+#include "pub/node.h"
 
 namespace mcs {
     class Number : public Node {};
@@ -11,7 +11,7 @@ namespace mcs {
         ~IntNum() override = default;
 
     public:
-        llvm::Value* codeGen() override;
+        llvm::Value* codeGen() const override;
 
     private:
         int32_t val_;
@@ -23,7 +23,7 @@ namespace mcs {
         ~FloatNum() override = default;
 
     public:
-        llvm::Value* codeGen() override;
+        llvm::Value* codeGen() const override;
 
     private:
         float val_;

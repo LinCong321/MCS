@@ -4,13 +4,13 @@
 
 namespace mcs {
     enum class Type : uint {
-        INT = 1,
-        FLOAT = 2,
-        VOID = 3,
-        UNKNOWN = 4,
+        INT = 0,
+        FLOAT,
+        VOID,
+        UNKNOWN,
     };
 
-    Type strToType(const std::string& str);
+    Type getType(const std::string& str);
     Type getTypeOfValue(const llvm::Value* value);
     std::ostream& operator<<(std::ostream& out, Type type);
 }
