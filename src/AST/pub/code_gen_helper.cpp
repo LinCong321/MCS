@@ -4,14 +4,15 @@
 #include "IR/context/context.h"
 
 #include "llvm/IR/Type.h"
+#include "llvm/IR/Constants.h"
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
     // ----------------------------------------string to type----------------------------------------
 
-    llvm::Type* strToType(const std::string& type) {
-        switch (getType(type)) {
+    llvm::Type* getLLVMType(const std::string& str) {
+        switch (getType(str)) {
             case Type::INT:
                 return llvm::Type::getInt32Ty(Context::getInstance().getContext());
             case Type::FLOAT:
@@ -26,12 +27,12 @@ namespace mcs {
 
     // ----------------------------------------get casted value----------------------------------------
 
-    llvm::Value* getIntValue(llvm::Value* value) {
+    llvm::Value* castToInt(llvm::Value* value) {
         switch (getTypeOfValue(value)) {
             case Type::INT:
                 return value;
             case Type::FLOAT:
-                return llvm::CastInst::Create(llvm::CastInst::FPToSI, value, strToType("int"), "",
+                return llvm::CastInst::Create(llvm::CastInst::FPToSI, value, getLLVMType("int"), "",
                                               Context::getInstance().getCurrentBlock());
             default:
                 LOG_ERROR("Unable to get int value because there are not enough cases in switch.");
@@ -39,10 +40,10 @@ namespace mcs {
         }
     }
 
-    llvm::Value* getFloatValue(llvm::Value* value) {
+    llvm::Value* castToFloat(llvm::Value* value) {
         switch (getTypeOfValue(value)) {
             case Type::INT:
-                return llvm::CastInst::Create(llvm::CastInst::SIToFP, value, strToType("float"), "",
+                return llvm::CastInst::Create(llvm::CastInst::SIToFP, value, getLLVMType("float"), "",
                                               Context::getInstance().getCurrentBlock());
             case Type::FLOAT:
                 return value;
@@ -52,43 +53,79 @@ namespace mcs {
         }
     }
 
-    llvm::Value* getCastedValue(llvm::Value* value, Type to) {
+    llvm::Value* getCastedValue(llvm::Value* value, Type type) {
         static const std::unordered_map<Type, std::function<llvm::Value*(llvm::Value*)>> type2Func = {
-            {Type::INT,     getIntValue},
-            {Type::FLOAT,   getFloatValue},
+            {Type::INT,     castToInt},
+            {Type::FLOAT,   castToFloat},
         };
 
-        const auto it = type2Func.find(to);
+        const auto it = type2Func.find(type);
         if (it == type2Func.end()) {
-            LOG_ERROR("Unable to get casted value because the target type (aka ", to, ") is not in the type list.");
+            LOG_ERROR("Unable to get casted value because the target type (aka ", type,
+                      ") is not in the type2Func table.");
             return nullptr;
         }
 
         return it->second(value);
     }
 
-    // ----------------------------------------assign to variable----------------------------------------
+    // ----------------------------------------get constant value----------------------------------------
 
-    llvm::Value* assignToGlobalVariable(llvm::Value* variable, llvm::Value* value) {
-        return nullptr;
+    int64_t getIntValue(llvm::Value* value) {
+        const auto constantInt = llvm::dyn_cast<llvm::ConstantInt>(value);
+        if (constantInt == nullptr) {
+            LOG_ERROR("Unable to get int value because constantInt is nullptr.");
+            return 0;
+        }
+        return constantInt->getValue().getSExtValue();
     }
 
-    llvm::Value* assignToLocalVariable(llvm::Value* variable, llvm::Value* value) {
-        return new llvm::StoreInst(value, variable, false, Context::getInstance().getCurrentBlock());
+    float getFloatValue(llvm::Value* value) {
+        const auto constantFP = llvm::dyn_cast<llvm::ConstantFP>(value);
+        if (constantFP == nullptr) {
+            LOG_ERROR("Unable to get float value because constantFp is nullptr.");
+            return 0;
+        }
+        return constantFP->getValue().convertToFloat();
+    }
+    
+    llvm::Constant* getConstantInt(llvm::Value* value) {
+        switch (getTypeOfValue(value)) {
+            case Type::INT:
+                return llvm::dyn_cast<llvm::ConstantInt>(value);
+            case Type::FLOAT:
+                return llvm::ConstantInt::get(getLLVMType("int"), static_cast<int>(getFloatValue(value)), true);
+            default:
+                LOG_ERROR("Unable to get constant int because there are not enough cases in switch.");
+                return nullptr;
+        }
     }
 
-    llvm::Value* assignToVariable(llvm::Value* variable, llvm::Value* value, Scope scope) {
-        static const std::unordered_map<Scope, std::function<llvm::Value*(llvm::Value*, llvm::Value*)>> scope2Func = {
-            {Scope::GLOBAL, assignToGlobalVariable},
-            {Scope::LOCAL,  assignToLocalVariable},
+    llvm::Constant* getConstantFloat(llvm::Value* value) {
+        switch (getTypeOfValue(value)) {
+            case Type::INT:
+                return llvm::ConstantFP::get(getLLVMType("float"), static_cast<float>(getIntValue(value)));
+            case Type::FLOAT:
+                return llvm::dyn_cast<llvm::ConstantFP>(value);
+            default:
+                LOG_ERROR("Unable to get constant int because there are not enough cases in switch.");
+                return nullptr;
+        }
+    }
+
+    llvm::Constant* getConstantValue(llvm::Value* value, const std::string& str) {
+        static const std::unordered_map<Type, std::function<llvm::Constant*(llvm::Value*)>> type2Func = {
+            {Type::INT,     getConstantInt},
+            {Type::FLOAT,   getConstantFloat},
         };
 
-        const auto it = scope2Func.find(scope);
-        if (it == scope2Func.end()) {
-            LOG_ERROR("Unable to assign to variable because the scope (aka ", scope, ") is not in the scope list.");
+        const auto it = type2Func.find(getType(str));
+        if (it == type2Func.end()) {
+            LOG_ERROR("Unable to get constant value because the target type (aka \"", str,
+                      "\") is not in the type2Func table.");
             return nullptr;
         }
 
-        return it->second(variable, value);
+        return it->second(value);
     }
 }

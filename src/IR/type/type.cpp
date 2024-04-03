@@ -20,7 +20,7 @@ namespace mcs {
     Type getType(const std::string& str) {
         const auto it = str2Type.find(str);
         if (it == str2Type.end()) {
-            LOG_ERROR("Unable to get type because the given str (aka \"", str, "\") is not in the type list.");
+            LOG_ERROR("Unable to get type because the given str (aka \"", str, "\") is not in the str2Type table.");
             return Type::UNKNOWN;
         }
         return it->second;
@@ -40,7 +40,8 @@ namespace mcs {
 
         const auto it = id2Type.find(type->getTypeID());
         if (it == id2Type.end()) {
-            LOG_ERROR("Unable to get type of value because the type id: ", type->getTypeID(), " is not in the id list.");
+            LOG_ERROR("Unable to get type of value because the type id: ", type->getTypeID(),
+                      " is not in the id2Type table.");
             return Type::UNKNOWN;
         }
 

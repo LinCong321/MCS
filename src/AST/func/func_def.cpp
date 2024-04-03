@@ -16,7 +16,7 @@ namespace mcs {
         }
 
         std::vector<llvm::Type*> argTypes;
-        const auto functionType = llvm::FunctionType::get(strToType(*retType_), llvm::ArrayRef(argTypes), false);
+        const auto functionType = llvm::FunctionType::get(getLLVMType(*retType_), llvm::ArrayRef(argTypes), false);
 
         const auto linkage = (*id_ == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
         const auto function = llvm::Function::Create(functionType, linkage, *id_, Context::getInstance().getModule());

@@ -66,13 +66,13 @@ namespace mcs {
     llvm::Instruction::BinaryOps BinaryExp::getOperation(Type type) const {
         const auto opMap = type2Map.find(type);
         if (opMap == type2Map.end()) {
-            LOG_ERROR("Unable to get operation because the given type (aka ", type, ") is not in the type list.");
+            LOG_ERROR("Unable to get operation because the given type (aka ", type, ") is not in the type2Map table.");
             return {};
         }
 
         const auto it = opMap->second.find(op_);
         if (it == opMap->second.end()) {
-            LOG_ERROR("Unable to get operation because the given op (aka \'", op_, "\' is not in the op list.");
+            LOG_ERROR("Unable to get operation because the given op (aka \'", op_, "\') is not in the opMap.");
             return {};
         }
 

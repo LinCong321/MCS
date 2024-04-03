@@ -1,14 +1,14 @@
 #include "number.h"
-#include "IR/context/context.h"
+#include "pub/code_gen_helper.h"
 
 #include "llvm/IR/Constants.h"
 
 namespace mcs {
     llvm::Value* IntNum::codeGen() const {
-        return llvm::ConstantInt::get(llvm::Type::getInt32Ty(Context::getInstance().getContext()), val_, true);
+        return llvm::ConstantInt::get(getLLVMType("int"), val_, true);
     }
 
     llvm::Value* FloatNum::codeGen() const {
-        return llvm::ConstantFP::get(llvm::Type::getFloatTy(Context::getInstance().getContext()), val_);
+        return llvm::ConstantFP::get(getLLVMType("float"), val_);
     }
 }

@@ -4,7 +4,7 @@
 #include "IR/scope/scope.h"
 
 namespace mcs {
-    llvm::Type* strToType(const std::string& type);
-    llvm::Value* getCastedValue(llvm::Value* value, Type to);
-    llvm::Value* assignToVariable(llvm::Value* variable, llvm::Value* value, Scope scope);
+    llvm::Type* getLLVMType(const std::string& str);
+    llvm::Value* getCastedValue(llvm::Value* value, Type type);
+    llvm::Constant* getConstantValue(llvm::Value* value, const std::string& str);
 }

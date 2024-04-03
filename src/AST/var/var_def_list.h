@@ -17,8 +17,9 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
-        llvm::Value* declareVariable(const std::string& id) const;
-        llvm::Value* assign(llvm::Value* variable, llvm::Value* value) const;
+        llvm::Value* declareVariable(const std::string& id, llvm::Value* value) const;
+        llvm::Value* declareLocalVariable(const std::string& id, llvm::Value* value) const;
+        llvm::Value* declareGlobalVariable(const std::string& id, llvm::Value* value) const;
 
     private:
         std::unique_ptr<std::string>         type_;

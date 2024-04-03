@@ -3,6 +3,8 @@
 #include "utils/logger.h"
 #include "IR/context/context.h"
 #include "pub/code_gen_helper.h"
+
+#include "llvm/IR/Constants.h"
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
@@ -21,16 +23,9 @@ namespace mcs {
                 LOG_ERROR("Unable to generate code because there is a nullptr in defList_.");
                 return nullptr;
             }
-
-            const auto variable = declareVariable(def->getId());
-            if (variable == nullptr) {
-                LOG_ERROR("Unable to generate code because the variable cannot be declared.");
-                return nullptr;
-            }
-
-            const auto result = assign(variable, def->getValue());
+            const auto result = declareVariable(def->getId(), def->getValue());
             if (result == nullptr) {
-                LOG_ERROR("Unable to generate code because the variable cannot be assigned.");
+                LOG_ERROR("Unable to generate code because the variable cannot be declared.");
                 return nullptr;
             }
         }
@@ -54,23 +49,53 @@ namespace mcs {
         return true;
     }
 
-    llvm::Value* VarDefList::declareVariable(const std::string& id) const {
-        if (Context::getInstance().checkLocalSymbol(id)) {
+    llvm::Value* VarDefList::declareVariable(const std::string& id, llvm::Value* value) const {
+        switch (Context::getInstance().getCurrentScope()) {
+            case Scope::GLOBAL:
+                return declareGlobalVariable(id, value);
+            case Scope::LOCAL:
+                return declareLocalVariable(id, value);
+            default:
+                LOG_ERROR("Unable to declare variable because the scope type is unknown.");
+                return nullptr;
+        }
+    }
+
+    llvm::Value* VarDefList::declareLocalVariable(const std::string& id, llvm::Value* value) const {
+        if (Context::getInstance().checkSymbol(id, Scope::LOCAL)) {
             LOG_ERROR("Unable to declare variable because id (aka \"", id, "\") already exists in local symbol table.");
             return nullptr;
         }
 
-        const auto variable = new llvm::AllocaInst(strToType(*type_), 0, id, Context::getInstance().getCurrentBlock());
-        if (!mcs::Context::getInstance().insertLocalSymbol(id, variable)) {
+        const auto variable = new llvm::AllocaInst(getLLVMType(*type_), 0, id,
+                                                   Context::getInstance().getCurrentBlock());
+
+        if (!Context::getInstance().insertSymbol(id, variable, Scope::LOCAL)) {
             LOG_ERROR("Unable to declare variable because id (aka \"", id,
                       "\") cannot be inserted into local symbol table.");
             return nullptr;
         }
 
-        return variable;
+        return new llvm::StoreInst(value, variable, false, Context::getInstance().getCurrentBlock());
     }
 
-    llvm::Value* VarDefList::assign(llvm::Value* variable, llvm::Value* value) const {
-        return assignToVariable(variable, getCastedValue(value, getType(*type_)), Scope::LOCAL);
+    llvm::Value* VarDefList::declareGlobalVariable(const std::string& id, llvm::Value* value) const {
+        if (Context::getInstance().checkSymbol(id, Scope::GLOBAL)) {
+            LOG_ERROR("Unable to declare variable because id (aka \"", id,
+                      "\") already exists in global symbol table.");
+            return nullptr;
+        }
+
+        const auto variable = new llvm::GlobalVariable(Context::getInstance().getModule(), getLLVMType(*type_),
+                                                       false, llvm::GlobalVariable::LinkageTypes::InternalLinkage,
+                                                       getConstantValue(value, *type_), id);
+
+        if (!Context::getInstance().insertSymbol(id, variable, Scope::GLOBAL)) {
+            LOG_ERROR("Unable to declare variable because id (aka \"", id,
+                      "\") cannot be inserted into global symbol table.");
+            return nullptr;
+        }
+
+        return variable;
     }
 }
