@@ -1,11 +1,13 @@
-int a = 10;
+int a = 0;
 
 int f() {
     int x = 1;
-    return 0;
+    {
+        int x = 2;
+        int x = 3;
+    }
+    return a;
 }
-
-float b = 114514;
 
 int main() {
     return 0;

@@ -35,7 +35,7 @@
 %token<floatVal>    FLOAT_CONST
 
 %type<compUnit>     CompUnit
-%type<node>         VarDecl InitVal FuncDef Block Stmt Exp AddExp MulExp UnaryExp Number
+%type<node>         VarDecl InitVal FuncDef Block Stmt Exp AddExp MulExp UnaryExp PrimaryExp LVal Number
 %type<varDefList>   VarDefList
 %type<varDef>       VarDef
 %type<strVal>       BType
@@ -119,6 +119,7 @@ BlockItem   :   VarDecl { $$ = new mcs::BlockItem($1); }
 
 Stmt        :   ';'             { $$ = new mcs::Stmt(); }
             |   Exp ';'         { $$ = $1; }
+            |   Block           { $$ = new mcs::BlockStmt($1); }
             |   RETURN Exp ';'  { $$ = new mcs::RetStmt($2); }
             ;
 
@@ -136,7 +137,15 @@ MulExp      :   UnaryExp            { $$ = $1; }
             |   MulExp '%' UnaryExp { $$ = new mcs::BinaryExp($1, '%', $3); }
             ;
 
-UnaryExp    :   Number  { $$ = $1; }
+UnaryExp    :   PrimaryExp  { $$ = $1; }
+            ;
+
+PrimaryExp  :   '(' Exp ')' { $$ = $2; }
+            |   LVal        { $$ = $1; }
+            |   Number      { $$ = $1; }
+            ;
+
+LVal        :   ID  { $$ =  new mcs::LVal($1); }
             ;
 
 Number      :   INT_CONST   { $$ = new mcs::IntNum($1); }

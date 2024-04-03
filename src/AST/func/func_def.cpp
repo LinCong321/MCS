@@ -16,21 +16,12 @@ namespace mcs {
         }
 
         std::vector<llvm::Type*> argTypes;
-        const auto functionType = llvm::FunctionType::get(getLLVMType(*retType_), llvm::ArrayRef(argTypes), false);
 
+        const auto functionType = llvm::FunctionType::get(getLLVMType(*retType_), llvm::ArrayRef(argTypes), false);
         const auto linkage = (*id_ == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
         const auto function = llvm::Function::Create(functionType, linkage, *id_, Context::getInstance().getModule());
 
-        const auto basicBlock = llvm::BasicBlock::Create(Context::getInstance().getContext(), "entry", function);
-        Context::getInstance().pushBlock(basicBlock);
-
-        block_->codeGen();
-
-        llvm::ReturnInst::Create(Context::getInstance().getContext(),
-                                 Context::getInstance().getCurrentReturnValue(),
-                                 basicBlock);
-
-        Context::getInstance().popBlock();
+        createBlock(function);
 
         return function;
     }
@@ -49,5 +40,17 @@ namespace mcs {
             return false;
         }
         return true;
+    }
+
+    void FuncDef::createBlock(llvm::Function* function) const {
+        const auto basicBlock = llvm::BasicBlock::Create(Context::getInstance().getContext(), "entry", function);
+        Context::getInstance().pushBlock(basicBlock);
+
+        block_->codeGen();
+
+        llvm::ReturnInst::Create(Context::getInstance().getContext(),
+                                 Context::getInstance().getCurrentReturnValue(),
+                                 basicBlock);
+        Context::getInstance().popBlock();
     }
 }

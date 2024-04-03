@@ -69,6 +69,10 @@ namespace mcs {
         return it->second(value);
     }
 
+    llvm::Value* getCastedValue(llvm::Value* value, const std::string& str) {
+        return getCastedValue(value, getType(str));
+    }
+
     // ----------------------------------------get constant value----------------------------------------
 
     int64_t getIntValue(llvm::Value* value) {
@@ -108,7 +112,7 @@ namespace mcs {
             case Type::FLOAT:
                 return llvm::dyn_cast<llvm::ConstantFP>(value);
             default:
-                LOG_ERROR("Unable to get constant int because there are not enough cases in switch.");
+                LOG_ERROR("Unable to get constant float because there are not enough cases in switch.");
                 return nullptr;
         }
     }

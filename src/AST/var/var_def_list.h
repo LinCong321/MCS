@@ -1,6 +1,7 @@
 #pragma once
 
 #include "var_def.h"
+#include "IR/scope/scope.h"
 
 namespace mcs {
     class VarDefList : public Node{
@@ -20,6 +21,7 @@ namespace mcs {
         llvm::Value* declareVariable(const std::string& id, llvm::Value* value) const;
         llvm::Value* declareLocalVariable(const std::string& id, llvm::Value* value) const;
         llvm::Value* declareGlobalVariable(const std::string& id, llvm::Value* value) const;
+        llvm::Value* declareVariable(const std::string& id, llvm::Value* value, Scope scope) const;
 
     private:
         std::unique_ptr<std::string>         type_;

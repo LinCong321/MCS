@@ -50,7 +50,38 @@ namespace mcs {
     }
 
     llvm::Value* VarDefList::declareVariable(const std::string& id, llvm::Value* value) const {
-        switch (Context::getInstance().getCurrentScope()) {
+        const auto scope = Context::getInstance().getCurrentScope();
+        if (Context::getInstance().checkSymbol(id)) {
+            LOG_ERROR("The ", scope, " variable cannot be declared because its id (aka \"", id,
+                      "\") already exists in the ", scope, " symbol table.");
+            return nullptr;
+        }
+
+        const auto variable = declareVariable(id, value, scope);
+        if (!Context::getInstance().insertSymbol(id, variable)) {
+            LOG_ERROR("The ", scope, " variable cannot be declared because it cannot be inserted into the ", scope,
+                      " symbol table and its id is \"", id, "\".");
+            return nullptr;
+        }
+
+        return variable;
+    }
+
+    llvm::Value* VarDefList::declareLocalVariable(const std::string& id, llvm::Value* value) const {
+        const auto variable = new llvm::AllocaInst(getLLVMType(*type_), 0, id,
+                                                   Context::getInstance().getCurrentBlock());
+        new llvm::StoreInst(getCastedValue(value, *type_), variable, false, Context::getInstance().getCurrentBlock());
+        return variable;
+    }
+
+    llvm::Value* VarDefList::declareGlobalVariable(const std::string& id, llvm::Value* value) const {
+        return new llvm::GlobalVariable(Context::getInstance().getModule(), getLLVMType(*type_), false,
+                                        llvm::GlobalVariable::LinkageTypes::InternalLinkage,
+                                        getConstantValue(value, *type_), id);
+    }
+
+    llvm::Value* VarDefList::declareVariable(const std::string& id, llvm::Value* value, Scope scope) const {
+        switch (scope) {
             case Scope::GLOBAL:
                 return declareGlobalVariable(id, value);
             case Scope::LOCAL:
@@ -59,43 +90,5 @@ namespace mcs {
                 LOG_ERROR("Unable to declare variable because the scope type is unknown.");
                 return nullptr;
         }
-    }
-
-    llvm::Value* VarDefList::declareLocalVariable(const std::string& id, llvm::Value* value) const {
-        if (Context::getInstance().checkSymbol(id, Scope::LOCAL)) {
-            LOG_ERROR("Unable to declare variable because id (aka \"", id, "\") already exists in local symbol table.");
-            return nullptr;
-        }
-
-        const auto variable = new llvm::AllocaInst(getLLVMType(*type_), 0, id,
-                                                   Context::getInstance().getCurrentBlock());
-
-        if (!Context::getInstance().insertSymbol(id, variable, Scope::LOCAL)) {
-            LOG_ERROR("Unable to declare variable because id (aka \"", id,
-                      "\") cannot be inserted into local symbol table.");
-            return nullptr;
-        }
-
-        return new llvm::StoreInst(value, variable, false, Context::getInstance().getCurrentBlock());
-    }
-
-    llvm::Value* VarDefList::declareGlobalVariable(const std::string& id, llvm::Value* value) const {
-        if (Context::getInstance().checkSymbol(id, Scope::GLOBAL)) {
-            LOG_ERROR("Unable to declare variable because id (aka \"", id,
-                      "\") already exists in global symbol table.");
-            return nullptr;
-        }
-
-        const auto variable = new llvm::GlobalVariable(Context::getInstance().getModule(), getLLVMType(*type_),
-                                                       false, llvm::GlobalVariable::LinkageTypes::InternalLinkage,
-                                                       getConstantValue(value, *type_), id);
-
-        if (!Context::getInstance().insertSymbol(id, variable, Scope::GLOBAL)) {
-            LOG_ERROR("Unable to declare variable because id (aka \"", id,
-                      "\") cannot be inserted into global symbol table.");
-            return nullptr;
-        }
-
-        return variable;
     }
 }

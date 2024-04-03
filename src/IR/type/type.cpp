@@ -52,12 +52,16 @@ namespace mcs {
         switch (type) {
             case Type::INT:
                 out << "Type::INT";
+                break;
             case Type::FLOAT:
                 out << "Type::FLOAT";
+                break;
             case Type::VOID:
                 out << "Type::VOID";
+                break;
             default:
                 out << "Type::UNKNOWN";
+                break;
         }
         return out;
     }

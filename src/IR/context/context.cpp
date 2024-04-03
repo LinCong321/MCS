@@ -12,7 +12,7 @@ namespace mcs {
             LOG_ERROR("Unable to pop block because blocks_ is empty.");
             return false;
         }
-        blocks_.pop();
+        blocks_.pop_back();
         return true;
     }
 
@@ -25,7 +25,7 @@ namespace mcs {
     }
 
     void Context::pushBlock(llvm::BasicBlock* basicBlock) {
-        blocks_.push(std::make_unique<CodeBlock>(basicBlock));
+        blocks_.emplace_back(std::make_unique<CodeBlock>(basicBlock));
     }
 
     bool Context::setCurrentReturnValue(llvm::Value* value) {
@@ -33,16 +33,16 @@ namespace mcs {
             LOG_ERROR("Unable to set current return value because blocks_ is empty.");
             return false;
         }
-        if (blocks_.top() == nullptr) {
-            LOG_ERROR("Unable to set current return value because blocks_.top() is nullptr.");
+        if (blocks_.back() == nullptr) {
+            LOG_ERROR("Unable to set current return value because blocks_.back() is nullptr.");
             return false;
         }
-        blocks_.top()->setReturnValue(value);
+        blocks_.back()->setReturnValue(value);
         return true;
     }
 
-    bool Context::insertSymbol(const std::string& symbol, llvm::Value* value, Scope scope) {
-        switch (scope) {
+    bool Context::insertSymbol(const std::string& symbol, llvm::Value* value) {
+        switch (getCurrentScope()) {
             case Scope::GLOBAL:
                 return insertGlobalSymbol(symbol, value);
             case Scope::LOCAL:
@@ -62,11 +62,11 @@ namespace mcs {
             LOG_ERROR("Unable to get current block because blocks_ is empty.");
             return nullptr;
         }
-        if (blocks_.top() == nullptr) {
-            LOG_ERROR("Unable to get current block because blocks_.top() is nullptr.");
+        if (blocks_.back() == nullptr) {
+            LOG_ERROR("Unable to get current block because blocks_.back() is nullptr.");
             return nullptr;
         }
-        return blocks_.top()->getBasicBlock();
+        return blocks_.back()->getBasicBlock();
     }
 
     llvm::Value* Context::getCurrentReturnValue() const {
@@ -74,11 +74,11 @@ namespace mcs {
             LOG_ERROR("Unable to get current return value because blocks_ is empty.");
             return nullptr;
         }
-        if (blocks_.top() == nullptr) {
-            LOG_ERROR("Unable to get current return value because blocks_.top() is nullptr.");
+        if (blocks_.back() == nullptr) {
+            LOG_ERROR("Unable to get current return value because blocks_.back() is nullptr.");
             return nullptr;
         }
-        return blocks_.top()->getReturnValue();
+        return blocks_.back()->getReturnValue();
     }
 
     std::string Context::getCurrentFunctionName() const {
@@ -86,15 +86,15 @@ namespace mcs {
             LOG_ERROR("Unable to get current function name because blocks_ is empty.");
             return {};
         }
-        if (blocks_.top() == nullptr) {
-            LOG_ERROR("Unable to get current function name because blocks_.top() is nullptr.");
+        if (blocks_.back() == nullptr) {
+            LOG_ERROR("Unable to get current function name because blocks_.back() is nullptr.");
             return {};
         }
-        return blocks_.top()->getFunctionName();
+        return blocks_.back()->getFunctionName();
     }
 
-    bool Context::checkSymbol(const std::string& symbol, Scope scope) const {
-        switch (scope) {
+    bool Context::checkSymbol(const std::string& symbol) const {
+        switch (getCurrentScope()) {
             case Scope::GLOBAL:
                 return checkGlobalSymbol(symbol);
             case Scope::LOCAL:
@@ -105,16 +105,9 @@ namespace mcs {
         }
     }
 
-    llvm::Value* Context::getVariable(const std::string& symbol, Scope scope) const {
-        switch (scope) {
-            case Scope::GLOBAL:
-                return getGlobalVariable(symbol);
-            case Scope::LOCAL:
-                return getLocalVariable(symbol);
-            default:
-                LOG_ERROR("Unable to check symbol because the scope type is unknown.");
-                return nullptr;
-        }
+    llvm::Value* Context::getVariable(const std::string& symbol) const {
+        const auto localVariable = getLocalVariable(symbol);
+        return localVariable != nullptr ? localVariable : getGlobalVariable(symbol);
     }
 
     bool Context::checkLocalSymbol(const std::string& symbol) const {
@@ -122,11 +115,11 @@ namespace mcs {
             LOG_ERROR("Unable to check local symbol because blocks is empty.");
             return false;
         }
-        if (blocks_.top() == nullptr) {
-            LOG_ERROR("Unable to check local symbol because blocks_.top() is nullptr.");
+        if (blocks_.back() == nullptr) {
+            LOG_ERROR("Unable to check local symbol because blocks_.back() is nullptr.");
             return false;
         }
-        return blocks_.top()->checkExist(symbol);
+        return blocks_.back()->checkExist(symbol);
     }
 
     bool Context::checkGlobalSymbol(const std::string& symbol) const {
@@ -134,22 +127,23 @@ namespace mcs {
     }
 
     llvm::Value* Context::getLocalVariable(const std::string& symbol) const {
-        if (blocks_.empty()) {
-            LOG_ERROR("Unable to get local variable because blocks_ is empty.");
-            return nullptr;
+        for (auto it = blocks_.crbegin(); it != blocks_.crend(); it++) {
+            if (*it == nullptr) {
+                LOG_ERROR("Unable to get local variable because *it is nullptr.");
+                return nullptr;
+            }
+            if ((*it)->checkExist(symbol)) {
+                return (*it)->getVariable(symbol);
+            }
         }
-        if (blocks_.top() == nullptr) {
-            LOG_ERROR("Unable to get local variable because blocks_.top() is nullptr.");
-            return nullptr;
-        }
-        return blocks_.top()->getVariable(symbol);
+        return nullptr;
     }
 
     llvm::Value* Context::getGlobalVariable(const std::string& symbol) const {
         const auto it = symbolTable_.find(symbol);
         if (it == symbolTable_.end()) {
             LOG_ERROR("Unable to get global variable because the symbol (aka \"", symbol,
-                      "\") is not in global symbol table.");
+                      "\") is not in the global symbol table.");
             return nullptr;
         }
         return it->second;
@@ -160,11 +154,11 @@ namespace mcs {
             LOG_ERROR("Unable to insert local symbol because blocks_ is empty.");
             return true;
         }
-        if (blocks_.top() == nullptr) {
-            LOG_ERROR("Unable to insert local symbol because blocks_.top() is nullptr.");
+        if (blocks_.back() == nullptr) {
+            LOG_ERROR("Unable to insert local symbol because blocks_.back() is nullptr.");
             return false;
         }
-        return blocks_.top()->insertSymbol(symbol, value);
+        return blocks_.back()->insertSymbol(symbol, value);
     }
 
     bool Context::insertGlobalSymbol(const std::string& symbol, llvm::Value* value) {

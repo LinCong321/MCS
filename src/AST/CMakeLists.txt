@@ -4,8 +4,11 @@ set(
         comp_unit/comp_unit.cpp
         exp/binary_exp.cpp
         func/func_def.cpp
+        lval/lval.cpp
         number/number.cpp
         pub/code_gen_helper.cpp
+        stmt/block_stmt.cpp
+        stmt/ret_stmt.cpp
         stmt/stmt.cpp
         var/var_def.cpp
         var/var_def_list.cpp
