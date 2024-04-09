@@ -2,13 +2,15 @@ set(
         SOURCE_FILES
         block/block.cpp
         comp_unit/comp_unit.cpp
+        const/const_def_list.cpp
+        const/const_def.cpp
         exp/binary_exp.cpp
         func/func_def.cpp
         lval/lval.cpp
         number/number.cpp
         start/start.cpp
-        stmt/block_stmt.cpp
-        stmt/ret_stmt.cpp
+        stmt/block_stmt/block_stmt.cpp
+        stmt/ret_stmt/ret_stmt.cpp
         stmt/stmt.cpp
         var/var_def.cpp
         var/var_def_list.cpp

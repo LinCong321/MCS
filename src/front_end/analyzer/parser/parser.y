@@ -20,6 +20,8 @@
     int                 intVal;
     mcs::BlockItem*     blockItem;
     mcs::CompUnit*      compUnit;
+    mcs::ConstDef*      constDef;
+    mcs::ConstDefList*  constDefList;
     mcs::Node*          node;
     mcs::VarDef*        varDef;
     mcs::VarDefList*    varDefList;
@@ -35,122 +37,163 @@
 %token<floatVal>    FLOAT_CONST
 
 %type<compUnit>     CompUnit
-%type<node>         VarDecl InitVal FuncDef Block Stmt Exp AddExp MulExp UnaryExp PrimaryExp LVal Number
+%type<node>         Decl ConstDecl
+%type<strVal>       BType
+%type<constDefList> ConstDefList
+%type<constDef>     ConstDef
+%type<node>         ConstInitVal ConstExp AddExp MulExp UnaryExp PrimaryExp Exp LVal Number VarDecl
 %type<varDefList>   VarDefList
 %type<varDef>       VarDef
-%type<strVal>       BType
+%type<node>         InitVal FuncDef Block
 %type<blockItem>    BlockItem
+%type<node>         Stmt
+%type<strVal>       VOID
 
 %%
 
-Start       :   CompUnit    { ast = std::make_unique<mcs::Start>($1); }
+Start           :   CompUnit    { ast = std::make_unique<mcs::Start>($1); }
 
-CompUnit    :   VarDecl { $$ = new mcs::CompUnit($1); }
-            |   CompUnit VarDecl {
-                    if ($1 == nullptr) {
-                        yyerror(ast, "CompUnit is nullptr.");
-                        return 0;
+CompUnit        :   Decl { $$ = new mcs::CompUnit($1); }
+                |   CompUnit Decl {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "CompUnit is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($2);
                     }
-                    $1->pushBack($2);
-                }
-            |   FuncDef { $$ = new mcs::CompUnit($1); }
-            |   CompUnit FuncDef {
-                    if ($1 == nullptr) {
-                        yyerror(ast, "CompUnit is nullptr.");
-                        return 0;
+                |   FuncDef { $$ = new mcs::CompUnit($1); }
+                |   CompUnit FuncDef {
+                            if ($1 == nullptr) {
+                            yyerror(ast, "CompUnit is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($2);
                     }
-                    $1->pushBack($2);
-                }
-            ;
+                ;
 
-VarDecl     :   BType VarDefList ';' {
-                    if ($2 == nullptr) {
-                        yyerror(ast, "VarDefList is nullptr.");
-                        return 0;
+Decl            :   ConstDecl   { $$ = $1; }
+                |   VarDecl     { $$ = $1; }
+                ;
+
+ConstDecl       :   CONST BType ConstDefList ';' {
+                        if ($3 == nullptr) {
+                            yyerror(ast, "VarDefList is nullptr.");
+                            return 0;
+                        }
+                        $3->setType($2);
+                        $$ = $3;
                     }
-                    $2->setType($1);
-                    $$ = $2;
-                }
-            ;
+                ;
 
-VarDefList  :   VarDef  { $$ = new mcs::VarDefList($1); }
-            |   VarDefList ',' VarDef {
-                    if ($1 == nullptr) {
-                        yyerror(ast, "VarDefList is nullptr.");
-                        return 0;
+BType           :   INT     { $$ = new std::string("int"); }
+                |   FLOAT   { $$ = new std::string("float"); }
+                ;
+
+ConstDefList    :	ConstDef    { $$ = new mcs::ConstDefList($1); }
+                |	ConstDefList ',' ConstDef {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "VarDefList is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($3);
                     }
-                    $1->pushBack($3);
-                }
-            ;
+                ;
 
-VarDef      :   IDENTIFIER              { $$ = new mcs::VarDef($1); }
-            |   IDENTIFIER '=' InitVal  { $$ = new mcs::VarDef($1, $3); }
+ConstDef        :   IDENTIFIER '=' ConstInitVal { $$ = new mcs::ConstDef($1, $3); }
+                ;
 
-InitVal     :   Exp { $$ = $1; }
-            ;
+ConstInitVal    :   ConstExp    { $$ = $1; }
+                ;
 
-FuncDef     :   BType IDENTIFIER '(' ')' Block  { $$ = new mcs::FuncDef($1, $2, $5); }
-            ;
+ConstExp        :   AddExp  { $$ = $1; }
+                ;
 
-BType       :   INT     { $$ = new std::string("int"); }
-            |   FLOAT   { $$ = new std::string("float"); }
-            ;
+AddExp          :   MulExp              { $$ = $1; }
+                |   AddExp '+' MulExp   { $$ = new mcs::BinaryExp($1, '+', $3); }
+                |   AddExp '-' MulExp   { $$ = new mcs::BinaryExp($1, '-', $3); }
+                ;
 
-Block       :   '{' BlockItem '}'   { $$ = $2; }
-            ;
+MulExp          :   UnaryExp            { $$ = $1; }
+                |   MulExp '*' UnaryExp { $$ = new mcs::BinaryExp($1, '*', $3); }
+                |   MulExp '/' UnaryExp { $$ = new mcs::BinaryExp($1, '/', $3); }
+                |   MulExp '%' UnaryExp { $$ = new mcs::BinaryExp($1, '%', $3); }
+                ;
 
-BlockItem   :   VarDecl { $$ = new mcs::BlockItem($1); }
-            |   BlockItem VarDecl {
-                    if ($1 == nullptr) {
-                        yyerror(ast, "BlockItem is nullptr.");
-                        return 0;
+UnaryExp        :   PrimaryExp  { $$ = $1; }
+                ;
+
+PrimaryExp      :   '(' Exp ')' { $$ = $2; }
+                |   LVal        { $$ = $1; }
+                |   Number      { $$ = $1; }
+                ;
+
+Exp             :   AddExp  { $$ = $1; }
+                ;
+
+LVal            :   IDENTIFIER  { $$ =  new mcs::LVal($1); }
+                ;
+
+Number          :   INT_CONST   { $$ = new mcs::IntNum($1); }
+                |   FLOAT_CONST { $$ = new mcs::FloatNum($1); }
+                ;
+
+VarDecl         :   BType VarDefList ';' {
+                        if ($2 == nullptr) {
+                            yyerror(ast, "VarDefList is nullptr.");
+                            return 0;
+                        }
+                        $2->setType($1);
+                        $$ = $2;
                     }
-                    $1->pushBack($2);
-                }
-            |   Stmt    { $$ = new mcs::BlockItem($1); }
-            |   BlockItem Stmt {
-                    if ($1 == nullptr) {
-                        yyerror(ast, "BlockItem is nullptr.");
-                        return 0;
+                ;
+
+VarDefList      :   VarDef  { $$ = new mcs::VarDefList($1); }
+                |   VarDefList ',' VarDef {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "VarDefList is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($3);
                     }
-                    $1->pushBack($2);
-                }
-            ;
+                ;
 
-Stmt        :   ';'             { $$ = new mcs::Stmt(); }
-            |   Exp ';'         { $$ = $1; }
-            |   Block           { $$ = new mcs::BlockStmt($1); }
-            |   RETURN Exp ';'  { $$ = new mcs::RetStmt($2); }
-            ;
+VarDef          :   IDENTIFIER              { $$ = new mcs::VarDef($1); }
+                |   IDENTIFIER '=' InitVal  { $$ = new mcs::VarDef($1, $3); }
 
-Exp         :   AddExp  { $$ = $1; }
-            ;
+InitVal         :   Exp { $$ = $1; }
+                ;
 
-AddExp      :   MulExp              { $$ = $1; }
-            |   AddExp '+' MulExp   { $$ = new mcs::BinaryExp($1, '+', $3); }
-            |   AddExp '-' MulExp   { $$ = new mcs::BinaryExp($1, '-', $3); }
-            ;
+FuncDef         :   BType IDENTIFIER '(' ')' Block  { $$ = new mcs::FuncDef($1, $2, $5); }
+                |   VOID IDENTIFIER '(' ')' Block   { $$ = new mcs::FuncDef(new std::string("void"), $2, $5); }
+                ;
 
-MulExp      :   UnaryExp            { $$ = $1; }
-            |   MulExp '*' UnaryExp { $$ = new mcs::BinaryExp($1, '*', $3); }
-            |   MulExp '/' UnaryExp { $$ = new mcs::BinaryExp($1, '/', $3); }
-            |   MulExp '%' UnaryExp { $$ = new mcs::BinaryExp($1, '%', $3); }
-            ;
+Block           :   '{' BlockItem '}'   { $$ = $2; }
+                ;
 
-UnaryExp    :   PrimaryExp  { $$ = $1; }
-            ;
+BlockItem       :   VarDecl { $$ = new mcs::BlockItem($1); }
+                |   BlockItem VarDecl {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "BlockItem is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($2);
+                    }
+                |   Stmt    { $$ = new mcs::BlockItem($1); }
+                |   BlockItem Stmt {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "BlockItem is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($2);
+                    }
+                ;
 
-PrimaryExp  :   '(' Exp ')' { $$ = $2; }
-            |   LVal        { $$ = $1; }
-            |   Number      { $$ = $1; }
-            ;
-
-LVal        :   IDENTIFIER  { $$ =  new mcs::LVal($1); }
-            ;
-
-Number      :   INT_CONST   { $$ = new mcs::IntNum($1); }
-            |   FLOAT_CONST { $$ = new mcs::FloatNum($1); }
-            ;
+Stmt            :   ';'             { $$ = new mcs::Stmt(); }
+                |   Exp ';'         { $$ = $1; }
+                |   Block           { $$ = new mcs::BlockStmt($1); }
+                |   RETURN ';'      { $$ = new mcs::RetStmt(); }
+                |   RETURN Exp ';'  { $$ = new mcs::RetStmt($2); }
+                ;
 
 %%
 

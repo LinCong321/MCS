@@ -7,14 +7,14 @@
 namespace mcs {
     class VarDefList : public Node{
     public:
-        explicit VarDefList(VarDef* node);
+        explicit VarDefList(VarDef* varDef);
         ~VarDefList() override = default;
 
     public:
         llvm::Value* codeGen() const override;
 
     public:
-        void pushBack(VarDef* node);
+        void pushBack(VarDef* varDef);
         void setType(std::string* type);
 
     private:

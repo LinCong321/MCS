@@ -1,11 +1,11 @@
 #pragma once
 
-#include "stmt.h"
+#include "AST/stmt/stmt.h"
 
 namespace mcs {
     class RetStmt : public Stmt {
     public:
-        explicit RetStmt(Node* retVal) : retVal_(retVal) {}
+        explicit RetStmt(Node* retVal = nullptr) : retVal_(retVal) {}
         ~RetStmt() override = default;
 
     public:

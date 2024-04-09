@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stmt.h"
+#include "AST/stmt/stmt.h"
 
 namespace mcs {
     class BlockStmt : public Stmt {
