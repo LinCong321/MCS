@@ -13,14 +13,7 @@ include_directories(${SRC_DIR})
 
 add_executable(compiler main.cpp)
 
-set(
-        TARGET_INCLUDE_DIRS
-        ${FRONT_END_DIR}
-        ${AST_DIR}
-        ${IR_DIR}
-)
-
-target_include_directories(compiler PRIVATE ${TARGET_INCLUDE_DIRS})
+target_include_directories(compiler PRIVATE ${FRONT_END_DIR})
 
 target_link_libraries(compiler analyzer)
 

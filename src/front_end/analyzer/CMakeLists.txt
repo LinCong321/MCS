@@ -19,6 +19,4 @@ add_flex_bison_dependency(lexer parser)
 
 add_library(analyzer ${SOURCE_FILES})
 
-target_include_directories(analyzer PRIVATE ${AST_DIR})
-
 target_link_libraries(analyzer ast)

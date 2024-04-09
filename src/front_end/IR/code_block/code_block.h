@@ -1,6 +1,6 @@
 #pragma once
 
-#include "symbol_table/symbol_table.h"
+#include "IR/symbol_table/symbol_table.h"
 #include "llvm/IR/BasicBlock.h"
 
 namespace mcs {

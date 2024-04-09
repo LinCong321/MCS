@@ -1,7 +1,7 @@
 #pragma once
 
-#include "scope/scope.h"
-#include "code_block/code_block.h"
+#include "IR/scope/scope.h"
+#include "IR/code_block/code_block.h"
 
 #include "llvm/IR/Module.h"
 #include "llvm/IR/LLVMContext.h"

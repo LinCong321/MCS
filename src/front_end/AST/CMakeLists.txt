@@ -18,6 +18,4 @@ include_directories(${AST_DIR})
 
 add_library(ast ${SOURCE_FILES})
 
-target_include_directories(ast PRIVATE ${IR_DIR})
-
 target_link_libraries(ast code_gen)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "node/node.h"
+#include "AST/node/node.h"
 
 namespace mcs {
     class Number : public Node {};

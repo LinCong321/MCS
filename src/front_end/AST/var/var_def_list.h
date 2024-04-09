@@ -19,10 +19,6 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
-        bool declareVariable(const std::string& id, llvm::Value* value) const;
-        llvm::Value* getLocalVariable(const std::string& id, llvm::Value* value) const;
-        llvm::Value* getGlobalVariable(const std::string& id, llvm::Value* value) const;
-        Symbol declareVariable(const std::string& id, llvm::Value* value, Scope scope) const;
 
     private:
         std::unique_ptr<std::string>         type_;

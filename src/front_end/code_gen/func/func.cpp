@@ -1,7 +1,7 @@
 #include "func.h"
+#include "pub/pub.h"
 #include "utils/logger.h"
 #include "IR/context/context.h"
-#include "code_gen/pub/pub.h"
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
@@ -34,7 +34,7 @@ namespace mcs {
     bool createFunctionReturnValue(Type type) {
         bool result = true;
         if (getReturnInst(type) == nullptr) {
-            LOG_ERROR("Unable to create function return value because the return inst cannot be created.");
+            LOG_ERROR("Unable to create function return value because the return instruction is nullptr.");
             result = false;
         }
         if (!Context::getInstance().popBlock()) {

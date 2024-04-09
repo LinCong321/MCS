@@ -1,10 +1,8 @@
 #include "binary_exp.h"
-
 #include "utils/logger.h"
-#include "IR/context/context.h"
 #include "code_gen/pub/pub.h"
-
 #include "llvm/IR/InstrTypes.h"
+#include "IR/context/context.h"
 
 namespace {
     constexpr std::string_view emptyString;

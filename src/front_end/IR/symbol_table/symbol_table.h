@@ -1,6 +1,6 @@
 #pragma once
 
-#include "symbol/symbol.h"
+#include "IR/symbol/symbol.h"
 
 namespace mcs {
     class SymbolTable {

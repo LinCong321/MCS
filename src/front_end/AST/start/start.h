@@ -1,6 +1,6 @@
 #pragma once
 
-#include "comp_unit/comp_unit.h"
+#include "AST/comp_unit/comp_unit.h"
 
 namespace mcs {
     class Start : public Node {
