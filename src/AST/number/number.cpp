@@ -5,10 +5,10 @@
 
 namespace mcs {
     llvm::Value* IntNum::codeGen() const {
-        return llvm::ConstantInt::get(getLLVMType("int"), val_, true);
+        return getConstantInt(val_);
     }
 
     llvm::Value* FloatNum::codeGen() const {
-        return llvm::ConstantFP::get(getLLVMType("float"), val_);
+        return getConstantFloat(val_);
     }
 }

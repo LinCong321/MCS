@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include "symbol_table/symbol_table.h"
 #include "llvm/IR/BasicBlock.h"
 
 namespace mcs {
@@ -8,23 +8,23 @@ namespace mcs {
     public:
         explicit CodeBlock(llvm::BasicBlock* basicBlock) : basicBlock_(basicBlock),
                                                            returnValue_(nullptr),
-                                                           symbolTable_() {}
+                                                           symbolTable_(new SymbolTable) {}
         ~CodeBlock() = default;
 
     public:
         void setReturnValue(llvm::Value* value);
-        bool insertSymbol(const std::string& symbol, llvm::Value* value);
+        bool insertSymbol(const std::string& name, const Symbol& symbol);
 
     public:
         llvm::Value* getReturnValue() const;
         std::string getFunctionName() const;
         llvm::BasicBlock* getBasicBlock() const;
-        bool checkExist(const std::string& symbol) const;
-        llvm::Value* getVariable(const std::string& symbol) const;
+        bool checkExist(const std::string& name) const;
+        Symbol getSymbol(const std::string& name) const;
 
     private:
-        llvm::BasicBlock*                   basicBlock_;
-        llvm::Value*                        returnValue_;
-        std::map<std::string, llvm::Value*> symbolTable_;
+        llvm::BasicBlock*               basicBlock_;
+        llvm::Value*                    returnValue_;
+        std::unique_ptr<SymbolTable>    symbolTable_;
     };
 }

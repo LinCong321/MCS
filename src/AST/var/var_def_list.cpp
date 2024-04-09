@@ -23,8 +23,7 @@ namespace mcs {
                 LOG_ERROR("Unable to generate code because there is a nullptr in defList_.");
                 return nullptr;
             }
-            const auto result = declareVariable(def->getId(), def->getValue());
-            if (result == nullptr) {
+            if (!declareVariable(def->getId(), def->getValue())) {
                 LOG_ERROR("Unable to generate code because the variable cannot be declared.");
                 return nullptr;
             }
@@ -49,46 +48,54 @@ namespace mcs {
         return true;
     }
 
-    llvm::Value* VarDefList::declareVariable(const std::string& id, llvm::Value* value) const {
-        const auto scope = Context::getInstance().getCurrentScope();
+    bool VarDefList::declareVariable(const std::string& id, llvm::Value* value) const {
+        const auto scope = Context::getInstance().getScope();
         if (Context::getInstance().checkSymbol(id)) {
-            LOG_ERROR("The ", scope, " variable cannot be declared because its id (aka \"", id,
+            LOG_ERROR("The ", scope, " variable cannot be declared. Because its id (aka \"", id,
                       "\") already exists in the ", scope, " symbol table.");
-            return nullptr;
+            return false;
         }
 
         const auto variable = declareVariable(id, value, scope);
         if (!Context::getInstance().insertSymbol(id, variable)) {
-            LOG_ERROR("The ", scope, " variable cannot be declared because it cannot be inserted into the ", scope,
+            LOG_ERROR("The ", scope, " variable cannot be declared. Because it cannot be inserted into the ", scope,
                       " symbol table and its id is \"", id, "\".");
-            return nullptr;
+            return false;
         }
 
+        return true;
+    }
+
+    llvm::Value* VarDefList::getLocalVariable(llvm::Type* type, llvm::Value* value) const {
+        const auto variable = new llvm::AllocaInst(type, 0, "", Context::getInstance().getCurrentBlock());
+        if (value != nullptr) {
+            new llvm::StoreInst(getCastedValue(value, *type_), variable, false,
+                                Context::getInstance().getCurrentBlock());
+        }
         return variable;
     }
 
-    llvm::Value* VarDefList::declareLocalVariable(const std::string& id, llvm::Value* value) const {
-        const auto variable = new llvm::AllocaInst(getLLVMType(*type_), 0, id,
-                                                   Context::getInstance().getCurrentBlock());
-        new llvm::StoreInst(getCastedValue(value, *type_), variable, false, Context::getInstance().getCurrentBlock());
-        return variable;
-    }
-
-    llvm::Value* VarDefList::declareGlobalVariable(const std::string& id, llvm::Value* value) const {
-        return new llvm::GlobalVariable(Context::getInstance().getModule(), getLLVMType(*type_), false,
-                                        llvm::GlobalVariable::LinkageTypes::InternalLinkage,
-                                        getConstantValue(value, *type_), id);
-    }
-
-    llvm::Value* VarDefList::declareVariable(const std::string& id, llvm::Value* value, Scope scope) const {
+    Symbol VarDefList::declareVariable(const std::string& id, llvm::Value* value, Scope scope) const {
+        const auto type = getLLVMType(*type_);
         switch (scope) {
             case Scope::GLOBAL:
-                return declareGlobalVariable(id, value);
+                return {type, getGlobalVariable(type, id, value)};
             case Scope::LOCAL:
-                return declareLocalVariable(id, value);
+                return {type, getLocalVariable(type, value)};
             default:
                 LOG_ERROR("Unable to declare variable because the scope type is unknown.");
                 return nullptr;
         }
+    }
+
+    llvm::Value* VarDefList::getGlobalVariable(llvm::Type* type, const std::string& id, llvm::Value* value) const {
+        const auto variable = new llvm::GlobalVariable(Context::getInstance().getModule(), type, false,
+                                                       llvm::GlobalVariable::LinkageTypes::InternalLinkage,
+                                                       getConstantValue(value, *type_), id);
+        if (value != nullptr && !llvm::isa<llvm::Constant>(value)) {
+            new llvm::StoreInst(getCastedValue(value, *type_), variable, false,
+                                Context::getInstance().getCurrentBlock());
+        }
+        return variable;
     }
 }

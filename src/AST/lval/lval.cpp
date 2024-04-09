@@ -1,6 +1,7 @@
 #include "lval.h"
 #include "utils/logger.h"
 #include "IR/context/context.h"
+#include "llvm/IR/Instructions.h"
 
 namespace mcs {
     llvm::Value* LVal::codeGen() const {
@@ -8,7 +9,8 @@ namespace mcs {
             LOG_ERROR("Unable to generate code because there is a nullptr in member pointers.");
             return nullptr;
         }
-        return Context::getInstance().getVariable(*id_);
+        const auto symbol = Context::getInstance().getSymbol(*id_);
+        return new llvm::LoadInst(symbol.getType(), symbol.getValue(), "", Context::getInstance().getCurrentBlock());
     }
 
     bool LVal::checkAllMemberPointers() const {

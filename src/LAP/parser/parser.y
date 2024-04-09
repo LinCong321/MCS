@@ -43,7 +43,7 @@
 
 %%
 
-Start       :   CompUnit    { ast = std::unique_ptr<mcs::Node>($1); }
+Start       :   CompUnit    { ast = std::make_unique<mcs::Start>($1); }
 
 CompUnit    :   VarDecl { $$ = new mcs::CompUnit($1); }
             |   CompUnit VarDecl {

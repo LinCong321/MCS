@@ -2,6 +2,7 @@
 
 #include "var_def.h"
 #include "IR/scope/scope.h"
+#include "IR/symbol/symbol.h"
 
 namespace mcs {
     class VarDefList : public Node{
@@ -18,10 +19,10 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
-        llvm::Value* declareVariable(const std::string& id, llvm::Value* value) const;
-        llvm::Value* declareLocalVariable(const std::string& id, llvm::Value* value) const;
-        llvm::Value* declareGlobalVariable(const std::string& id, llvm::Value* value) const;
-        llvm::Value* declareVariable(const std::string& id, llvm::Value* value, Scope scope) const;
+        bool declareVariable(const std::string& id, llvm::Value* value) const;
+        llvm::Value* getLocalVariable(llvm::Type* type, llvm::Value* value) const;
+        Symbol declareVariable(const std::string& id, llvm::Value* value, Scope scope) const;
+        llvm::Value* getGlobalVariable(llvm::Type* type, const std::string& id, llvm::Value* value) const;
 
     private:
         std::unique_ptr<std::string>         type_;

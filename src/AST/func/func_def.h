@@ -15,7 +15,6 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
-        void createBlock(llvm::Function* function) const;
 
     private:
         std::unique_ptr<std::string>    retType_;

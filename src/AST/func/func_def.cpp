@@ -1,12 +1,7 @@
 #include "func_def.h"
-
+#include "function.h"
 #include "utils/logger.h"
 #include "IR/context/context.h"
-#include "pub/code_gen_helper.h"
-
-#include "llvm/IR/Type.h"
-#include "llvm/IR/Function.h"
-#include "llvm/IR/Instructions.h"
 
 namespace mcs {
     llvm::Value* FuncDef::codeGen() const {
@@ -16,13 +11,13 @@ namespace mcs {
         }
 
         std::vector<llvm::Type*> argTypes;
+        const auto function = createFunction(*retType_, *id_, argTypes);
 
-        const auto functionType = llvm::FunctionType::get(getLLVMType(*retType_), llvm::ArrayRef(argTypes), false);
-        const auto linkage = (*id_ == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
-        const auto function = llvm::Function::Create(functionType, linkage, *id_, Context::getInstance().getModule());
+        Context::getInstance().setScope(Scope::LOCAL);
+        block_->codeGen();
+        Context::getInstance().setScope(Scope::GLOBAL);
 
-        createBlock(function);
-
+        createFunctionReturnValue();
         return function;
     }
 
@@ -40,17 +35,5 @@ namespace mcs {
             return false;
         }
         return true;
-    }
-
-    void FuncDef::createBlock(llvm::Function* function) const {
-        const auto basicBlock = llvm::BasicBlock::Create(Context::getInstance().getContext(), "entry", function);
-        Context::getInstance().pushBlock(basicBlock);
-
-        block_->codeGen();
-
-        llvm::ReturnInst::Create(Context::getInstance().getContext(),
-                                 Context::getInstance().getCurrentReturnValue(),
-                                 basicBlock);
-        Context::getInstance().popBlock();
     }
 }

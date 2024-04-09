@@ -7,8 +7,12 @@ namespace mcs {
         returnValue_ = value;
     }
 
-    bool CodeBlock::insertSymbol(const std::string& symbol, llvm::Value* value) {
-        symbolTable_[symbol] = value;
+    bool CodeBlock::insertSymbol(const std::string& name, const Symbol& symbol) {
+        if (symbolTable_ == nullptr) {
+            LOG_ERROR("Unable to insert symbol because symbolTable_ is nullptr.");
+            return false;
+        }
+        symbolTable_->insertSymbol(name, symbol);
         return true;
     }
 
@@ -33,16 +37,19 @@ namespace mcs {
         return basicBlock_;
     }
 
-    bool CodeBlock::checkExist(const std::string& symbol) const {
-        return symbolTable_.find(symbol) != symbolTable_.end();
+    bool CodeBlock::checkExist(const std::string& name) const {
+        if (symbolTable_ == nullptr) {
+            LOG_ERROR("Unable to check exist because symbolTable_ is nullptr.");
+            return false;
+        }
+        return symbolTable_->checkExist(name);
     }
 
-    llvm::Value* CodeBlock::getVariable(const std::string& symbol) const {
-        const auto it = symbolTable_.find(symbol);
-        if (it == symbolTable_.end()) {
-            LOG_ERROR("Unable to get variable because the symbol (aka \"", symbol, "\" is not in the symbol table.");
-            return nullptr;
+    Symbol CodeBlock::getSymbol(const std::string& name) const {
+        if (symbolTable_ == nullptr) {
+            LOG_ERROR("Unable to check exist because symbolTable_ is nullptr.");
+            return {};
         }
-        return it->second;
+        return symbolTable_->getSymbol(name);
     }
 }

@@ -6,6 +6,7 @@
 #include "func/func_def.h"
 #include "lval/lval.h"
 #include "number/number.h"
+#include "start/start.h"
 #include "stmt/block_stmt.h"
 #include "stmt/ret_stmt.h"
 #include "stmt/stmt.h"

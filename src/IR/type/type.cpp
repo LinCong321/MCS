@@ -17,10 +17,11 @@ namespace {
 }
 
 namespace mcs {
-    Type getType(const std::string& str) {
+    Type strToType(const std::string& str) {
         const auto it = str2Type.find(str);
         if (it == str2Type.end()) {
-            LOG_ERROR("Unable to get type because the given str (aka \"", str, "\") is not in the str2Type table.");
+            LOG_ERROR("Cannot cast str to type because the given str (aka \"", str,
+                      "\") is not in the str2Type table.");
             return Type::UNKNOWN;
         }
         return it->second;
@@ -64,5 +65,9 @@ namespace mcs {
                 break;
         }
         return out;
+    }
+
+    Type getMaxType(const llvm::Value* value1, const llvm::Value* value2) {
+        return std::max(getTypeOfValue(value1), getTypeOfValue(value2));
     }
 }

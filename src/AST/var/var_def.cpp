@@ -12,7 +12,7 @@ namespace mcs {
 
     llvm::Value* VarDef::getValue() const {
         if (value_ == nullptr) {
-            LOG_ERROR("Unable to get value because value_ is nullptr.");
+            LOG_INFO("Unable to get value because value_ is nullptr.");
             return nullptr;
         }
         return value_->codeGen();
