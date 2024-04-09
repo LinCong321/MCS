@@ -7,6 +7,8 @@
 #include "llvm/IR/InstrTypes.h"
 
 namespace {
+    constexpr std::string_view emptyString;
+
     const std::unordered_map<char, llvm::Instruction::BinaryOps> char2SOp = {
         {'+',   llvm::Instruction::Add},
         {'-',   llvm::Instruction::Sub},
@@ -37,10 +39,13 @@ namespace mcs {
 
         const auto lhs = lhs_->codeGen();
         const auto rhs = rhs_->codeGen();
-        const auto type = getMaxType(lhs, rhs);
+        const auto targetType = getMaxType(lhs, rhs);
 
-        return llvm::BinaryOperator::Create(getOperation(type), getCastedValue(lhs, type), getCastedValue(rhs, type),
-                                            "", Context::getInstance().getCurrentBlock());
+        return llvm::BinaryOperator::Create(getOperation(targetType),
+                                            getCastedValue(lhs, targetType),
+                                            getCastedValue(rhs, targetType),
+                                            emptyString,
+                                            Context::getInstance().getCurrentBlock());
     }
 
     bool BinaryExp::checkAllMemberPointers() const {

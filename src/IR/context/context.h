@@ -14,14 +14,14 @@ namespace mcs {
     public:
         bool popBlock();
         llvm::Module& getModule();
-        void setScope(Scope scope);
         llvm::LLVMContext& getContext();
+        void setCurrentScope(Scope scope);
         void pushBlock(llvm::BasicBlock* basicBlock);
         bool setCurrentReturnValue(llvm::Value* value);
         bool insertSymbol(const std::string& name, const Symbol& symbol);
 
     public:
-        Scope getScope() const;
+        Scope getCurrentScope() const;
         llvm::BasicBlock* getCurrentBlock() const;
         llvm::Value* getCurrentReturnValue() const;
         std::string getCurrentFunctionName() const;

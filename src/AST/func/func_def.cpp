@@ -10,12 +10,12 @@ namespace mcs {
             return nullptr;
         }
 
-        std::vector<llvm::Type*> argTypes;
-        const auto function = createFunction(*retType_, *id_, argTypes);
+        std::vector<llvm::Type*> params;
+        const auto function = createFunction(*retType_, *id_, params);
 
-        Context::getInstance().setScope(Scope::LOCAL);
+        Context::getInstance().setCurrentScope(Scope::LOCAL);
         block_->codeGen();
-        Context::getInstance().setScope(Scope::GLOBAL);
+        Context::getInstance().setCurrentScope(Scope::GLOBAL);
 
         createFunctionReturnValue();
         return function;

@@ -20,12 +20,12 @@ namespace mcs {
         return module_;
     }
 
-    void Context::setScope(Scope scope) {
-        scope_ = scope;
-    }
-
     llvm::LLVMContext& Context::getContext() {
         return context_;
+    }
+
+    void Context::setCurrentScope(Scope scope) {
+        scope_ = scope;
     }
 
     void Context::pushBlock(llvm::BasicBlock* basicBlock) {
@@ -34,11 +34,11 @@ namespace mcs {
 
     bool Context::setCurrentReturnValue(llvm::Value* value) {
         if (blocks_.empty()) {
-            LOG_ERROR("Unable to set current return symbol because blocks_ is empty.");
+            LOG_ERROR("Unable to set current return value because blocks_ is empty.");
             return false;
         }
         if (blocks_.back() == nullptr) {
-            LOG_ERROR("Unable to set current return symbol because blocks_.back() is nullptr.");
+            LOG_ERROR("Unable to set current return value because blocks_.back() is nullptr.");
             return false;
         }
         blocks_.back()->setReturnValue(value);
@@ -46,7 +46,7 @@ namespace mcs {
     }
 
     bool Context::insertSymbol(const std::string& name, const Symbol& symbol) {
-        switch (getScope()) {
+        switch (getCurrentScope()) {
             case Scope::GLOBAL:
                 return insertGlobalSymbol(name, symbol);
             case Scope::LOCAL:
@@ -57,7 +57,7 @@ namespace mcs {
         }
     }
 
-    Scope Context::getScope() const {
+    Scope Context::getCurrentScope() const {
         return scope_;
     }
 
@@ -75,11 +75,11 @@ namespace mcs {
 
     llvm::Value* Context::getCurrentReturnValue() const {
         if (blocks_.empty()) {
-            LOG_ERROR("Unable to get current return symbol because blocks_ is empty.");
+            LOG_ERROR("Unable to get current return value because blocks_ is empty.");
             return nullptr;
         }
         if (blocks_.back() == nullptr) {
-            LOG_ERROR("Unable to get current return symbol because blocks_.back() is nullptr.");
+            LOG_ERROR("Unable to get current return value because blocks_.back() is nullptr.");
             return nullptr;
         }
         return blocks_.back()->getReturnValue();
@@ -98,7 +98,7 @@ namespace mcs {
     }
 
     bool Context::checkSymbol(const std::string& name) const {
-        switch (getScope()) {
+        switch (getCurrentScope()) {
             case Scope::GLOBAL:
                 return checkGlobalSymbol(name);
             case Scope::LOCAL:
@@ -113,13 +113,13 @@ namespace mcs {
         for (auto it = blocks_.crbegin(); it != blocks_.crend(); it++) {
             if (*it == nullptr) {
                 LOG_ERROR("Unable to get symbol because *it is nullptr.");
-                return {};
+                return Symbol();
             }
             if ((*it)->checkExist(name)) {
                 return (*it)->getSymbol(name);
             }
         }
-        return {};
+        return Symbol();
     }
 
     bool Context::checkLocalSymbol(const std::string& name) const {

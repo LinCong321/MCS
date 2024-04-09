@@ -147,7 +147,7 @@ namespace mcs {
         };
 
         if (value == nullptr || !llvm::isa<llvm::Constant>(value)) {
-            LOG_INFO("Return a null value from LLVM because value is nullptr or not a constant.");
+            LOG_INFO("Return a null value from LLVM because the source value is nullptr or not a constant.");
             return llvm::Constant::getNullValue(getLLVMType(str));
         }
 

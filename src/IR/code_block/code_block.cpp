@@ -48,7 +48,7 @@ namespace mcs {
     Symbol CodeBlock::getSymbol(const std::string& name) const {
         if (symbolTable_ == nullptr) {
             LOG_ERROR("Unable to check exist because symbolTable_ is nullptr.");
-            return {};
+            return Symbol();
         }
         return symbolTable_->getSymbol(name);
     }

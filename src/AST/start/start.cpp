@@ -43,11 +43,10 @@ namespace mcs {
         }
 
         const auto elements = std::vector<llvm::Type*>({getLLVMType(Type::INT), getPointerType(function->getType())});
-        const auto structType = llvm::StructType::get(Context::getInstance().getContext(), elements);
-
-        const auto arrayType = llvm::ArrayType::get(structType, 1);
-        const auto ctor = llvm::ConstantStruct::get(structType, getConstantInt(MAX_PRIORITY), function);
-        const auto constantArray = llvm::ConstantArray::get(arrayType, {ctor});
+        const auto structType       = llvm::StructType::get(Context::getInstance().getContext(), elements);
+        const auto arrayType        = llvm::ArrayType::get(structType, 1);
+        const auto constantStruct   = llvm::ConstantStruct::get(structType, getConstantInt(MAX_PRIORITY), function);
+        const auto constantArray    = llvm::ConstantArray::get(arrayType, {constantStruct});
 
         new llvm::GlobalVariable(Context::getInstance().getModule(), arrayType, true,
                                  llvm::GlobalValue::AppendingLinkage, constantArray, LLVM_GLOBAL_CTORS);

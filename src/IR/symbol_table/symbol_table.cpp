@@ -10,7 +10,7 @@ namespace mcs {
         const auto it = name2Symbol_.find(name);
         if (it == name2Symbol_.end()) {
             LOG_ERROR("Unable to get symbol because its name (aka ", name, ") is not in the symbol table.");
-            return {};
+            return Symbol();
         }
         return it->second;
     }

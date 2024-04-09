@@ -1,5 +1,4 @@
 #include "var_def_list.h"
-
 #include "utils/logger.h"
 #include "IR/context/context.h"
 #include "pub/code_gen_helper.h"
@@ -48,8 +47,18 @@ namespace mcs {
         return true;
     }
 
+    llvm::Value* VarDefList::getLocalVariable(llvm::Value* value) const {
+        const auto variable = new llvm::AllocaInst(getLLVMType(*type_), 0, "",
+                                                   Context::getInstance().getCurrentBlock());
+        if (value != nullptr) {
+            new llvm::StoreInst(getCastedValue(value, *type_), variable, false,
+                                Context::getInstance().getCurrentBlock());
+        }
+        return variable;
+    }
+
     bool VarDefList::declareVariable(const std::string& id, llvm::Value* value) const {
-        const auto scope = Context::getInstance().getScope();
+        const auto scope = Context::getInstance().getCurrentScope();
         if (Context::getInstance().checkSymbol(id)) {
             LOG_ERROR("The ", scope, " variable cannot be declared. Because its id (aka \"", id,
                       "\") already exists in the ", scope, " symbol table.");
@@ -66,30 +75,20 @@ namespace mcs {
         return true;
     }
 
-    llvm::Value* VarDefList::getLocalVariable(llvm::Type* type, llvm::Value* value) const {
-        const auto variable = new llvm::AllocaInst(type, 0, "", Context::getInstance().getCurrentBlock());
-        if (value != nullptr) {
-            new llvm::StoreInst(getCastedValue(value, *type_), variable, false,
-                                Context::getInstance().getCurrentBlock());
-        }
-        return variable;
-    }
-
     Symbol VarDefList::declareVariable(const std::string& id, llvm::Value* value, Scope scope) const {
-        const auto type = getLLVMType(*type_);
         switch (scope) {
             case Scope::GLOBAL:
-                return {type, getGlobalVariable(type, id, value)};
+                return Symbol(getLLVMType(*type_), getGlobalVariable(id, value));
             case Scope::LOCAL:
-                return {type, getLocalVariable(type, value)};
+                return Symbol(getLLVMType(*type_), getLocalVariable(value));
             default:
                 LOG_ERROR("Unable to declare variable because the scope type is unknown.");
-                return nullptr;
+                return Symbol();
         }
     }
 
-    llvm::Value* VarDefList::getGlobalVariable(llvm::Type* type, const std::string& id, llvm::Value* value) const {
-        const auto variable = new llvm::GlobalVariable(Context::getInstance().getModule(), type, false,
+    llvm::Value* VarDefList::getGlobalVariable(const std::string& id, llvm::Value* value) const {
+        const auto variable = new llvm::GlobalVariable(Context::getInstance().getModule(), getLLVMType(*type_), false,
                                                        llvm::GlobalVariable::LinkageTypes::InternalLinkage,
                                                        getConstantValue(value, *type_), id);
         if (value != nullptr && !llvm::isa<llvm::Constant>(value)) {

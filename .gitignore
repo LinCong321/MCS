@@ -3,3 +3,4 @@ cmake*
 src/LAP/lexer/*.cpp
 src/LAP/parser/*.cpp
 src/LAP/parser/*.hpp
+test/*.ll

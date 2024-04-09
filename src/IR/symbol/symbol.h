@@ -5,7 +5,7 @@
 namespace mcs {
     class Symbol {
     public:
-        Symbol(llvm::Type* type = nullptr, llvm::Value* value = nullptr) : type_(type), value_(value) {}
+        explicit Symbol(llvm::Type* type = nullptr, llvm::Value* value = nullptr) : type_(type), value_(value) {}
         ~Symbol() = default;
 
     public:
