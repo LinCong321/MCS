@@ -1,6 +1,6 @@
 #include "utils/logger.h"
-#include "IR/context/context.h"
-#include "LAP/parser/parser.hpp"
+#include "front_end/IR/context/context.h"
+#include "front_end/analyzer/parser/parser.hpp"
 
 void codeGen(const std::unique_ptr<mcs::Node>& ast) {
     if (ast == nullptr) {

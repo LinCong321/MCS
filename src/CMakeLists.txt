@@ -1,20 +1,28 @@
 project(src)
 
-set(SRC_DIR     ${PROJECT_SOURCE_DIR})
-set(AST_DIR     ${SRC_DIR}/AST)
-set(IR_DIR      ${SRC_DIR}/IR)
-set(LAP_DIR     ${SRC_DIR}/LAP)
-set(UTILS_DIR   ${SRC_DIR}/utils)
+set(SRC_DIR         ${PROJECT_SOURCE_DIR})
+set(FRONT_END_DIR   ${SRC_DIR}/front_end)
+set(UTILS_DIR       ${SRC_DIR}/utils)
+
+set(ANALYZER_DIR    ${FRONT_END_DIR}/analyzer)
+set(AST_DIR         ${FRONT_END_DIR}/AST)
+set(CODE_GEN_DIR    ${FRONT_END_DIR}/code_gen)
+set(IR_DIR          ${FRONT_END_DIR}/IR)
 
 include_directories(${SRC_DIR})
 
 add_executable(compiler main.cpp)
 
-target_include_directories(compiler PRIVATE ${AST_DIR} ${IR_DIR})
+set(
+        TARGET_INCLUDE_DIRS
+        ${FRONT_END_DIR}
+        ${AST_DIR}
+        ${IR_DIR}
+)
 
-target_link_libraries(compiler lexer_parser)
+target_include_directories(compiler PRIVATE ${TARGET_INCLUDE_DIRS})
 
-add_subdirectory(AST)
-add_subdirectory(IR)
-add_subdirectory(LAP)
+target_link_libraries(compiler analyzer)
+
+add_subdirectory(front_end)
 add_subdirectory(utils)
