@@ -23,7 +23,6 @@ namespace mcs {
 
     bool RetStmt::checkAllMemberPointers() const {
         if (retVal_ == nullptr) {
-            LOG_INFO("The function ", Context::getInstance().getCurrentFunctionName(), "() has no return value.");
             return false;
         }
         return true;

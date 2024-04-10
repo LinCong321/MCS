@@ -10,8 +10,10 @@ namespace mcs {
         UNKNOWN,
     };
 
-    Type strToType(const std::string& str);
-    Type getTypeOfValue(const llvm::Value* value);
     std::ostream& operator<<(std::ostream& out, Type type);
+
+    Type strToType(const std::string& str);
+    Type getTypeOf(const llvm::Type* type);
+    Type getTypeOf(const llvm::Value* value);
     Type getMaxType(const llvm::Value* value1, const llvm::Value* value2);
 }

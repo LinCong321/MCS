@@ -10,9 +10,9 @@ namespace mcs {
     llvm::PointerType* getPointerType(llvm::Type* type);
 
     llvm::Value* getCastedValue(llvm::Value* value, Type type);
-    llvm::Value* getCastedValue(llvm::Value* value, const std::string& str);
+    llvm::Value* getCastedValue(llvm::Value* value, llvm::Type* type);
 
     llvm::Constant* getConstantInt(int value);
     llvm::Constant* getConstantFloat(float value);
-    llvm::Constant* getConstantValue(const llvm::Value* value, const std::string& str);
+    llvm::Constant* getConstantValue(const llvm::Value* value, llvm::Type* type);
 }

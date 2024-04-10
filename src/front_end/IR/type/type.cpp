@@ -17,38 +17,6 @@ namespace {
 }
 
 namespace mcs {
-    Type strToType(const std::string& str) {
-        const auto it = str2Type.find(str);
-        if (it == str2Type.end()) {
-            LOG_ERROR("Cannot cast str to type because the given str (aka \"", str,
-                      "\") is not in the str2Type table.");
-            return Type::UNKNOWN;
-        }
-        return it->second;
-    }
-
-    Type getTypeOfValue(const llvm::Value* value) {
-        if (value == nullptr) {
-            LOG_ERROR("Unable to get type of value because value is nullptr.");
-            return Type::UNKNOWN;
-        }
-
-        const auto type = value->getType();
-        if (type == nullptr) {
-            LOG_ERROR("Unable to get type of value because value->getType() is nullptr.");
-            return Type::UNKNOWN;
-        }
-
-        const auto it = id2Type.find(type->getTypeID());
-        if (it == id2Type.end()) {
-            LOG_ERROR("Unable to get type of value because the type id: ", type->getTypeID(),
-                      " is not in the id2Type table.");
-            return Type::UNKNOWN;
-        }
-
-        return it->second;
-    }
-
     std::ostream& operator<<(std::ostream& out, Type type) {
         switch (type) {
             case Type::INT:
@@ -67,7 +35,41 @@ namespace mcs {
         return out;
     }
 
+    Type strToType(const std::string& str) {
+        const auto it = str2Type.find(str);
+        if (it == str2Type.end()) {
+            LOG_ERROR("Cannot cast str to type because the given str (aka \"", str,
+                      "\") is not in the str2Type table.");
+            return Type::UNKNOWN;
+        }
+        return it->second;
+    }
+
+    Type getTypeOf(const llvm::Type* type) {
+        if (type == nullptr) {
+            LOG_ERROR("Unable to get type of value because value->getType() is nullptr.");
+            return Type::UNKNOWN;
+        }
+
+        const auto it = id2Type.find(type->getTypeID());
+        if (it == id2Type.end()) {
+            LOG_ERROR("Unable to get type of value because the type id: ", type->getTypeID(),
+                      " is not in the id2Type table.");
+            return Type::UNKNOWN;
+        }
+
+        return it->second;
+    }
+
+    Type getTypeOf(const llvm::Value* value) {
+        if (value == nullptr) {
+            LOG_ERROR("Unable to get type of value because value is nullptr.");
+            return Type::UNKNOWN;
+        }
+        return getTypeOf(value->getType());
+    }
+
     Type getMaxType(const llvm::Value* value1, const llvm::Value* value2) {
-        return std::max(getTypeOfValue(value1), getTypeOfValue(value2));
+        return std::max(getTypeOf(value1), getTypeOf(value2));
     }
 }

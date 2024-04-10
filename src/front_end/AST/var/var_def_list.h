@@ -15,13 +15,14 @@ namespace mcs {
 
     public:
         void pushBack(VarDef* varDef);
-        void setType(std::string* type);
+        void setAttribute(std::string* type, bool isConstant = false);
 
     private:
         bool checkAllMemberPointers() const;
 
     private:
-        std::unique_ptr<std::string>         type_;
-        std::vector<std::unique_ptr<VarDef>> defList_;
+        bool                                    isConstant_;
+        std::unique_ptr<std::string>            type_;
+        std::vector<std::unique_ptr<VarDef>>    defList_;
     };
 }

@@ -33,7 +33,7 @@ namespace mcs {
     // ----------------------------------------get casted value----------------------------------------
 
     llvm::Value* castToInt(llvm::Value* value) {
-        switch (getTypeOfValue(value)) {
+        switch (getTypeOf(value)) {
             case Type::INT:
                 return value;
             case Type::FLOAT:
@@ -46,7 +46,7 @@ namespace mcs {
     }
 
     llvm::Value* castToFloat(llvm::Value* value) {
-        switch (getTypeOfValue(value)) {
+        switch (getTypeOf(value)) {
             case Type::INT:
                 return llvm::CastInst::Create(llvm::CastInst::SIToFP, value, getLLVMType(Type::FLOAT), "",
                                               Context::getInstance().getCurrentBlock());
@@ -79,8 +79,8 @@ namespace mcs {
         return it->second(value);
     }
 
-    llvm::Value* getCastedValue(llvm::Value* value, const std::string& str) {
-        return getCastedValue(value, strToType(str));
+    llvm::Value* getCastedValue(llvm::Value* value, llvm::Type* type) {
+        return getCastedValue(value, getTypeOf(type));
     }
 
     // ----------------------------------------get constant int----------------------------------------
@@ -116,7 +116,7 @@ namespace mcs {
     }
     
     llvm::Constant* castToConstantInt(const llvm::Value* value) {
-        switch (getTypeOfValue(value)) {
+        switch (getTypeOf(value)) {
             case Type::INT:
                 return getConstantInt(getIntValue(value));
             case Type::FLOAT:
@@ -128,7 +128,7 @@ namespace mcs {
     }
 
     llvm::Constant* castToConstantFloat(const llvm::Value* value) {
-        switch (getTypeOfValue(value)) {
+        switch (getTypeOf(value)) {
             case Type::INT:
                 return getConstantFloat(static_cast<float>(getIntValue(value)));
             case Type::FLOAT:
@@ -139,7 +139,7 @@ namespace mcs {
         }
     }
 
-    llvm::Constant* getConstantValue(const llvm::Value* value, const std::string& str) {
+    llvm::Constant* getConstantValue(const llvm::Value* value, llvm::Type* type) {
         static const std::unordered_map<Type, std::function<llvm::Constant*(const llvm::Value*)>> type2Func = {
             {Type::INT,     castToConstantInt},
             {Type::FLOAT,   castToConstantFloat},
@@ -147,13 +147,13 @@ namespace mcs {
 
         if (value == nullptr || !llvm::isa<llvm::Constant>(value)) {
             LOG_INFO("Return a null value from LLVM because the source value is nullptr or not a constant.");
-            return llvm::Constant::getNullValue(getLLVMType(str));
+            return llvm::Constant::getNullValue(type);
         }
 
-        const auto it = type2Func.find(strToType(str));
+        const auto it = type2Func.find(getTypeOf(type));
         if (it == type2Func.end()) {
-            LOG_ERROR("Unable to get constant value because the target type (aka \"", str,
-                      "\") is not in the type2Func table.");
+            LOG_ERROR("Unable to get constant value because the target type (aka ", getTypeOf(type),
+                      ") is not in the type2Func table.");
             return nullptr;
         }
 

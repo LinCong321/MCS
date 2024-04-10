@@ -20,8 +20,6 @@
     int                 intVal;
     mcs::BlockItem*     blockItem;
     mcs::CompUnit*      compUnit;
-    mcs::ConstDef*      constDef;
-    mcs::ConstDefList*  constDefList;
     mcs::Node*          node;
     mcs::VarDef*        varDef;
     mcs::VarDefList*    varDefList;
@@ -37,17 +35,13 @@
 %token<floatVal>    FLOAT_CONST
 
 %type<compUnit>     CompUnit
-%type<node>         Decl ConstDecl
-%type<strVal>       BType
-%type<constDefList> ConstDefList
-%type<constDef>     ConstDef
-%type<node>         ConstInitVal ConstExp AddExp MulExp UnaryExp PrimaryExp Exp LVal Number VarDecl
-%type<varDefList>   VarDefList
-%type<varDef>       VarDef
-%type<node>         InitVal FuncDef Block
+%type<node>         Decl ConstDecl ConstInitVal
+%type<strVal>       BType VOID
+%type<varDefList>   ConstDefList VarDefList
+%type<varDef>       ConstDef VarDef
+%type<node>         ConstExp AddExp MulExp UnaryExp PrimaryExp Exp
+%type<node>         LVal Number VarDecl InitVal FuncDef Block Stmt
 %type<blockItem>    BlockItem
-%type<node>         Stmt
-%type<strVal>       VOID
 
 %%
 
@@ -80,7 +74,7 @@ ConstDecl       :   CONST BType ConstDefList ';' {
                             yyerror(ast, "VarDefList is nullptr.");
                             return 0;
                         }
-                        $3->setType($2);
+                        $3->setAttribute($2, true);
                         $$ = $3;
                     }
                 ;
@@ -89,8 +83,8 @@ BType           :   INT     { $$ = new std::string("int"); }
                 |   FLOAT   { $$ = new std::string("float"); }
                 ;
 
-ConstDefList    :	ConstDef    { $$ = new mcs::ConstDefList($1); }
-                |	ConstDefList ',' ConstDef {
+ConstDefList    :   ConstDef    { $$ = new mcs::VarDefList($1); }
+                |   ConstDefList ',' ConstDef {
                         if ($1 == nullptr) {
                             yyerror(ast, "VarDefList is nullptr.");
                             return 0;
@@ -99,7 +93,7 @@ ConstDefList    :	ConstDef    { $$ = new mcs::ConstDefList($1); }
                     }
                 ;
 
-ConstDef        :   IDENTIFIER '=' ConstInitVal { $$ = new mcs::ConstDef($1, $3); }
+ConstDef        :   IDENTIFIER '=' ConstInitVal { $$ = new mcs::VarDef($1, $3); }
                 ;
 
 ConstInitVal    :   ConstExp    { $$ = $1; }
@@ -142,7 +136,7 @@ VarDecl         :   BType VarDefList ';' {
                             yyerror(ast, "VarDefList is nullptr.");
                             return 0;
                         }
-                        $2->setType($1);
+                        $2->setAttribute($1);
                         $$ = $2;
                     }
                 ;
@@ -170,8 +164,8 @@ FuncDef         :   BType IDENTIFIER '(' ')' Block  { $$ = new mcs::FuncDef($1, 
 Block           :   '{' BlockItem '}'   { $$ = $2; }
                 ;
 
-BlockItem       :   VarDecl { $$ = new mcs::BlockItem($1); }
-                |   BlockItem VarDecl {
+BlockItem       :   Decl { $$ = new mcs::BlockItem($1); }
+                |   BlockItem Decl {
                         if ($1 == nullptr) {
                             yyerror(ast, "BlockItem is nullptr.");
                             return 0;

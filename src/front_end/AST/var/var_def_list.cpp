@@ -18,7 +18,7 @@ namespace mcs {
                 LOG_ERROR("Unable to generate code because there is a nullptr in defList_.");
                 return nullptr;
             }
-            if (!declareVariable(*type_, def->getId(), def->getValue())) {
+            if (!declareVariable(*type_, def->getId(), def->getValue(), isConstant_)) {
                 LOG_ERROR("Unable to generate code because the variable cannot be declared.");
                 return nullptr;
             }
@@ -31,8 +31,9 @@ namespace mcs {
         defList_.emplace_back(varDef);
     }
 
-    void VarDefList::setType(std::string* type) {
+    void VarDefList::setAttribute(std::string* type, bool isConstant) {
         type_ = std::unique_ptr<std::string>(type);
+        isConstant_ = isConstant;
     }
 
     bool VarDefList::checkAllMemberPointers() const {

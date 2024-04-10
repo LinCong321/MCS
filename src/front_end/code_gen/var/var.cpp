@@ -5,13 +5,14 @@
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
-    // ----------------------------------------declare variable----------------------------------------
+    // --------------------------------------------declare variable--------------------------------------------
 
-    llvm::Value* getLocalVariable(const std::string& type, const std::string& id, llvm::Value* value) {
-        const auto variable = new llvm::AllocaInst(getLLVMType(type), 0, "", Context::getInstance().getCurrentBlock());
+    llvm::Value* getLocalVariable(llvm::Type* type, const std::string& id, llvm::Value* value) {
+        const auto variable = new llvm::AllocaInst(type, 0, "", Context::getInstance().getCurrentBlock());
 
         if (value == nullptr) {
-            LOG_WARN("The local variable \"", id, "\" has no initial value assigned.");
+            LOG_WARN("The local variable \"", id, "\" in function ", Context::getInstance().getCurrentFunctionName(),
+                     "() is not assigned an initial value.");
         } else {
             new llvm::StoreInst(getCastedValue(value, type), variable, false, Context::getInstance().getCurrentBlock());
         }
@@ -19,8 +20,8 @@ namespace mcs {
         return variable;
     }
 
-    llvm::Value* getGlobalVariable(const std::string& type, const std::string& id, llvm::Value* value) {
-        const auto variable = new llvm::GlobalVariable(Context::getInstance().getModule(), getLLVMType(type), false,
+    llvm::Value* getGlobalVariable(llvm::Type* type, const std::string& id, llvm::Value* value) {
+        const auto variable = new llvm::GlobalVariable(Context::getInstance().getModule(), type, false,
                                                        llvm::GlobalVariable::LinkageTypes::InternalLinkage,
                                                        getConstantValue(value, type), id);
 
@@ -31,8 +32,8 @@ namespace mcs {
         return variable;
     }
 
-    Symbol getVariable(const std::string& type, const std::string& id, llvm::Value* value) {
-        using Function = std::function<llvm::Value*(const std::string&, const std::string& id, llvm::Value*)>;
+    Symbol getVariable(llvm::Type* type, const std::string& id, llvm::Value* value, bool isConstant) {
+        using Function = std::function<llvm::Value*(llvm::Type*, const std::string& id, llvm::Value*)>;
         static const std::unordered_map<Scope, Function> scope2Func = {
             {Scope::LOCAL,  getLocalVariable},
             {Scope::GLOBAL, getGlobalVariable},
@@ -44,10 +45,10 @@ namespace mcs {
             return Symbol();
         }
 
-        return Symbol(getLLVMType(type), it->second(type, id, value));
+        return Symbol(type, it->second(type, id, value), isConstant);
     }
 
-    bool declareVariable(const std::string& type, const std::string& id, llvm::Value* value) {
+    bool declareVariable(llvm::Type* type, const std::string& id, llvm::Value* value, bool isConstant) {
         const auto scope = Context::getInstance().getCurrentScope();
         if (Context::getInstance().checkSymbol(id)) {
             LOG_ERROR("Unable to declare ", scope, " variable. Because its id (aka \"", id,
@@ -55,7 +56,7 @@ namespace mcs {
             return false;
         }
 
-        const auto variable = getVariable(type, id, value);
+        const auto variable = getVariable(type, id, value, isConstant);
         if (!Context::getInstance().insertSymbol(id, variable)) {
             LOG_ERROR("Unable to declare ", scope, " variable. Because it cannot be inserted into the ", scope,
                       " symbol table and its id is \"", id, "\".");
@@ -63,5 +64,9 @@ namespace mcs {
         }
 
         return true;
+    }
+
+    bool declareVariable(const std::string& type, const std::string& id, llvm::Value* value, bool isConstant) {
+        return declareVariable(getLLVMType(type), id, value, isConstant);
     }
 }
