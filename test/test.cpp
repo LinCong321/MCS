@@ -1,9 +1,10 @@
-// clang -S -emit-llvm test.cpp -o test.ll
+// clang -S -emit-llvm test/test.cpp -o test/test.ll
 
-int x = 1;
-const int y = x - 1;
+void f() {
+    int x = 1;
+    float y = 3.14;
+}
 
 int main() {
-    int a;
-    return y;
+    return 0;
 }

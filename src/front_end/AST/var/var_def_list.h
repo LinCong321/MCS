@@ -21,8 +21,8 @@ namespace mcs {
         bool checkAllMemberPointers() const;
 
     private:
-        bool                                    isConstant_;
-        std::unique_ptr<std::string>            type_;
-        std::vector<std::unique_ptr<VarDef>>    defList_;
+        std::unique_ptr<std::string> type_;
+        std::vector<std::unique_ptr<VarDef>> defList_;
+        bool isConstant_;
     };
 }

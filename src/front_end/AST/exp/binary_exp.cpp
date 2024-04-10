@@ -1,8 +1,8 @@
 #include "binary_exp.h"
 #include "utils/logger.h"
-#include "code_gen/pub/pub.h"
 #include "llvm/IR/InstrTypes.h"
 #include "IR/context/context.h"
+#include "code_gen/public/public.h"
 
 namespace {
     constexpr std::string_view emptyString;
@@ -67,7 +67,7 @@ namespace mcs {
 
         const auto it = opMap->second.find(op_);
         if (it == opMap->second.end()) {
-            LOG_ERROR("Unable to get operation because the given op (aka \'", op_, "\') is not in the opMap.");
+            LOG_ERROR("Unable to get operation because binary operator \'", op_, "\' does not work with ", type, ".");
             return {};
         }
 

@@ -1,8 +1,8 @@
 set (
         SOURCE_FILES
-        func/func.cpp
-        pub/pub.cpp
-        var/var.cpp
+        function/function.cpp
+        public/public.cpp
+        variable/variable.cpp
 )
 
 include_directories(${CODE_GEN_DIR})

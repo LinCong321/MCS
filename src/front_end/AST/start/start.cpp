@@ -1,8 +1,8 @@
 #include "start.h"
 #include "utils/logger.h"
-#include "code_gen/pub/pub.h"
-#include "code_gen/func/func.h"
 #include "IR/context/context.h"
+#include "code_gen/public/public.h"
+#include "code_gen/function/function.h"
 
 namespace {
     const auto MAX_PRIORITY = 65535;

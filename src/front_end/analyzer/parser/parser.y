@@ -113,7 +113,10 @@ MulExp          :   UnaryExp            { $$ = $1; }
                 |   MulExp '%' UnaryExp { $$ = new mcs::BinaryExp($1, '%', $3); }
                 ;
 
-UnaryExp        :   PrimaryExp  { $$ = $1; }
+UnaryExp        :   PrimaryExp      { $$ = $1; }
+                |   '+' UnaryExp    { $$ = new mcs::UnaryExp('+', $2); }
+                |   '-' UnaryExp    { $$ = new mcs::UnaryExp('-', $2); }
+                |   '!' UnaryExp    { $$ = new mcs::UnaryExp('!', $2); }
                 ;
 
 PrimaryExp      :   '(' Exp ')' { $$ = $2; }

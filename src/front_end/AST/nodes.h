@@ -3,6 +3,7 @@
 #include "block/block.h"
 #include "comp_unit/comp_unit.h"
 #include "exp/binary_exp.h"
+#include "exp/unary_exp.h"
 #include "func/func_def.h"
 #include "lval/lval.h"
 #include "number/number.h"

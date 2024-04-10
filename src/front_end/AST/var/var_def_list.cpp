@@ -1,6 +1,6 @@
 #include "var_def_list.h"
 #include "utils/logger.h"
-#include "code_gen/var/var.h"
+#include "code_gen/variable/variable.h"
 
 namespace mcs {
     VarDefList::VarDefList(VarDef* varDef) {

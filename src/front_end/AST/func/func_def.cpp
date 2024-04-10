@@ -1,7 +1,7 @@
 #include "func_def.h"
 #include "utils/logger.h"
 #include "IR/context/context.h"
-#include "code_gen/func/func.h"
+#include "code_gen/function/function.h"
 
 namespace mcs {
     llvm::Value* FuncDef::codeGen() const {

@@ -1,5 +1,5 @@
 #include "number.h"
-#include "code_gen/pub/pub.h"
+#include "code_gen/public/public.h"
 
 namespace mcs {
     llvm::Value* IntNum::codeGen() const {

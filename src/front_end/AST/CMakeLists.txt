@@ -3,6 +3,7 @@ set(
         block/block.cpp
         comp_unit/comp_unit.cpp
         exp/binary_exp.cpp
+        exp/unary_exp.cpp
         func/func_def.cpp
         lval/lval.cpp
         number/number.cpp
