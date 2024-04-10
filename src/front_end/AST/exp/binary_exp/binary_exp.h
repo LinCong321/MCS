@@ -1,8 +1,6 @@
 #pragma once
 
-#include "exp.h"
-#include "IR/type/type.h"
-#include "llvm/IR/Instruction.h"
+#include "AST/exp/exp.h"
 
 namespace mcs {
     class BinaryExp : public Exp {
@@ -15,8 +13,6 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
-        llvm::Instruction::BinaryOps getOperation(Type type) const;
-
     private:
         std::unique_ptr<Node>   lhs_;
         char                    op_;

@@ -27,8 +27,8 @@ namespace mcs {
                                         Context::getInstance().getCurrentBlock());
     }
 
-    llvm::ReturnInst* getReturnInst(mcs::Type type) {
-        return (type == mcs::Type::VOID) ? getVoidReturnInst() : getNonVoidReturnInst(type);
+    llvm::ReturnInst* getReturnInst(Type type) {
+        return (type == Type::VOID) ? getVoidReturnInst() : getNonVoidReturnInst(type);
     }
 
     bool createFunctionReturnValue(Type type) {
@@ -45,10 +45,14 @@ namespace mcs {
     }
 
     bool createFunctionReturnValue(const std::string& str) {
-        return createFunctionReturnValue(strToType(str));
+        return createFunctionReturnValue(getTypeOf(str));
     }
 
     // ----------------------------------------create function----------------------------------------
+
+    llvm::Function* createFunction(Type retType, const std::string& name, const std::vector<llvm::Type*>& params) {
+        return createFunction(getLLVMType(retType), name, params);
+    }
 
     llvm::Function* createFunction(llvm::Type* retType, const std::string& name,
                                    const std::vector<llvm::Type*>& params) {
@@ -58,10 +62,6 @@ namespace mcs {
         const auto basicBlock = llvm::BasicBlock::Create(Context::getInstance().getContext(), "entry", function);
         Context::getInstance().pushBlock(basicBlock);
         return function;
-    }
-
-    llvm::Function* createFunction(Type retType, const std::string& name, const std::vector<llvm::Type*>& params) {
-        return createFunction(getLLVMType(retType), name, params);
     }
 
     llvm::Function* createFunction(const std::string& retType, const std::string& name,

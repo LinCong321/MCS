@@ -1,6 +1,7 @@
 #include "variable.h"
 #include "utils/logger.h"
 #include "public/public.h"
+#include "constant/constant.h"
 #include "IR/context/context.h"
 #include "llvm/IR/Instructions.h"
 
@@ -23,7 +24,7 @@ namespace mcs {
     llvm::Value* getGlobalVariable(llvm::Type* type, const std::string& id, llvm::Value* value) {
         const auto variable = new llvm::GlobalVariable(Context::getInstance().getModule(), type, false,
                                                        llvm::GlobalVariable::LinkageTypes::InternalLinkage,
-                                                       getConstantValue(value, type), id);
+                                                       getConstant(value, type), id);
 
         if (value != nullptr && !llvm::isa<llvm::Constant>(value)) {
             new llvm::StoreInst(getCastedValue(value, type), variable, false, Context::getInstance().getCurrentBlock());

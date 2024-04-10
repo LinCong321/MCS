@@ -1,12 +1,12 @@
 #include "type.h"
 #include "utils/logger.h"
-#include "llvm/IR/Type.h"
 
 namespace {
     const std::unordered_map<std::string, mcs::Type> str2Type = {
+        {"void",    mcs::Type::VOID},
+        {"bool",    mcs::Type::BOOL},
         {"int",     mcs::Type::INT},
         {"float",   mcs::Type::FLOAT},
-        {"void",    mcs::Type::VOID},
     };
 
     const std::unordered_map<llvm::Type::TypeID, mcs::Type> id2Type = {
@@ -17,25 +17,7 @@ namespace {
 }
 
 namespace mcs {
-    std::ostream& operator<<(std::ostream& out, Type type) {
-        switch (type) {
-            case Type::INT:
-                out << "Type::INT";
-                break;
-            case Type::FLOAT:
-                out << "Type::FLOAT";
-                break;
-            case Type::VOID:
-                out << "Type::VOID";
-                break;
-            default:
-                out << "Type::UNKNOWN";
-                break;
-        }
-        return out;
-    }
-
-    Type strToType(const std::string& str) {
+    Type getTypeOf(const std::string& str) {
         const auto it = str2Type.find(str);
         if (it == str2Type.end()) {
             LOG_ERROR("Cannot cast str to type because the given str (aka \"", str,
@@ -47,18 +29,13 @@ namespace mcs {
 
     Type getTypeOf(const llvm::Type* type) {
         if (type == nullptr) {
-            LOG_ERROR("Unable to get type of value because value->getType() is nullptr.");
+            LOG_ERROR("Unable to get type because LLVM type is nullptr.");
             return Type::UNKNOWN;
         }
-
-        const auto it = id2Type.find(type->getTypeID());
-        if (it == id2Type.end()) {
-            LOG_ERROR("Unable to get type of value because the type id: ", type->getTypeID(),
-                      " is not in the id2Type table.");
-            return Type::UNKNOWN;
+        if (type->isIntegerTy(1)) {
+            return Type::BOOL;
         }
-
-        return it->second;
+        return getTypeOf(type->getTypeID());
     }
 
     Type getTypeOf(const llvm::Value* value) {
@@ -69,7 +46,33 @@ namespace mcs {
         return getTypeOf(value->getType());
     }
 
-    Type getMaxType(const llvm::Value* value1, const llvm::Value* value2) {
-        return std::max(getTypeOf(value1), getTypeOf(value2));
+    Type getTypeOf(llvm::Type::TypeID typeId) {
+        const auto it = id2Type.find(typeId);
+        if (it == id2Type.end()) {
+            LOG_ERROR("Unable to get type because LLVM type id: ", typeId, " is not in the id2Type table.");
+            return Type::UNKNOWN;
+        }
+        return it->second;
+    }
+
+    std::ostream& operator<<(std::ostream& out, Type type) {
+        switch (type) {
+            case Type::VOID:
+                out << "Type::VOID";
+                break;
+            case Type::BOOL:
+                out << "Type::BOOL";
+                break;
+            case Type::INT:
+                out << "Type::INT";
+                break;
+            case Type::FLOAT:
+                out << "Type::FLOAT";
+                break;
+            default:
+                out << "Type::UNKNOWN";
+                break;
+        }
+        return out;
     }
 }

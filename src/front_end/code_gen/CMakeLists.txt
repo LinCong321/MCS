@@ -1,6 +1,8 @@
 set (
         SOURCE_FILES
+        constant/constant.cpp
         function/function.cpp
+        operation/operation.cpp
         public/public.cpp
         variable/variable.cpp
 )

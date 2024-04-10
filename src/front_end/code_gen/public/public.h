@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IR/type/type.h"
-#include "llvm/IR/Constants.h"
 
 namespace mcs {
     llvm::Type* getLLVMType(Type type);
@@ -11,8 +10,4 @@ namespace mcs {
 
     llvm::Value* getCastedValue(llvm::Value* value, Type type);
     llvm::Value* getCastedValue(llvm::Value* value, llvm::Type* type);
-
-    llvm::Constant* getConstantInt(int value);
-    llvm::Constant* getConstantFloat(float value);
-    llvm::Constant* getConstantValue(const llvm::Value* value, llvm::Type* type);
 }

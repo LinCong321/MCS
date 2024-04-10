@@ -1,12 +1,12 @@
 #include "number.h"
-#include "code_gen/public/public.h"
+#include "code_gen/constant/constant.h"
 
 namespace mcs {
     llvm::Value* IntNum::codeGen() const {
-        return getConstantInt(val_);
+        return getInt32(val_);
     }
 
     llvm::Value* FloatNum::codeGen() const {
-        return getConstantFloat(val_);
+        return getFloat(val_);
     }
 }
