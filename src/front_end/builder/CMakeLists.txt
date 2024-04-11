@@ -7,8 +7,8 @@ set (
         variable/variable.cpp
 )
 
-include_directories(${CODE_GEN_DIR})
+include_directories(${BUILDER_DIR})
 
-add_library(code_gen ${SOURCE_FILES})
+add_library(builder ${SOURCE_FILES})
 
-target_link_libraries(code_gen ir)
+target_link_libraries(builder ir)

@@ -19,4 +19,4 @@ include_directories(${AST_DIR})
 
 add_library(ast ${SOURCE_FILES})
 
-target_link_libraries(ast code_gen)
+target_link_libraries(ast builder)

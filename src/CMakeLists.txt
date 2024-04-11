@@ -6,7 +6,7 @@ set(UTILS_DIR       ${SRC_DIR}/utils)
 
 set(ANALYZER_DIR    ${FRONT_END_DIR}/analyzer)
 set(AST_DIR         ${FRONT_END_DIR}/AST)
-set(CODE_GEN_DIR    ${FRONT_END_DIR}/code_gen)
+set(BUILDER_DIR     ${FRONT_END_DIR}/builder)
 set(IR_DIR          ${FRONT_END_DIR}/IR)
 
 include_directories(${SRC_DIR})
