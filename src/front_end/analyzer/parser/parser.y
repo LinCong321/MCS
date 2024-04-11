@@ -20,6 +20,7 @@
     int                 intVal;
     mcs::BlockItem*     blockItem;
     mcs::CompUnit*      compUnit;
+    mcs::LValue*        lValue;
     mcs::Node*          node;
     mcs::VarDef*        varDef;
     mcs::VarDefList*    varDefList;
@@ -40,7 +41,8 @@
 %type<varDefList>   ConstDefList VarDefList
 %type<varDef>       ConstDef VarDef
 %type<node>         ConstExp AddExp MulExp UnaryExp PrimaryExp Exp
-%type<node>         LVal Number VarDecl InitVal FuncDef Block Stmt
+%type<lValue>       LVal
+%type<node>         Number VarDecl InitVal FuncDef Block Stmt
 %type<blockItem>    BlockItem
 
 %%
@@ -120,14 +122,14 @@ UnaryExp        :   PrimaryExp      { $$ = $1; }
                 ;
 
 PrimaryExp      :   '(' Exp ')' { $$ = $2; }
-                |   LVal        { $$ = $1; }
+                |   LVal        { $$ = new mcs::VarExp($1); }
                 |   Number      { $$ = $1; }
                 ;
 
 Exp             :   AddExp  { $$ = $1; }
                 ;
 
-LVal            :   IDENTIFIER  { $$ =  new mcs::LVal($1); }
+LVal            :   IDENTIFIER  { $$ =  new mcs::LValue($1); }
                 ;
 
 Number          :   INT_CONST   { $$ = new mcs::IntNum($1); }
@@ -185,11 +187,12 @@ BlockItem       :   Decl { $$ = new mcs::BlockItem($1); }
                     }
                 ;
 
-Stmt            :   ';'             { $$ = new mcs::Stmt(); }
-                |   Exp ';'         { $$ = $1; }
-                |   Block           { $$ = new mcs::BlockStmt($1); }
-                |   RETURN ';'      { $$ = new mcs::RetStmt(); }
-                |   RETURN Exp ';'  { $$ = new mcs::RetStmt($2); }
+Stmt            :   LVal '=' Exp ';'    { $$ = new mcs::AssignStmt($1, $3); }
+                |   ';'                 { $$ = new mcs::NullStmt(); }
+                |   Exp ';'             { $$ = $1; }
+                |   Block               { $$ = new mcs::BlockStmt($1); }
+                |   RETURN ';'          { $$ = new mcs::RetStmt(); }
+                |   RETURN Exp ';'      { $$ = new mcs::RetStmt($2); }
                 ;
 
 %%

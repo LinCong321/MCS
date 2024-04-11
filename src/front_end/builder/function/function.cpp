@@ -34,11 +34,11 @@ namespace mcs {
     bool createFunctionReturnValue(Type type) {
         bool result = true;
         if (getReturnInst(type) == nullptr) {
-            LOG_ERROR("Unable to create function return value because the return instruction is nullptr.");
+            LOG_ERROR("The function return value cannot be created because the return instruction is nullptr.");
             result = false;
         }
         if (!Context::getInstance().popBlock()) {
-            LOG_ERROR("Unable to create function return value because the code block cannot be popped out.");
+            LOG_ERROR("The function return value cannot be created because the code block cannot be popped out.");
             result = false;
         }
         return result;

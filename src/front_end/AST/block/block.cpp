@@ -9,7 +9,7 @@ namespace mcs {
     llvm::Value* BlockItem::codeGen() const {
         for (const auto& item : items_) {
             if (item == nullptr) {
-                LOG_ERROR("Unable to generate code because there is a nullptr in items_");
+                LOG_ERROR("Unable to generate code because there is a nullptr in items_.");
                 return nullptr;
             }
             item->codeGen();

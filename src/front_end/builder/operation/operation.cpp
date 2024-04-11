@@ -6,6 +6,8 @@
 #include "llvm/IR/InstrTypes.h"
 
 namespace {
+    constexpr std::string_view emptyString;
+
     const std::unordered_map<char, llvm::Instruction::BinaryOps> char2SOp = {
         {'+',   llvm::Instruction::Add},
         {'-',   llvm::Instruction::Sub},
@@ -93,7 +95,7 @@ namespace mcs {
         return llvm::BinaryOperator::Create(getBinaryOperator(op, targetType),
                                             getCastedValue(lhs, targetType),
                                             getCastedValue(rhs, targetType),
-                                            "",
+                                            emptyString,
                                             Context::getInstance().getCurrentBlock());
     }
 }

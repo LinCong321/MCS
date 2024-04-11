@@ -1,6 +1,7 @@
 #include "variable.h"
 #include "utils/logger.h"
 #include "public/public.h"
+#include "memory/memory.h"
 #include "constant/constant.h"
 #include "IR/context/context.h"
 #include "llvm/IR/Instructions.h"
@@ -9,15 +10,15 @@ namespace mcs {
     // --------------------------------------------declare variable--------------------------------------------
 
     llvm::Value* getLocalVariable(llvm::Type* type, const std::string& id, llvm::Value* value) {
-        const auto variable = new llvm::AllocaInst(type, 0, "", Context::getInstance().getCurrentBlock());
+        const auto variable = createAllocaInst(type);
 
         if (value == nullptr) {
             LOG_WARN("The local variable \"", id, "\" in function ", Context::getInstance().getCurrentFunctionName(),
                      "() is not assigned an initial value.");
-        } else {
-            new llvm::StoreInst(getCastedValue(value, type), variable, false, Context::getInstance().getCurrentBlock());
+            return variable;
         }
 
+        createStoreInst(variable, getCastedValue(value, type));
         return variable;
     }
 
@@ -27,7 +28,7 @@ namespace mcs {
                                                        getConstant(value, type), id);
 
         if (value != nullptr && !llvm::isa<llvm::Constant>(value)) {
-            new llvm::StoreInst(getCastedValue(value, type), variable, false, Context::getInstance().getCurrentBlock());
+            createStoreInst(variable, getCastedValue(value, type));
         }
 
         return variable;

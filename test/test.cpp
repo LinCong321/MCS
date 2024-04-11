@@ -1,13 +1,11 @@
 // clang -S -emit-llvm test/test.cpp -o test/test.ll
 
-const int x = 1;
-const float y = 2;
+int x = 1.0;
 
-void f() {
-    int a = -x + y;
-    int b = +(x * !y);
-    float c = -x / (-y);
-    float d = !x - +y;
+int f() {
+    float y = 2;
+    y = x - y;
+    return y;
 }
 
 int main() {

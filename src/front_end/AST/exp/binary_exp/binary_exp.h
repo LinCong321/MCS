@@ -13,6 +13,7 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
+
     private:
         std::unique_ptr<Node>   lhs_;
         char                    op_;

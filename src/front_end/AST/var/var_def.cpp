@@ -4,7 +4,7 @@
 namespace mcs {
     std::string VarDef::getId() const {
         if (id_ == nullptr) {
-            LOG_ERROR("Unable to get id because id_ is nullptr.");
+            LOG_ERROR("Unable to get ID because id_ is nullptr.");
             return {};
         }
         return *id_;
