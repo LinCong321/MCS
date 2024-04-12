@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IR/scope/scope.h"
-#include "IR/symbol_table/symbol_table.h"
+#include "IR/code_block/code_block.h"
 
 #include "llvm/IR/Module.h"
 #include "llvm/IR/LLVMContext.h"
@@ -12,12 +12,13 @@ namespace mcs {
         static Context& getInstance();
 
     public:
-        void createSymbolTable();
-        bool deleteSymbolTable();
+        bool popBlock();
         llvm::Module& getModule();
+        bool clearInsertionPoint();
         llvm::LLVMContext& getContext();
-        void setInsertPoint(llvm::BasicBlock* basicBlock);
+        std::unique_ptr<SymbolTable> getCurrentSymbolTable();
         bool insertSymbol(const std::string& name, const Symbol& symbol);
+        void pushBlock(llvm::BasicBlock* basicBlock, std::unique_ptr<SymbolTable> symbolTable = nullptr);
 
     public:
         Scope getCurrentScope() const;
@@ -29,13 +30,12 @@ namespace mcs {
         llvm::Type* getReturnTypeOfCurrentFunction() const;
 
     private:
-        Context() : context_(), module_("main", context_), tables_(1), insertBlock_(nullptr) {}
+        Context() : context_(), module_("main", context_), blocks_() {}
         ~Context() = default;
 
     private:
-        llvm::LLVMContext           context_;
-        llvm::Module                module_;
-        std::vector<SymbolTable>    tables_;
-        llvm::BasicBlock*           insertBlock_;
+        llvm::LLVMContext                       context_;
+        llvm::Module                            module_;
+        std::vector<std::unique_ptr<CodeBlock>> blocks_;
     };
 }

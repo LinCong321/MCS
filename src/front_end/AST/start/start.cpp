@@ -33,6 +33,7 @@ namespace mcs {
             LOG_ERROR("Unable to generate code because the return instruction is nullptr.");
             return nullptr;
         }
+        Context::getInstance().popBlock();
 
         return value;
     }

@@ -12,7 +12,7 @@ namespace mcs {
 
         const auto function = createFunction(*retType_, *name_);
         block_->codeGen();
-        Context::getInstance().deleteSymbolTable();
+        Context::getInstance().popBlock();
 
         return function;
     }

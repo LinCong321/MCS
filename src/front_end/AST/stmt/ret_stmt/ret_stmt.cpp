@@ -10,6 +10,8 @@ namespace mcs {
                      "() has already returned, so this return statement is unreachable!");
             return nullptr;
         }
-        return (retVal_ == nullptr) ? createReturnInst() : createReturnInst(retVal_->codeGen());
+        const auto returnInst = (retVal_ == nullptr) ? createReturnInst() : createReturnInst(retVal_->codeGen());
+        Context::getInstance().clearInsertionPoint();
+        return returnInst;
     }
 }
