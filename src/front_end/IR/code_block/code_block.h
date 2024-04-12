@@ -16,8 +16,9 @@ namespace mcs {
         bool insertSymbol(const std::string& name, const Symbol& symbol);
 
     public:
-        llvm::Value* getReturnValue() const;
         std::string getFunctionName() const;
+        llvm::Function* getFunction() const;
+        llvm::Value* getReturnValue() const;
         llvm::BasicBlock* getBasicBlock() const;
         bool checkExist(const std::string& name) const;
         Symbol getSymbol(const std::string& name) const;

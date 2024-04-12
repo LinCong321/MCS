@@ -16,21 +16,25 @@ namespace mcs {
         return true;
     }
 
-    llvm::Value* CodeBlock::getReturnValue() const {
-        return returnValue_;
+    std::string CodeBlock::getFunctionName() const {
+        const auto function = getFunction();
+        if (function == nullptr) {
+            LOG_ERROR("Unable to get function name because function is nullptr.");
+            return {};
+        }
+        return function->getName().str();
     }
 
-    std::string CodeBlock::getFunctionName() const {
+    llvm::Function* CodeBlock::getFunction() const {
         if (basicBlock_ == nullptr) {
-            LOG_ERROR("Unable to get function name because basicBlock_ is nullptr.");
+            LOG_ERROR("Unable to get function because basicBlock_ is nullptr.");
             return {};
         }
-        const auto parent = basicBlock_->getParent();
-        if (parent == nullptr) {
-            LOG_ERROR("Unable to get function name because parent is nullptr.");
-            return {};
-        }
-        return parent->getName().str();
+        return basicBlock_->getParent();
+    }
+
+    llvm::Value* CodeBlock::getReturnValue() const {
+        return returnValue_;
     }
 
     llvm::BasicBlock* CodeBlock::getBasicBlock() const {

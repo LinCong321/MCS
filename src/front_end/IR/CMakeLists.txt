@@ -4,7 +4,6 @@ set(
         SOURCE_FILES
         code_block/code_block.cpp
         context/context.cpp
-        operator/operator.cpp
         scope/scope.cpp
         symbol/symbol.cpp
         symbol_table/symbol_table.cpp

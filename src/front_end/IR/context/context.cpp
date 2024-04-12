@@ -73,18 +73,6 @@ namespace mcs {
         return blocks_.back()->getBasicBlock();
     }
 
-    llvm::Value* Context::getCurrentReturnValue() const {
-        if (blocks_.empty()) {
-            LOG_ERROR("Unable to get current return value because blocks_ is empty.");
-            return nullptr;
-        }
-        if (blocks_.back() == nullptr) {
-            LOG_ERROR("Unable to get current return value because blocks_.back() is nullptr.");
-            return nullptr;
-        }
-        return blocks_.back()->getReturnValue();
-    }
-
     std::string Context::getCurrentFunctionName() const {
         if (blocks_.empty()) {
             LOG_ERROR("Unable to get current function name because blocks_ is empty.");
@@ -95,6 +83,30 @@ namespace mcs {
             return {};
         }
         return blocks_.back()->getFunctionName();
+    }
+
+    llvm::Function* Context::getCurrentFunction() const {
+        if (blocks_.empty()) {
+            LOG_ERROR("Unable to get current function because blocks_ is empty.");
+            return {};
+        }
+        if (blocks_.back() == nullptr) {
+            LOG_ERROR("Unable to get current function because blocks_.back() is nullptr.");
+            return {};
+        }
+        return blocks_.back()->getFunction();
+    }
+
+    llvm::Value* Context::getCurrentReturnValue() const {
+        if (blocks_.empty()) {
+            LOG_ERROR("Unable to get current return value because blocks_ is empty.");
+            return nullptr;
+        }
+        if (blocks_.back() == nullptr) {
+            LOG_ERROR("Unable to get current return value because blocks_.back() is nullptr.");
+            return nullptr;
+        }
+        return blocks_.back()->getReturnValue();
     }
 
     bool Context::checkSymbol(const std::string& name) const {

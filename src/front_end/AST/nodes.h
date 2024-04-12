@@ -2,7 +2,9 @@
 
 #include "block/block.h"
 #include "comp_unit/comp_unit.h"
-#include "exp/binary_exp/binary_exp.h"
+#include "exp/arith_exp/arith_exp.h"
+#include "exp/logic_exp/logic_exp.h"
+#include "exp/rel_exp/rel_exp.h"
 #include "exp/unary_exp/unary_exp.h"
 #include "exp/var_exp/var_exp.h"
 #include "func/func_def.h"

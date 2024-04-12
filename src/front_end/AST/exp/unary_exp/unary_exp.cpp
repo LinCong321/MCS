@@ -8,7 +8,7 @@ namespace mcs {
             LOG_ERROR("Unable to generate code because there is a nullptr in member pointers.");
             return nullptr;
         }
-        return getUnaryOperation(op_, val_->codeGen());
+        return createUnaryOperation(op_, val_->codeGen());
     }
 
     bool UnaryExp::checkAllMemberPointers() const {

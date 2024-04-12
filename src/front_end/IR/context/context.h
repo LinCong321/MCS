@@ -23,8 +23,9 @@ namespace mcs {
     public:
         Scope getCurrentScope() const;
         llvm::BasicBlock* getCurrentBlock() const;
-        llvm::Value* getCurrentReturnValue() const;
         std::string getCurrentFunctionName() const;
+        llvm::Function* getCurrentFunction() const;
+        llvm::Value* getCurrentReturnValue() const;
         bool checkSymbol(const std::string& name) const;
         Symbol getSymbol(const std::string& name) const;
 
