@@ -25,7 +25,7 @@ namespace mcs {
         llvm::BasicBlock* getInsertBlock() const;
         llvm::Function* getCurrentFunction() const;
         std::string getCurrentFunctionName() const;
-        bool checkSymbol(const std::string& name) const;
+        bool findSymbol(const std::string& name) const;
         Symbol getSymbol(const std::string& name) const;
         llvm::Type* getReturnTypeOfCurrentFunction() const;
 

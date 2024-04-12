@@ -46,12 +46,12 @@ namespace mcs {
             return Symbol();
         }
 
-        return Symbol(type, it->second(type, id, value), isConstant);
+        return Symbol(it->second(type, id, value), type, isConstant);
     }
 
     bool declareVariable(llvm::Type* type, const std::string& id, llvm::Value* value, bool isConstant) {
         const auto scope = Context::getInstance().getCurrentScope();
-        if (Context::getInstance().checkSymbol(id)) {
+        if (Context::getInstance().findSymbol(id)) {
             LOG_ERROR("Unable to declare ", scope, " variable. Because its id (aka \"", id,
                       "\") already exists in ", scope, " symbol table.");
             return false;

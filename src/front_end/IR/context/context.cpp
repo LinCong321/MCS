@@ -102,7 +102,7 @@ namespace mcs {
         return function->getName().str();
     }
 
-    bool Context::checkSymbol(const std::string& name) const {
+    bool Context::findSymbol(const std::string& name) const {
         if (blocks_.empty()) {
             LOG_ERROR("Unable to check symbol because blocks_ is empty.");
             return false;

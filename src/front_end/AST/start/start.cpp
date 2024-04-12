@@ -22,7 +22,8 @@ namespace mcs {
             return nullptr;
         }
 
-        const auto initFunc = createFunction(Type::VOID, INIT_GLOBAL_VAR);
+        const auto initFunc = getFunction(Type::VOID, INIT_GLOBAL_VAR);
+        Context::getInstance().pushBlock(llvm::BasicBlock::Create(Context::getInstance().getContext(), "", initFunc));
         if (!createLLVMGlobalCtors(initFunc)) {
             LOG_ERROR("Unable to generate code because llvm.global_ctors cannot be created.");
             return nullptr;
@@ -30,11 +31,11 @@ namespace mcs {
 
         const auto value = compUnit_->codeGen();
         if (createReturnInst() == nullptr) {
-            LOG_ERROR("Unable to generate code because the return instruction is nullptr.");
+            LOG_ERROR("Unable to generate body because the return instruction is nullptr.");
             return nullptr;
         }
-        Context::getInstance().popBlock();
 
+        Context::getInstance().popBlock();
         return value;
     }
 

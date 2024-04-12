@@ -5,8 +5,8 @@
 namespace mcs {
     class Symbol {
     public:
-        explicit Symbol(llvm::Type* type = nullptr, llvm::Value* value = nullptr, bool isConstant = false)
-            : type_(type), value_(value), isConstant_(isConstant) {}
+        explicit Symbol(llvm::Value* value = nullptr, llvm::Type* type = nullptr, bool isConstant = false)
+            : value_(value), type_(type), isConstant_(isConstant) {}
         ~Symbol() = default;
 
     public:
@@ -15,8 +15,8 @@ namespace mcs {
         llvm::Value* getValue() const;
 
     private:
-        llvm::Type*     type_;
         llvm::Value*    value_;
+        llvm::Type*     type_;
         bool            isConstant_;
     };
 }
