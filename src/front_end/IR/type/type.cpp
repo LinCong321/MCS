@@ -20,8 +20,7 @@ namespace mcs {
     Type getTypeOf(const std::string& str) {
         const auto it = str2Type.find(str);
         if (it == str2Type.end()) {
-            LOG_ERROR("Cannot cast str to type because the given str (aka \"", str,
-                      "\") is not in the str2Type table.");
+            LOG_ERROR("Cannot cast str to type because the given str (aka \"", str, "\") is not in str2Type table.");
             return Type::UNKNOWN;
         }
         return it->second;
@@ -49,7 +48,7 @@ namespace mcs {
     Type getTypeOf(llvm::Type::TypeID typeId) {
         const auto it = id2Type.find(typeId);
         if (it == id2Type.end()) {
-            LOG_ERROR("Unable to get type because LLVM type id: ", typeId, " is not in the id2Type table.");
+            LOG_ERROR("Unable to get type because LLVM type id: ", typeId, " is not in id2Type table.");
             return Type::UNKNOWN;
         }
         return it->second;
@@ -59,20 +58,19 @@ namespace mcs {
         switch (type) {
             case Type::VOID:
                 out << "Type::VOID";
-                break;
+                return out;
             case Type::BOOL:
                 out << "Type::BOOL";
-                break;
+                return out;
             case Type::INT:
                 out << "Type::INT";
-                break;
+                return out;
             case Type::FLOAT:
                 out << "Type::FLOAT";
-                break;
+                return out;
             default:
                 out << "Type::UNKNOWN";
-                break;
+                return out;
         }
-        return out;
     }
 }

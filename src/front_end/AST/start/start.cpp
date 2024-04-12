@@ -1,9 +1,11 @@
 #include "start.h"
+
 #include "utils/logger.h"
 #include "IR/context/context.h"
 #include "builder/public/public.h"
 #include "builder/constant/constant.h"
 #include "builder/function/function.h"
+
 #include "llvm/IR/Constants.h"
 
 namespace {

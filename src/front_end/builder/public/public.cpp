@@ -113,8 +113,7 @@ namespace mcs {
 
         const auto it = type2Func.find(type);
         if (it == type2Func.end()) {
-            LOG_ERROR("Unable to get casted value because the target type (aka ", type,
-                      ") is not in the type2Func table.");
+            LOG_ERROR("Unable to get casted value because the target type (aka ", type, ") is not in type2Func table.");
             return nullptr;
         }
 

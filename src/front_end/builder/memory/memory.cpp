@@ -23,11 +23,10 @@ namespace mcs {
     llvm::Instruction* createStoreInst(const std::string& id, llvm::Value* value) {
         const auto symbol = Context::getInstance().getSymbol(id);
         if (symbol.isConstant()) {
-            LOG_ERROR("Unable to generate code because symbol \"", id, "\" is a constant.");
+            LOG_ERROR("Unable to create store inst because symbol \"", id, "\" is a constant.");
             return nullptr;
         }
-        return new llvm::StoreInst(getCastedValue(value, symbol.getType()), symbol.getValue(), false,
-                                   Context::getInstance().getCurrentBlock());
+        return createStoreInst(symbol.getValue(), getCastedValue(value, symbol.getType()));
     }
 
     llvm::Instruction* createStoreInst(llvm::Value* variable, llvm::Value* value) {

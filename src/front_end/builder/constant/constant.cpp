@@ -90,7 +90,7 @@ namespace mcs {
         const auto it = type2Func.find(getTypeOf(type));
         if (it == type2Func.end()) {
             LOG_ERROR("Unable to get constant value because the target type (aka ", getTypeOf(type),
-                      ") is not in the type2Func table.");
+                      ") is not in type2Func table.");
             return nullptr;
         }
 

@@ -5,14 +5,13 @@ namespace mcs {
         switch (scope) {
             case Scope::GLOBAL:
                 out << "global";
-                break;
+                return out;
             case Scope::LOCAL:
                 out << "local";
-                break;
+                return out;
             default:
                 out << "unknown";
-                break;
+                return out;
         }
-        return out;
     }
 }

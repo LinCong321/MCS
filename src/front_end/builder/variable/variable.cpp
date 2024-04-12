@@ -53,13 +53,13 @@ namespace mcs {
         const auto scope = Context::getInstance().getCurrentScope();
         if (Context::getInstance().checkSymbol(id)) {
             LOG_ERROR("Unable to declare ", scope, " variable. Because its id (aka \"", id,
-                      "\") already exists in the ", scope, " symbol table.");
+                      "\") already exists in ", scope, " symbol table.");
             return false;
         }
 
         const auto variable = getVariable(type, id, value, isConstant);
         if (!Context::getInstance().insertSymbol(id, variable)) {
-            LOG_ERROR("Unable to declare ", scope, " variable. Because it cannot be inserted into the ", scope,
+            LOG_ERROR("Unable to declare ", scope, " variable. Because it cannot be inserted into ", scope,
                       " symbol table and its id is \"", id, "\".");
             return false;
         }
