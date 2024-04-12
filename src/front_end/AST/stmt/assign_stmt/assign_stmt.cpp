@@ -1,6 +1,6 @@
 #include "assign_stmt.h"
 #include "utils/logger.h"
-#include "builder/memory/memory.h"
+#include "builder/instruction/instruction.h"
 
 namespace mcs {
     llvm::Value* AssignStmt::codeGen() const {

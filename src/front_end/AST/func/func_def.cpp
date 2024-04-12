@@ -10,17 +10,9 @@ namespace mcs {
             return nullptr;
         }
 
-        std::vector<llvm::Type*> params;
-        const auto function = createFunction(*retType_, *name_, params);
-
-        Context::getInstance().setCurrentScope(Scope::LOCAL);
+        const auto function = createFunction(*retType_, *name_);
         block_->codeGen();
-        Context::getInstance().setCurrentScope(Scope::GLOBAL);
-
-        if (!createFunctionReturnValue(*retType_)) {
-            LOG_ERROR("Unable to generate code because the function return value cannot be created.");
-            return nullptr;
-        }
+        Context::getInstance().deleteSymbolTable();
 
         return function;
     }

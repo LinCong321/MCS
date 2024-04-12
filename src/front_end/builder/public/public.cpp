@@ -36,7 +36,7 @@ namespace mcs {
     // ----------------------------------------get casted value----------------------------------------
 
     llvm::Instruction* compareWithInt(llvm::Value* lhs, llvm::Value* rhs) {
-        const auto block = Context::getInstance().getCurrentBlock();
+        const auto block = Context::getInstance().getInsertBlock();
         if (block == nullptr) {
             LOG_ERROR("Cannot be compared with int because block is nullptr.");
             return nullptr;
@@ -45,7 +45,7 @@ namespace mcs {
     }
 
     llvm::Instruction* compareWithFloat(llvm::Value* lhs, llvm::Value* rhs) {
-        const auto block = Context::getInstance().getCurrentBlock();
+        const auto block = Context::getInstance().getInsertBlock();
         if (block == nullptr) {
             LOG_ERROR("Cannot be compared with float because block is nullptr.");
             return nullptr;
@@ -71,12 +71,12 @@ namespace mcs {
         switch (getTypeOf(value)) {
             case Type::BOOL:
                 return llvm::CastInst::Create(llvm::CastInst::ZExt, value, getLLVMType(Type::INT), "",
-                                              Context::getInstance().getCurrentBlock());
+                                              Context::getInstance().getInsertBlock());
             case Type::INT:
                 return value;
             case Type::FLOAT:
                 return llvm::CastInst::Create(llvm::CastInst::FPToSI, value, getLLVMType(Type::INT), "",
-                                              Context::getInstance().getCurrentBlock());
+                                              Context::getInstance().getInsertBlock());
             default:
                 LOG_ERROR("Cannot cast to int because there are not enough cases in switch.");
                 return nullptr;
@@ -87,10 +87,10 @@ namespace mcs {
         switch (getTypeOf(value)) {
             case Type::BOOL:
                 return llvm::CastInst::Create(llvm::CastInst::UIToFP, value, getLLVMType(Type::FLOAT), "",
-                                              Context::getInstance().getCurrentBlock());
+                                              Context::getInstance().getInsertBlock());
             case Type::INT:
                 return llvm::CastInst::Create(llvm::CastInst::SIToFP, value, getLLVMType(Type::FLOAT), "",
-                                              Context::getInstance().getCurrentBlock());
+                                              Context::getInstance().getInsertBlock());
             case Type::FLOAT:
                 return value;
             default:

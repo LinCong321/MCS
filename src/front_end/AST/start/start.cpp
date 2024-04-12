@@ -5,6 +5,7 @@
 #include "builder/public/public.h"
 #include "builder/constant/constant.h"
 #include "builder/function/function.h"
+#include "builder/instruction/instruction.h"
 
 #include "llvm/IR/Constants.h"
 
@@ -28,8 +29,8 @@ namespace mcs {
         }
 
         const auto value = compUnit_->codeGen();
-        if (!createFunctionReturnValue(Type::VOID)) {
-            LOG_ERROR("Unable to generate code because the return value for initGlobalFunc cannot be created.");
+        if (createReturnInst() == nullptr) {
+            LOG_ERROR("Unable to generate code because the return instruction is nullptr.");
             return nullptr;
         }
 

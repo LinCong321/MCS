@@ -9,9 +9,9 @@ namespace mcs {
             return nullptr;
         }
 
-        Context::getInstance().pushBlock(Context::getInstance().getCurrentBlock());
+        Context::getInstance().createSymbolTable();
         block_->codeGen();
-        Context::getInstance().popBlock();
+        Context::getInstance().deleteSymbolTable();
 
         return nullptr;
     }

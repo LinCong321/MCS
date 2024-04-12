@@ -31,15 +31,13 @@ namespace mcs {
         const auto function = Context::getInstance().getCurrentFunction();
         const auto orBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto mergeBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
-        const auto currentBlock = Context::getInstance().getCurrentBlock();
+        const auto currentBlock = Context::getInstance().getInsertBlock();
         llvm::BranchInst::Create(mergeBlock, orBlock, getCastedValue(lhs_->codeGen(), Type::BOOL), currentBlock);
-        Context::getInstance().popBlock();
-        Context::getInstance().pushBlock(orBlock);
+        Context::getInstance().setInsertPoint(orBlock);
         function->insert(function->end(), orBlock);
         const auto rhs = getCastedValue(rhs_->codeGen(), Type::BOOL);
         llvm::BranchInst::Create(mergeBlock, orBlock);
-        Context::getInstance().popBlock();
-        Context::getInstance().pushBlock(mergeBlock);
+        Context::getInstance().setInsertPoint(mergeBlock);
         function->insert(function->end(), mergeBlock);
         const auto phiNode = llvm::PHINode::Create(getLLVMType(Type::BOOL), 2, "", mergeBlock);
         phiNode->addIncoming(getBool(true), currentBlock);

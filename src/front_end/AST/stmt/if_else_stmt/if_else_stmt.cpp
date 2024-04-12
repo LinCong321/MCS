@@ -15,20 +15,17 @@ namespace mcs {
         const auto thenBB = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto elseBB = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto mergeBB = llvm::BasicBlock::Create(Context::getInstance().getContext());
-        const auto currentBlock = Context::getInstance().getCurrentBlock();
+        const auto currentBlock = Context::getInstance().getInsertBlock();
         llvm::BranchInst::Create(thenBB, elseBB, getCastedValue(cond_->codeGen(), Type::BOOL), currentBlock);
         function->insert(function->end(), thenBB);
-        Context::getInstance().pushBlock(thenBB);
+        Context::getInstance().setInsertPoint(thenBB);
         thenStmt_->codeGen();
         llvm::BranchInst::Create(mergeBB, thenBB);
         function->insert(function->end(), elseBB);
-        Context::getInstance().popBlock();
-        Context::getInstance().pushBlock(elseBB);
+        Context::getInstance().setInsertPoint(elseBB);
         elseStmt_->codeGen();
         llvm::BranchInst::Create(mergeBB, elseBB);
-        Context::getInstance().popBlock();
-        Context::getInstance().popBlock();
-        Context::getInstance().pushBlock(mergeBB);
+        Context::getInstance().setInsertPoint(mergeBB);
         function->insert(function->end(), mergeBB);
         return nullptr;
     }

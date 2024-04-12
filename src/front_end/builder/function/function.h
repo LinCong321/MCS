@@ -4,9 +4,6 @@
 #include "llvm/IR/Function.h"
 
 namespace mcs {
-    bool createFunctionReturnValue(Type type);
-    bool createFunctionReturnValue(const std::string& str);
-
     llvm::Function* createFunction(Type retType, const std::string& name, const std::vector<llvm::Type*>& params = {});
     llvm::Function* createFunction(llvm::Type* retType, const std::string& name,
                                    const std::vector<llvm::Type*>& params = {});

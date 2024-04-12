@@ -38,7 +38,7 @@ namespace mcs {
                 return createArithmeticOperation(getNullValue(value), '-', value);
             case Type::FLOAT:
                 return llvm::UnaryOperator::Create(llvm::Instruction::FNeg, value, "",
-                                                   Context::getInstance().getCurrentBlock());
+                                                   Context::getInstance().getInsertBlock());
             default:
                 LOG_ERROR("Unable to create negative operation because there are not enough cases in switch.");
                 return nullptr;
@@ -47,7 +47,7 @@ namespace mcs {
 
     llvm::Value* createNotOperation(llvm::Value* value) {
         return llvm::BinaryOperator::CreateXor(getCastedValue(value, Type::BOOL), getBool(true), "",
-                                               Context::getInstance().getCurrentBlock());
+                                               Context::getInstance().getInsertBlock());
     }
 
     llvm::Value* createUnaryOperation(char op, llvm::Value* value) {
@@ -97,7 +97,7 @@ namespace mcs {
                                             getCastedValue(lhs, targetType),
                                             getCastedValue(rhs, targetType),
                                             emptyString,
-                                            Context::getInstance().getCurrentBlock());
+                                            Context::getInstance().getInsertBlock());
     }
 
     // ----------------------------------------create relational operation----------------------------------------

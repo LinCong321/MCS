@@ -12,10 +12,6 @@ namespace mcs {
         llvm::Value* codeGen() const override;
 
     private:
-        static bool checkReturned();
-        bool checkAllMemberPointers() const;
-
-    private:
         std::unique_ptr<Node> retVal_;
     };
 }

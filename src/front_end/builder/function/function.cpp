@@ -5,49 +5,6 @@
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
-    // ------------------------------------create function return value------------------------------------
-
-    llvm::ReturnInst* getVoidReturnInst() {
-        if (mcs::Context::getInstance().getCurrentReturnValue() != nullptr) {
-            LOG_ERROR("Void function ", Context::getInstance().getCurrentFunctionName(),
-                      "() should not return a value.");
-            return nullptr;
-        }
-        return llvm::ReturnInst::Create(Context::getInstance().getContext(), Context::getInstance().getCurrentBlock());
-    }
-
-    llvm::ReturnInst* getNonVoidReturnInst(Type type) {
-        const auto value = Context::getInstance().getCurrentReturnValue();
-        if (value == nullptr) {
-            LOG_ERROR("Non-void function ", Context::getInstance().getCurrentFunctionName(),
-                      "() does not return a value.");
-            return nullptr;
-        }
-        return llvm::ReturnInst::Create(Context::getInstance().getContext(), getCastedValue(value, type),
-                                        Context::getInstance().getCurrentBlock());
-    }
-
-    llvm::ReturnInst* getReturnInst(Type type) {
-        return (type == Type::VOID) ? getVoidReturnInst() : getNonVoidReturnInst(type);
-    }
-
-    bool createFunctionReturnValue(Type type) {
-        bool result = true;
-        if (getReturnInst(type) == nullptr) {
-            LOG_ERROR("The function return value cannot be created because the return instruction is nullptr.");
-            result = false;
-        }
-        if (!Context::getInstance().popBlock()) {
-            LOG_ERROR("The function return value cannot be created because the code block cannot be popped out.");
-            result = false;
-        }
-        return result;
-    }
-
-    bool createFunctionReturnValue(const std::string& str) {
-        return createFunctionReturnValue(getTypeOf(str));
-    }
-
     // ----------------------------------------create function----------------------------------------
 
     llvm::Function* createFunction(Type retType, const std::string& name, const std::vector<llvm::Type*>& params) {
@@ -56,12 +13,11 @@ namespace mcs {
 
     llvm::Function* createFunction(llvm::Type* retType, const std::string& name,
                                    const std::vector<llvm::Type*>& params) {
-        const auto functionType = llvm::FunctionType::get(retType, params, false);
+        const auto funcType = llvm::FunctionType::get(retType, params, false);
         const auto linkage = (name == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
-        const auto function = llvm::Function::Create(functionType, linkage, name, Context::getInstance().getModule());
-        const auto basicBlock = llvm::BasicBlock::Create(Context::getInstance().getContext(), "", function);
-        Context::getInstance().pushBlock(basicBlock);
-        return function;
+        const auto func = llvm::Function::Create(funcType, linkage, name, Context::getInstance().getModule());
+        Context::getInstance().setInsertPoint(llvm::BasicBlock::Create(Context::getInstance().getContext(), "", func));
+        return func;
     }
 
     llvm::Function* createFunction(const std::string& retType, const std::string& name,
