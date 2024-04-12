@@ -5,7 +5,7 @@
 namespace mcs {
     class LogicExp : public Exp {
     public:
-        LogicExp(Node* lhs, std::string* op, Node* rhs) : lhs_(lhs), op_(op), rhs_(rhs) {}
+        LogicExp(Node* lhs, char op, Node* rhs) : lhs_(lhs), op_(op), rhs_(rhs) {}
         ~LogicExp() override = default;
 
     public:
@@ -13,10 +13,13 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
+        llvm::Value* createOrOperation() const;
+        llvm::Value* createAndOperation() const;
+        llvm::Value* createLogicalOperation() const;
 
     protected:
-        std::unique_ptr<Node>           lhs_;
-        std::unique_ptr<std::string>    op_;
-        std::unique_ptr<Node>           rhs_;
+        std::unique_ptr<Node>   lhs_;
+        char                    op_;
+        std::unique_ptr<Node>   rhs_;
     };
 }

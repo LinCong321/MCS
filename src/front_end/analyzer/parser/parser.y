@@ -205,11 +205,11 @@ Cond            :   LOrExp  { $$ = $1; }
                 ;
 
 LOrExp          :   LAndExp             { $$ = $1; }
-                |   LOrExp OR LAndExp   { $$ = new mcs::LogicExp($1, new std::string("||"), $3); }
+                |   LOrExp OR LAndExp   { $$ = new mcs::LogicExp($1, '|', $3); }
                 ;
 
 LAndExp         :   EqExp               { $$ = $1; }
-                |   LAndExp AND EqExp   { $$ = new mcs::LogicExp($1, new std::string("&&"), $3); }
+                |   LAndExp AND EqExp   { $$ = new mcs::LogicExp($1, '&', $3); }
                 ;
 
 EqExp           :   RelExp          { $$ = $1; }

@@ -67,37 +67,6 @@ namespace mcs {
         return it->second(value);
     }
 
-    // ----------------------------------------create logical operation----------------------------------------
-
-    llvm::Value* createOrOperation(llvm::Value* lhs, llvm::Value* rhs) {
-        const auto function = Context::getInstance().getCurrentFunction();
-        const auto orBlock = llvm::BasicBlock::Create(Context::getInstance().getContext(), "", function);
-        const auto mergeBlock = llvm::BasicBlock::Create(Context::getInstance().getContext(), "", function);
-        llvm::BranchInst::Create(mergeBlock, orBlock, getCastedValue(lhs, Type::BOOL),
-                                 Context::getInstance().getCurrentBlock());
-    }
-
-    llvm::Value* createAndOperation(llvm::Value* lhs, llvm::Value* rhs) {
-
-    }
-
-    llvm::Value* createLogicalOperation(llvm::Value* lhs, const std::string& op, llvm::Value* rhs) {
-        using Function = std::function<llvm::Value*(llvm::Value*, llvm::Value*)>;
-        static const std::unordered_map<std::string, Function> str2Func = {
-            {"||",  createOrOperation},
-            {"&&",  createAndOperation},
-        };
-
-        const auto it = str2Func.find(op);
-        if (it == str2Func.end()) {
-            LOG_ERROR("Unable to create logical operation because the given op (aka \"", op,
-                      "\") is not in str2Func table.");
-            return nullptr;
-        }
-
-        return it->second(lhs, rhs);
-    }
-
     // ----------------------------------------create arithmetic operation----------------------------------------
 
     llvm::Instruction::BinaryOps getOperator(char op, Type type) {
@@ -134,6 +103,6 @@ namespace mcs {
     // ----------------------------------------create relational operation----------------------------------------
 
     llvm::Value* createRelationalOperation(llvm::Value* lhs, const std::string& op, llvm::Value* rhs) {
-
+        return nullptr;
     }
 }

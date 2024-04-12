@@ -59,7 +59,7 @@ namespace mcs {
         const auto functionType = llvm::FunctionType::get(retType, params, false);
         const auto linkage = (name == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
         const auto function = llvm::Function::Create(functionType, linkage, name, Context::getInstance().getModule());
-        const auto basicBlock = llvm::BasicBlock::Create(Context::getInstance().getContext(), "entry", function);
+        const auto basicBlock = llvm::BasicBlock::Create(Context::getInstance().getContext(), "", function);
         Context::getInstance().pushBlock(basicBlock);
         return function;
     }
