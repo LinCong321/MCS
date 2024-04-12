@@ -2,7 +2,9 @@
 
 #include "block/block.h"
 #include "comp_unit/comp_unit.h"
-#include "exp/binary_exp/binary_exp.h"
+#include "exp/binary_exp/arith_exp/arith_exp.h"
+#include "exp/binary_exp/logic_exp/logic_exp.h"
+#include "exp/binary_exp/rel_exp/rel_exp.h"
 #include "exp/unary_exp/unary_exp.h"
 #include "exp/var_exp/var_exp.h"
 #include "func/func_def.h"
@@ -11,6 +13,7 @@
 #include "start/start.h"
 #include "stmt/assign_stmt/assign_stmt.h"
 #include "stmt/block_stmt/block_stmt.h"
+#include "stmt/if_else_stmt/if_else_stmt.h"
 #include "stmt/null_stmt/null_stmt.h"
 #include "stmt/ret_stmt/ret_stmt.h"
 #include "var/var_def.h"

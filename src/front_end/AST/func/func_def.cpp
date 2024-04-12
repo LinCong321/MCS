@@ -11,7 +11,7 @@ namespace mcs {
         }
 
         std::vector<llvm::Type*> params;
-        const auto function = createFunction(*retType_, *id_, params);
+        const auto function = createFunction(*retType_, *name_, params);
 
         Context::getInstance().setCurrentScope(Scope::LOCAL);
         block_->codeGen();
@@ -30,8 +30,8 @@ namespace mcs {
             LOG_ERROR("retType_ is nullptr.");
             return false;
         }
-        if (id_ == nullptr) {
-            LOG_ERROR("id_ is nullptr.");
+        if (name_ == nullptr) {
+            LOG_ERROR("name_ is nullptr.");
             return false;
         }
         if (block_ == nullptr) {

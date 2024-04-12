@@ -4,7 +4,6 @@
 #include "memory/memory.h"
 #include "constant/constant.h"
 #include "IR/context/context.h"
-#include "llvm/IR/Instructions.h"
 
 namespace mcs {
     // --------------------------------------------declare variable--------------------------------------------

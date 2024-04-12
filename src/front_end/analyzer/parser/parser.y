@@ -42,8 +42,9 @@
 %type<varDef>       ConstDef VarDef
 %type<node>         ConstExp AddExp MulExp UnaryExp PrimaryExp Exp
 %type<lValue>       LVal
-%type<node>         Number VarDecl InitVal FuncDef Block Stmt
+%type<node>         Number VarDecl InitVal FuncDef Block Stmt BStmt
 %type<blockItem>    BlockItem
+%type<node>         Cond LOrExp LAndExp EqExp RelExp WithElse
 
 %%
 
@@ -105,14 +106,14 @@ ConstExp        :   AddExp  { $$ = $1; }
                 ;
 
 AddExp          :   MulExp              { $$ = $1; }
-                |   AddExp '+' MulExp   { $$ = new mcs::BinaryExp($1, '+', $3); }
-                |   AddExp '-' MulExp   { $$ = new mcs::BinaryExp($1, '-', $3); }
+                |   AddExp '+' MulExp   { $$ = new mcs::ArithExp($1, '+', $3); }
+                |   AddExp '-' MulExp   { $$ = new mcs::ArithExp($1, '-', $3); }
                 ;
 
 MulExp          :   UnaryExp            { $$ = $1; }
-                |   MulExp '*' UnaryExp { $$ = new mcs::BinaryExp($1, '*', $3); }
-                |   MulExp '/' UnaryExp { $$ = new mcs::BinaryExp($1, '/', $3); }
-                |   MulExp '%' UnaryExp { $$ = new mcs::BinaryExp($1, '%', $3); }
+                |   MulExp '*' UnaryExp { $$ = new mcs::ArithExp($1, '*', $3); }
+                |   MulExp '/' UnaryExp { $$ = new mcs::ArithExp($1, '/', $3); }
+                |   MulExp '%' UnaryExp { $$ = new mcs::ArithExp($1, '%', $3); }
                 ;
 
 UnaryExp        :   PrimaryExp      { $$ = $1; }
@@ -187,12 +188,44 @@ BlockItem       :   Decl { $$ = new mcs::BlockItem($1); }
                     }
                 ;
 
-Stmt            :   LVal '=' Exp ';'    { $$ = new mcs::AssignStmt($1, $3); }
+Stmt            :   BStmt                               { $$ = $1; }
+                |   IF '(' Cond ')' Stmt                { $$ = new mcs::IfElseStmt($3, $5); }
+                |   IF '(' Cond ')' WithElse ELSE Stmt  { $$ = new mcs::IfElseStmt($3, $5, $7); }
+                ;
+
+BStmt           :   LVal '=' Exp ';'    { $$ = new mcs::AssignStmt($1, $3); }
                 |   ';'                 { $$ = new mcs::NullStmt(); }
                 |   Exp ';'             { $$ = $1; }
                 |   Block               { $$ = new mcs::BlockStmt($1); }
                 |   RETURN ';'          { $$ = new mcs::RetStmt(); }
                 |   RETURN Exp ';'      { $$ = new mcs::RetStmt($2); }
+                ;
+
+Cond            :   LOrExp  { $$ = $1; }
+                ;
+
+LOrExp          :   LAndExp             { $$ = $1; }
+                |   LOrExp OR LAndExp   { $$ = new mcs::LogicExp($1, new std::string("||"), $3); }
+                ;
+
+LAndExp         :   EqExp               { $$ = $1; }
+                |   LAndExp AND EqExp   { $$ = new mcs::LogicExp($1, new std::string("&&"), $3); }
+                ;
+
+EqExp           :   RelExp          { $$ = $1; }
+                |   EqExp EQ RelExp { $$ = new mcs::RelExp($1, new std::string("=="), $3); }
+                |   EqExp NE RelExp { $$ = new mcs::RelExp($1, new std::string("!="), $3); }
+                ;
+
+RelExp          :   AddExp              { $$ = $1; }
+                |   RelExp '<' AddExp   { $$ = new mcs::RelExp($1, new std::string("<"), $3); }
+                |   RelExp '>' AddExp   { $$ = new mcs::RelExp($1, new std::string(">"), $3); }
+                |   RelExp LE AddExp    { $$ = new mcs::RelExp($1, new std::string("<="), $3); }
+                |   RelExp GE AddExp    { $$ = new mcs::RelExp($1, new std::string(">="), $3); }
+                ;
+
+WithElse        :   IF '(' Cond ')' WithElse ELSE WithElse  { $$ = new mcs::IfElseStmt($3, $5, $7); }
+                |   BStmt                                   { $$ = $1; }
                 ;
 
 %%
