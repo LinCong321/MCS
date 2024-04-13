@@ -16,9 +16,9 @@ namespace mcs {
         llvm::Module& getModule();
         bool clearInsertionPoint();
         llvm::LLVMContext& getContext();
-        std::unique_ptr<SymbolTable> getCurrentSymbolTable();
+        void pushBlock(llvm::BasicBlock* basicBlock);
+        bool setInsertPoint(llvm::BasicBlock* basicBlock);
         bool insertSymbol(const std::string& name, const Symbol& symbol);
-        void pushBlock(llvm::BasicBlock* basicBlock, std::unique_ptr<SymbolTable> symbolTable = nullptr);
 
     public:
         Scope getCurrentScope() const;

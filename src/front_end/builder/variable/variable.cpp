@@ -17,7 +17,7 @@ namespace mcs {
             return variable;
         }
 
-        createStoreInst(variable, getCastedValue(value, type));
+        createStoreInst(getCastedValue(value, type), variable);
         return variable;
     }
 
@@ -27,7 +27,7 @@ namespace mcs {
                                                        getConstant(value, type), id);
 
         if (value != nullptr && !llvm::isa<llvm::Constant>(value)) {
-            createStoreInst(variable, getCastedValue(value, type));
+            createStoreInst(getCastedValue(value, type), variable);
         }
 
         return variable;

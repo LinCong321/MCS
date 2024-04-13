@@ -13,7 +13,7 @@ namespace mcs {
     std::string logLevelToStr(LogLevel logLevel);
     std::string fileToStr(const std::string& file);
 
-    template <class... Args>
+    template <typename... Args>
     void logger(LogLevel level, const char* file, const char* function, const Args&... args) {
         std::cout << logLevelToStr(level) << timeToStr() << fileToStr(file) << '[' << function << "()]: ";
         ((std::cout << args), ...);

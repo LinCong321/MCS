@@ -35,7 +35,7 @@ namespace {
 
     const std::unordered_map<std::string, llvm::CmpInst::Predicate> str2FPred = {
         {"==",  llvm::CmpInst::FCMP_OEQ},
-        {"!=",  llvm::CmpInst::FCMP_ONE},
+        {"!=",  llvm::CmpInst::FCMP_UNE},
         {"<",   llvm::CmpInst::FCMP_OLT},
         {">",   llvm::CmpInst::FCMP_OGT},
         {"<=",  llvm::CmpInst::FCMP_OLE},
@@ -142,7 +142,7 @@ namespace mcs {
     }
 
     llvm::Value* createBinaryOperation(llvm::Value* lhs, char op, llvm::Value* rhs) {
-        const auto targetType = std::max(getTypeOf(lhs), getTypeOf(rhs));
+        const auto targetType = std::max(std::max(getTypeOf(lhs), getTypeOf(rhs)), Type::INT);
 
         return llvm::BinaryOperator::Create(getBinaryOperator(op, targetType),
                                             getCastedValue(lhs, targetType),
@@ -158,7 +158,7 @@ namespace mcs {
             {Type::FLOAT,   createFCmpInst},
         };
 
-        const auto targetType = std::max(getTypeOf(lhs), getTypeOf(rhs));
+        const auto targetType = std::max(std::max(getTypeOf(lhs), getTypeOf(rhs)), Type::INT);
         const auto it = type2Func.find(targetType);
         if (it == type2Func.end()) {
             LOG_ERROR("Unable to create binary operation because target type (aka ", targetType,

@@ -33,16 +33,21 @@ namespace mcs {
         return context_;
     }
 
-    std::unique_ptr<SymbolTable> Context::getCurrentSymbolTable() {
+    void Context::pushBlock(llvm::BasicBlock* basicBlock) {
+        blocks_.emplace_back(std::make_unique<CodeBlock>(basicBlock));
+    }
+
+    bool Context::setInsertPoint(llvm::BasicBlock* basicBlock) {
         if (blocks_.empty()) {
-            LOG_ERROR("Unable to get current symbol table because blocks_ is empty.");
-            return nullptr;
+            LOG_ERROR("Unable to set insert point because blocks_ is empty.");
+            return false;
         }
         if (blocks_.back() == nullptr) {
-            LOG_ERROR("Unable to get current symbol table because blocks_.back() is nullptr.");
-            return nullptr;
+            LOG_ERROR("Unable to set insert point because blocks_.back() is nullptr.");
+            return false;
         }
-        return blocks_.back()->getSymbolTable();
+        blocks_.back() = std::make_unique<CodeBlock>(basicBlock, blocks_.back()->getSymbolTable());
+        return true;
     }
 
     bool Context::insertSymbol(const std::string& name, const Symbol& symbol) {
@@ -55,10 +60,6 @@ namespace mcs {
             return false;
         }
         return blocks_.back()->insertSymbol(name, symbol);
-    }
-
-    void Context::pushBlock(llvm::BasicBlock* basicBlock, std::unique_ptr<SymbolTable> symbolTable) {
-        blocks_.emplace_back(std::make_unique<CodeBlock>(basicBlock, std::move(symbolTable)));
     }
 
     Scope Context::getCurrentScope() const {

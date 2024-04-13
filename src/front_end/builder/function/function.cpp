@@ -6,7 +6,7 @@
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
-    // ----------------------------------------create return inst----------------------------------------
+    // --------------------------------------------create return inst--------------------------------------------
 
     llvm::ReturnInst* createVoidReturnInst(llvm::Value* value) {
         if (value != nullptr) {
@@ -44,8 +44,10 @@ namespace mcs {
 
     llvm::Function* getFunction(llvm::Type* retType, const std::string& name, const std::vector<llvm::Type*>& params) {
         const auto funcType = llvm::FunctionType::get(retType, params, false);
-        const auto linkage = (name == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
-        return llvm::Function::Create(funcType, linkage, name, Context::getInstance().getModule());
+        const auto linkage  = (name == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
+        const auto function = llvm::Function::Create(funcType, linkage, name, Context::getInstance().getModule());
+        Context::getInstance().pushBlock(llvm::BasicBlock::Create(Context::getInstance().getContext(), "", function));
+        return function;
     }
 
     // --------------------------------------------create function--------------------------------------------
@@ -54,12 +56,11 @@ namespace mcs {
                                    const std::vector<llvm::Type*>& params) {
         if (Context::getInstance().findSymbol(name)) {
             LOG_ERROR("Cannot create function because its name (aka \"", name,
-                      "\") has already exists in the symbol table.");
+                      "\") already exists in the symbol table.");
             return nullptr;
         }
 
         const auto function = getFunction(retType, name, params);
-        Context::getInstance().pushBlock(llvm::BasicBlock::Create(Context::getInstance().getContext(), "", function));
         if (!Context::getInstance().insertSymbol(name, Symbol(function))) {
             LOG_ERROR("Cannot create function because it cannot be inserted to the symbol table.");
             return nullptr;

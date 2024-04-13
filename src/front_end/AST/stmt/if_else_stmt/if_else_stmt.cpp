@@ -16,9 +16,7 @@ namespace mcs {
         const auto elseBB = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto mergeBB = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto currentBlock = Context::getInstance().getInsertBlock();
-        std::unique_ptr<SymbolTable> symbolTable = Context::getInstance().getCurrentSymbolTable();
         llvm::BranchInst::Create(thenBB, elseBB, getCastedValue(cond_->codeGen(), Type::BOOL), currentBlock);
-        Context::getInstance().popBlock();
 
         function->insert(function->end(), thenBB);
         Context::getInstance().pushBlock(thenBB);
@@ -33,7 +31,7 @@ namespace mcs {
         llvm::BranchInst::Create(mergeBB, elseBB);
 
         function->insert(function->end(), mergeBB);
-        Context::getInstance().pushBlock(mergeBB, std::move(symbolTable));
+        Context::getInstance().setInsertPoint(mergeBB);
         return nullptr;
     }
 

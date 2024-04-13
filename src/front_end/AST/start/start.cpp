@@ -22,7 +22,6 @@ namespace mcs {
         }
 
         const auto initFunc = getFunction(Type::VOID, INIT_GLOBAL_VAR);
-        Context::getInstance().pushBlock(llvm::BasicBlock::Create(Context::getInstance().getContext(), "", initFunc));
         if (!createLLVMGlobalCtors(initFunc)) {
             LOG_ERROR("Unable to generate code because llvm.global_ctors cannot be created.");
             return nullptr;

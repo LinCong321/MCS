@@ -8,7 +8,7 @@ namespace mcs {
             LOG_ERROR("Unable to generate code because there is a nullptr in member pointers.");
             return nullptr;
         }
-        return createStoreInst(lvalue_->getId(), exp_->codeGen());
+        return createStoreInst(exp_->codeGen(), lvalue_->getId());
     }
 
     bool AssignStmt::checkAllMemberPointers() const {

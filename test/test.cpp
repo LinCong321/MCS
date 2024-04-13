@@ -3,9 +3,14 @@
 int x = 1;
 int y = 2 * x + 3;
 
-void f() {
-    int a = -x + !y;
-    return;
+int f() {
+    int a = 3;
+    if (!x != !y) {
+        y = y + 1;
+    } else {
+        y = y - 1;
+    }
+    return y;
 }
 
 int main() {
