@@ -118,7 +118,7 @@ namespace mcs {
 
         const auto it = str2IPred.find(op);
         if (it == str2IPred.end()) {
-            LOG_ERROR("Unable to create icmp inst because the given op (aka \"", op, "\") is not in str2IPred table.");
+            LOG_ERROR("Unable to create ICmp inst because the given op (aka \"", op, "\") is not in str2IPred table.");
             return nullptr;
         }
 

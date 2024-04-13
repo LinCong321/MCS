@@ -1,8 +1,8 @@
 #include "if_else_stmt.h"
 #include "utils/logger.h"
 #include "IR/context/context.h"
-#include "builder/public/public.h"
 #include "llvm/IR/Instructions.h"
+#include "builder/public/public.h"
 
 namespace mcs {
     llvm::Value* IfElseStmt::codeGen() const {
@@ -11,26 +11,22 @@ namespace mcs {
             return nullptr;
         }
 
-        const auto function = Context::getInstance().getCurrentFunction();
         const auto thenBB = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto elseBB = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto mergeBB = llvm::BasicBlock::Create(Context::getInstance().getContext());
-        const auto currentBlock = Context::getInstance().getInsertBlock();
-        llvm::BranchInst::Create(thenBB, elseBB, getCastedValue(cond_->codeGen(), Type::BOOL), currentBlock);
+        const auto cond = getCastedValue(cond_->codeGen(), Type::BOOL);
+        llvm::BranchInst::Create(thenBB, elseBB, cond, Context::getInstance().getInsertBlock());
 
-        function->insert(function->end(), thenBB);
-        Context::getInstance().pushBlock(thenBB);
+        Context::getInstance().insertBlock(thenBB);
         thenStmt_->codeGen();
         Context::getInstance().popBlock();
         llvm::BranchInst::Create(mergeBB, thenBB);
 
-        function->insert(function->end(), elseBB);
-        Context::getInstance().pushBlock(elseBB);
+        Context::getInstance().insertBlock(elseBB);
         elseStmt_->codeGen();
         Context::getInstance().popBlock();
         llvm::BranchInst::Create(mergeBB, elseBB);
 
-        function->insert(function->end(), mergeBB);
         Context::getInstance().setInsertPoint(mergeBB);
         return nullptr;
     }

@@ -37,17 +37,21 @@ namespace mcs {
         blocks_.emplace_back(std::make_unique<CodeBlock>(basicBlock));
     }
 
-    bool Context::setInsertPoint(llvm::BasicBlock* basicBlock) {
-        if (blocks_.empty()) {
-            LOG_ERROR("Unable to set insert point because blocks_ is empty.");
+    bool Context::insertBlock(llvm::BasicBlock* basicBlock) {
+        if (!insertBlockIntoCurrentFunction(basicBlock)) {
+            LOG_ERROR("Unable to insert block because basicBlock cannot be inserted into the current function.");
             return false;
         }
-        if (blocks_.back() == nullptr) {
-            LOG_ERROR("Unable to set insert point because blocks_.back() is nullptr.");
-            return false;
-        }
-        blocks_.back() = std::make_unique<CodeBlock>(basicBlock, blocks_.back()->getSymbolTable());
+        pushBlock(basicBlock);
         return true;
+    }
+
+    bool Context::setInsertPoint(llvm::BasicBlock* basicBlock) {
+        if (!insertBlockIntoCurrentFunction(basicBlock)) {
+            LOG_ERROR("Unable to set insert point because basicBlock cannot be inserted into the current function.");
+            return false;
+        }
+        return moveCurrentSymbolTableToNewBlock(basicBlock);
     }
 
     bool Context::insertSymbol(const std::string& name, const Symbol& symbol) {
@@ -115,19 +119,6 @@ namespace mcs {
         return blocks_.back()->checkExist(name);
     }
 
-    Symbol Context::getSymbol(const std::string& name) const {
-        for (auto it = blocks_.crbegin(); it != blocks_.crend(); it++) {
-            if (*it == nullptr) {
-                LOG_ERROR("Unable to get symbol because *it is nullptr.");
-                return Symbol();
-            }
-            if ((*it)->checkExist(name)) {
-                return (*it)->getSymbol(name);
-            }
-        }
-        return Symbol();
-    }
-
     llvm::Type* Context::getReturnTypeOfCurrentFunction() const {
         const auto function = getCurrentFunction();
         if (function == nullptr) {
@@ -135,5 +126,42 @@ namespace mcs {
             return nullptr;
         }
         return function->getReturnType();
+    }
+
+    bool Context::getSymbol(const std::string& name, Symbol& symbol) const {
+        for (auto it = blocks_.crbegin(); it != blocks_.crend(); it++) {
+            if (*it == nullptr) {
+                LOG_ERROR("Unable to get symbol because *it is nullptr.");
+                return false;
+            }
+            if ((*it)->checkExist(name)) {
+                symbol = (*it)->getSymbol(name);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool Context::moveCurrentSymbolTableToNewBlock(llvm::BasicBlock* basicBlock) {
+        if (blocks_.empty()) {
+            LOG_ERROR("Unable to move current symbol table to a new block because blocks_ is empty.");
+            return false;
+        }
+        if (blocks_.back() == nullptr) {
+            LOG_ERROR("Unable to move current symbol table to a new block because blocks_.back() is nullptr.");
+            return false;
+        }
+        blocks_.back() = std::make_unique<CodeBlock>(basicBlock, blocks_.back()->getSymbolTable());
+        return true;
+    }
+
+    bool Context::insertBlockIntoCurrentFunction(llvm::BasicBlock* basicBlock) const {
+        const auto function = getCurrentFunction();
+        if (function == nullptr) {
+            LOG_ERROR("Unable to insert a block into the current function because function is nullptr.");
+            return false;
+        }
+        function->insert(function->end(), basicBlock);
+        return true;
     }
 }

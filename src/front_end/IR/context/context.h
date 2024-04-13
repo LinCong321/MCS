@@ -1,10 +1,9 @@
 #pragma once
 
 #include "IR/scope/scope.h"
-#include "IR/code_block/code_block.h"
-
 #include "llvm/IR/Module.h"
 #include "llvm/IR/LLVMContext.h"
+#include "IR/code_block/code_block.h"
 
 namespace mcs {
     class Context {
@@ -17,6 +16,7 @@ namespace mcs {
         bool clearInsertionPoint();
         llvm::LLVMContext& getContext();
         void pushBlock(llvm::BasicBlock* basicBlock);
+        bool insertBlock(llvm::BasicBlock* basicBlock);
         bool setInsertPoint(llvm::BasicBlock* basicBlock);
         bool insertSymbol(const std::string& name, const Symbol& symbol);
 
@@ -26,8 +26,12 @@ namespace mcs {
         llvm::Function* getCurrentFunction() const;
         std::string getCurrentFunctionName() const;
         bool findSymbol(const std::string& name) const;
-        Symbol getSymbol(const std::string& name) const;
         llvm::Type* getReturnTypeOfCurrentFunction() const;
+        bool getSymbol(const std::string& name, Symbol& symbol) const;
+
+    private:
+        bool moveCurrentSymbolTableToNewBlock(llvm::BasicBlock* basicBlock);
+        bool insertBlockIntoCurrentFunction(llvm::BasicBlock* basicBlock) const;
 
     private:
         Context() : context_(), module_("main", context_), blocks_() {}

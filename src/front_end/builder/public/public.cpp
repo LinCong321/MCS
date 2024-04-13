@@ -28,12 +28,6 @@ namespace mcs {
         return getLLVMType(getTypeOf(str));
     }
 
-    // ----------------------------------------get pointer type----------------------------------------
-
-    llvm::PointerType* getPointerType(llvm::Type* type) {
-        return llvm::PointerType::get(type, 0);
-    }
-
     // ----------------------------------------get casted value----------------------------------------
 
     llvm::Value* castToBool(llvm::Value* value) {

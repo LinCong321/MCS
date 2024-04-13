@@ -1,6 +1,4 @@
 #include "code_block.h"
-
-#include <memory>
 #include "utils/logger.h"
 #include "llvm/IR/Function.h"
 

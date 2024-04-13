@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AST/exp/exp.h"
+#include "llvm/IR/BasicBlock.h"
 
 namespace mcs {
     class LogicExp : public Exp {
@@ -12,12 +13,15 @@ namespace mcs {
         llvm::Value* codeGen() const override;
 
     private:
-        bool checkAllMemberPointers() const;
-        llvm::Value* createOrOperation() const;
-        llvm::Value* createAndOperation() const;
-        llvm::Value* createLogicalOperation() const;
+        using PhiNode = std::pair<llvm::Value*, llvm::BasicBlock*>;
 
-    protected:
+    private:
+        bool checkAllMemberPointers() const;
+        static llvm::PHINode* createPHINode(const std::vector<PhiNode>& nodes);
+        PhiNode getLhsNode(llvm::BasicBlock* branchBlock, llvm::BasicBlock* mergeBlock) const;
+        PhiNode getRhsNode(llvm::BasicBlock* branchBlock, llvm::BasicBlock* mergeBlock) const;
+
+    private:
         std::unique_ptr<Node>   lhs_;
         char                    op_;
         std::unique_ptr<Node>   rhs_;

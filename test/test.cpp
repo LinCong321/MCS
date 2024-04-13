@@ -5,7 +5,7 @@ int y = 2 * x + 3;
 
 int f() {
     int a = 3;
-    if (!x != !y) {
+    if (a && x || y) {
         y = y + 1;
     } else {
         y = y - 1;

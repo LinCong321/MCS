@@ -1,12 +1,10 @@
 #include "start.h"
-
 #include "utils/logger.h"
+#include "llvm/IR/Constants.h"
 #include "IR/context/context.h"
 #include "builder/public/public.h"
 #include "builder/constant/constant.h"
 #include "builder/function/function.h"
-
-#include "llvm/IR/Constants.h"
 
 namespace {
     const auto MAX_PRIORITY = 65535;
@@ -51,7 +49,7 @@ namespace mcs {
             return false;
         }
 
-        const auto elements = std::vector<llvm::Type*>({getLLVMType(Type::INT), getPointerType(function->getType())});
+        std::vector<llvm::Type*> elements = {getLLVMType(Type::INT), llvm::PointerType::get(function->getType(), 0)};
         const auto structType       = llvm::StructType::get(Context::getInstance().getContext(), elements);
         const auto arrayType        = llvm::ArrayType::get(structType, 1);
         const auto constantStruct   = llvm::ConstantStruct::get(structType, getInt32(MAX_PRIORITY), function);

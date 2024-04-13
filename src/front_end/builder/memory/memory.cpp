@@ -14,7 +14,11 @@ namespace mcs {
     // ----------------------------------------create load inst----------------------------------------
 
     llvm::Instruction* createLoadInst(const std::string& id) {
-        const auto symbol = Context::getInstance().getSymbol(id);
+        Symbol symbol;
+        if (!Context::getInstance().getSymbol(id, symbol)) {
+            LOG_ERROR("The load instruction cannot be created because getting symbol \"", id, "\" failed.");
+            return nullptr;
+        }
         return new llvm::LoadInst(symbol.getType(), symbol.getValue(), "", Context::getInstance().getInsertBlock());
     }
 
@@ -25,9 +29,10 @@ namespace mcs {
     }
 
     llvm::Instruction* createStoreInst(llvm::Value* value, const std::string& id) {
-        const auto symbol = Context::getInstance().getSymbol(id);
-        if (symbol.isConstant()) {
-            LOG_ERROR("Unable to create store inst because symbol \"", id, "\" is a constant.");
+        Symbol symbol;
+        if (!Context::getInstance().getSymbol(id, symbol) || symbol.isConstant()) {
+            LOG_ERROR("The store instruction cannot be created because getting symbol \"", id,
+                      "\" failed or it is a constant.");
             return nullptr;
         }
         return createStoreInst(getCastedValue(value, symbol.getType()), symbol.getValue());

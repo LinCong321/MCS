@@ -1,10 +1,9 @@
 #include "logic_exp.h"
 #include "utils/logger.h"
 #include "IR/context/context.h"
+#include "llvm/IR/Instructions.h"
 #include "builder/public/public.h"
 #include "builder/constant/constant.h"
-
-#include "llvm/IR/Instructions.h"
 
 namespace mcs {
     llvm::Value* LogicExp::codeGen() const {
@@ -12,7 +11,16 @@ namespace mcs {
             LOG_ERROR("Unable to generate code because there is a nullptr in member pointers.");
             return nullptr;
         }
-        return createLogicalOperation();
+
+        const auto branchBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
+        const auto mergeBlock  = llvm::BasicBlock::Create(Context::getInstance().getContext());
+
+        std::vector<PhiNode> nodes;
+        nodes.emplace_back(getLhsNode(branchBlock, mergeBlock));
+        nodes.emplace_back(getRhsNode(branchBlock, mergeBlock));
+
+        Context::getInstance().setInsertPoint(mergeBlock);
+        return createPHINode(nodes);
     }
 
     bool LogicExp::checkAllMemberPointers() const {
@@ -27,37 +35,38 @@ namespace mcs {
         return true;
     }
 
-    llvm::Value* LogicExp::createOrOperation() const {
-        const auto function = Context::getInstance().getCurrentFunction();
-        const auto orBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
-        const auto mergeBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
-        const auto currentBlock = Context::getInstance().getInsertBlock();
-        llvm::BranchInst::Create(mergeBlock, orBlock, getCastedValue(lhs_->codeGen(), Type::BOOL), currentBlock);
-        Context::getInstance().pushBlock(orBlock);
-        function->insert(function->end(), orBlock);
-        const auto rhs = getCastedValue(rhs_->codeGen(), Type::BOOL);
-        llvm::BranchInst::Create(mergeBlock, orBlock);
-        Context::getInstance().pushBlock(mergeBlock);
-        function->insert(function->end(), mergeBlock);
-        const auto phiNode = llvm::PHINode::Create(getLLVMType(Type::BOOL), 2, "", mergeBlock);
-        phiNode->addIncoming(getBool(true), currentBlock);
-        phiNode->addIncoming(rhs, orBlock);
+    llvm::PHINode* LogicExp::createPHINode(const std::vector<PhiNode>& nodes) {
+        const auto phiNode = llvm::PHINode::Create(getLLVMType(Type::BOOL), nodes.size(), "",
+                                                   Context::getInstance().getInsertBlock());
+        if (phiNode == nullptr) {
+            LOG_ERROR("Unable to create PHINode because phiNode is nullptr.");
+            return nullptr;
+        }
+        for (const auto& node : nodes) {
+            phiNode->addIncoming(node.first, node.second);
+        }
         return phiNode;
     }
 
-    llvm::Value* LogicExp::createAndOperation() const {
-        return nullptr;
-    }
-
-    llvm::Value* LogicExp::createLogicalOperation() const {
+    LogicExp::PhiNode LogicExp::getLhsNode(llvm::BasicBlock* branchBlock, llvm::BasicBlock* mergeBlock) const {
+        const auto lhs = getCastedValue(lhs_->codeGen(), Type::BOOL);
         switch (op_) {
             case '|':
-                return createOrOperation();
+                llvm::BranchInst::Create(mergeBlock, branchBlock, lhs, Context::getInstance().getInsertBlock());
+                return std::make_pair(getBool(true), Context::getInstance().getInsertBlock());
             case '&':
-                return createAndOperation();
+                llvm::BranchInst::Create(branchBlock, mergeBlock, lhs, Context::getInstance().getInsertBlock());
+                return std::make_pair(getBool(false), Context::getInstance().getInsertBlock());
             default:
-                LOG_ERROR("Unable to generate code because there are not enough cases in switch.");
-                return nullptr;
+                LOG_ERROR("Unable to create branch instruction because there are not enough cases in switch.");
+                return {};
         }
+    }
+
+    LogicExp::PhiNode LogicExp::getRhsNode(llvm::BasicBlock* branchBlock, llvm::BasicBlock* mergeBlock) const {
+        Context::getInstance().setInsertPoint(branchBlock);
+        const auto rhs = getCastedValue(rhs_->codeGen(), Type::BOOL);
+        llvm::BranchInst::Create(mergeBlock, Context::getInstance().getInsertBlock());
+        return std::make_pair(rhs, Context::getInstance().getInsertBlock());
     }
 }

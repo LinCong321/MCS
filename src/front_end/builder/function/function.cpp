@@ -30,7 +30,7 @@ namespace mcs {
     llvm::Instruction* createReturnInst(llvm::Value* value) {
         const auto type = Context::getInstance().getReturnTypeOfCurrentFunction();
         if (type == nullptr) {
-            LOG_ERROR("Unable to create return inst because type is nullptr.");
+            LOG_ERROR("Cannot create return instruction because type is nullptr.");
             return nullptr;
         }
         return type->isVoidTy() ? createVoidReturnInst(value) : createNonVoidReturnInst(value, type);
