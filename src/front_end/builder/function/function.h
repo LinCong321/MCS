@@ -4,6 +4,8 @@
 #include "llvm/IR/Function.h"
 
 namespace mcs {
+    llvm::Instruction* createReturnInst(llvm::Value* value = nullptr);
+
     llvm::Function* getFunction(Type retType, const std::string& name, const std::vector<llvm::Type*>& params = {});
     llvm::Function* getFunction(llvm::Type* retType, const std::string& name,
                                 const std::vector<llvm::Type*>& params = {});

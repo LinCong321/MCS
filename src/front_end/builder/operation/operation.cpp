@@ -23,6 +23,24 @@ namespace {
         {'*',   llvm::Instruction::FMul},
         {'/',   llvm::Instruction::FDiv},
     };
+
+    const std::unordered_map<std::string, llvm::CmpInst::Predicate> str2IPred = {
+        {"==",  llvm::CmpInst::ICMP_EQ},
+        {"!=",  llvm::CmpInst::ICMP_NE},
+        {"<",   llvm::CmpInst::ICMP_SLT},
+        {">",   llvm::CmpInst::ICMP_SGT},
+        {"<=",  llvm::CmpInst::ICMP_SLE},
+        {">=",  llvm::CmpInst::ICMP_SGE},
+    };
+
+    const std::unordered_map<std::string, llvm::CmpInst::Predicate> str2FPred = {
+        {"==",  llvm::CmpInst::FCMP_OEQ},
+        {"!=",  llvm::CmpInst::FCMP_ONE},
+        {"<",   llvm::CmpInst::FCMP_OLT},
+        {">",   llvm::CmpInst::FCMP_OGT},
+        {"<=",  llvm::CmpInst::FCMP_OLE},
+        {">=",  llvm::CmpInst::FCMP_OGE},
+    };
 }
 
 namespace mcs {
@@ -35,9 +53,9 @@ namespace mcs {
     llvm::Value* createNegativeOperation(llvm::Value* value) {
         switch (getTypeOf(value)) {
             case Type::INT:
-                return createArithmeticOperation(getNullValue(value), '-', value);
+                return createBinaryOperation(getNullValue(value), '-', value);
             case Type::FLOAT:
-                return llvm::UnaryOperator::Create(llvm::Instruction::FNeg, value, "",
+                return llvm::UnaryOperator::Create(llvm::Instruction::FNeg, value, emptyString,
                                                    Context::getInstance().getInsertBlock());
             default:
                 LOG_ERROR("Unable to create negative operation because there are not enough cases in switch.");
@@ -46,7 +64,7 @@ namespace mcs {
     }
 
     llvm::Value* createNotOperation(llvm::Value* value) {
-        return llvm::BinaryOperator::CreateXor(getCastedValue(value, Type::BOOL), getBool(true), "",
+        return llvm::BinaryOperator::CreateXor(getCastedValue(value, Type::BOOL), getBool(true), emptyString,
                                                Context::getInstance().getInsertBlock());
     }
 
@@ -67,9 +85,9 @@ namespace mcs {
         return it->second(value);
     }
 
-    // ----------------------------------------create arithmetic operation----------------------------------------
+    // ----------------------------------------create binary operation----------------------------------------
 
-    llvm::Instruction::BinaryOps getOperator(char op, Type type) {
+    llvm::Instruction::BinaryOps getBinaryOperator(char op, Type type) {
         static const std::unordered_map<Type, std::unordered_map<char, llvm::Instruction::BinaryOps>> type2Map = {
             {Type::INT,     char2SOp},
             {Type::FLOAT,   char2FOp},
@@ -77,32 +95,77 @@ namespace mcs {
 
         const auto opMap = type2Map.find(type);
         if (opMap == type2Map.end()) {
-            LOG_ERROR("Unable to create operation because the given type (aka ", type, ") is not in type2Map table.");
+            LOG_ERROR("Unable to get binary operator because the given type (aka ", type,
+                      ") is not in type2Map table.");
             return {};
         }
 
         const auto it = opMap->second.find(op);
         if (it == opMap->second.end()) {
-            LOG_ERROR("Unable to create operation because operator \"", op, "\" does not apply to ", type, ".");
+            LOG_ERROR("Unable to get binary operator because operator \"", op, "\" does not work with ", type, ".");
             return {};
         }
 
         return it->second;
     }
 
-    llvm::Value* createArithmeticOperation(llvm::Value* lhs, char op, llvm::Value* rhs) {
+    llvm::Value* createICmpInst(llvm::Value* lhs, const std::string& op, llvm::Value* rhs) {
+        const auto insertBlock = Context::getInstance().getInsertBlock();
+        if (insertBlock == nullptr) {
+            LOG_ERROR("Unable to create ICmp inst because insertBlock is nullptr.");
+            return nullptr;
+        }
+
+        const auto it = str2IPred.find(op);
+        if (it == str2IPred.end()) {
+            LOG_ERROR("Unable to create icmp inst because the given op (aka \"", op, "\") is not in str2IPred table.");
+            return nullptr;
+        }
+
+        return new llvm::ICmpInst(*insertBlock, it->second, lhs, rhs);
+    }
+
+    llvm::Value* createFCmpInst(llvm::Value* lhs, const std::string& op, llvm::Value* rhs) {
+        const auto insertBlock = Context::getInstance().getInsertBlock();
+        if (insertBlock == nullptr) {
+            LOG_ERROR("Unable to create FCmp inst because insertBlock is nullptr.");
+            return nullptr;
+        }
+
+        const auto it = str2FPred.find(op);
+        if (it == str2FPred.end()) {
+            LOG_ERROR("Unable to create FCmp inst because the given op (aka \"", op, "\") is not in str2FPred table.");
+            return nullptr;
+        }
+
+        return new llvm::FCmpInst(*insertBlock, it->second, lhs, rhs);
+    }
+
+    llvm::Value* createBinaryOperation(llvm::Value* lhs, char op, llvm::Value* rhs) {
         const auto targetType = std::max(getTypeOf(lhs), getTypeOf(rhs));
 
-        return llvm::BinaryOperator::Create(getOperator(op, targetType),
+        return llvm::BinaryOperator::Create(getBinaryOperator(op, targetType),
                                             getCastedValue(lhs, targetType),
                                             getCastedValue(rhs, targetType),
                                             emptyString,
                                             Context::getInstance().getInsertBlock());
     }
 
-    // ----------------------------------------create relational operation----------------------------------------
+    llvm::Value* createBinaryOperation(llvm::Value* lhs, const std::string& op, llvm::Value* rhs) {
+        using Function = std::function<llvm::Value*(llvm::Value*, const std::string&, llvm::Value*)>;
+        static const std::unordered_map<Type, Function> type2Func = {
+            {Type::INT,     createICmpInst},
+            {Type::FLOAT,   createFCmpInst},
+        };
 
-    llvm::Value* createRelationalOperation(llvm::Value* lhs, const std::string& op, llvm::Value* rhs) {
-        return nullptr;
+        const auto targetType = std::max(getTypeOf(lhs), getTypeOf(rhs));
+        const auto it = type2Func.find(targetType);
+        if (it == type2Func.end()) {
+            LOG_ERROR("Unable to create binary operation because target type (aka ", targetType,
+                      ") is not in type2Func table.");
+            return nullptr;
+        }
+
+        return it->second(getCastedValue(lhs, targetType), op, getCastedValue(rhs, targetType));
     }
 }

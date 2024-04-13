@@ -2,6 +2,7 @@
 #include "utils/logger.h"
 #include "constant/constant.h"
 #include "IR/context/context.h"
+#include "operation/operation.h"
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
@@ -35,32 +36,14 @@ namespace mcs {
 
     // ----------------------------------------get casted value----------------------------------------
 
-    llvm::Instruction* compareWithInt(llvm::Value* lhs, llvm::Value* rhs) {
-        const auto block = Context::getInstance().getInsertBlock();
-        if (block == nullptr) {
-            LOG_ERROR("Cannot be compared with int because block is nullptr.");
-            return nullptr;
-        }
-        return new llvm::ICmpInst(*block, llvm::ICmpInst::ICMP_NE, lhs, rhs, "");
-    }
-
-    llvm::Instruction* compareWithFloat(llvm::Value* lhs, llvm::Value* rhs) {
-        const auto block = Context::getInstance().getInsertBlock();
-        if (block == nullptr) {
-            LOG_ERROR("Cannot be compared with float because block is nullptr.");
-            return nullptr;
-        }
-        return new llvm::FCmpInst(*block, llvm::FCmpInst::FCMP_UNE, lhs, rhs, "");
-    }
-
     llvm::Value* castToBool(llvm::Value* value) {
         switch (getTypeOf(value)) {
             case Type::BOOL:
                 return value;
             case Type::INT:
-                return compareWithInt(value, getInt32(0));
+                return createBinaryOperation(value, "!=", getInt32(0));
             case Type::FLOAT:
-                return compareWithFloat(value, getFloat(0));
+                return createBinaryOperation(value, "!=", getFloat(0));
             default:
                 LOG_ERROR("Cannot cast to bool because there are not enough cases in switch.");
                 return nullptr;

@@ -1,4 +1,4 @@
-#include "instruction.h"
+#include "memory.h"
 #include "utils/logger.h"
 #include "public/public.h"
 #include "constant/constant.h"
@@ -18,36 +18,6 @@ namespace mcs {
     llvm::Instruction* createLoadInst(const std::string& id) {
         const auto symbol = Context::getInstance().getSymbol(id);
         return new llvm::LoadInst(symbol.getType(), symbol.getValue(), "", Context::getInstance().getInsertBlock());
-    }
-
-    // ----------------------------------------create return inst----------------------------------------
-
-    llvm::ReturnInst* getVoidReturnInst(llvm::Value* value) {
-        if (value != nullptr) {
-            LOG_ERROR("Void function ", Context::getInstance().getCurrentFunctionName(),
-                      "() should not return a value.");
-            return nullptr;
-        }
-        return llvm::ReturnInst::Create(Context::getInstance().getContext(), Context::getInstance().getInsertBlock());
-    }
-
-    llvm::ReturnInst* getNonVoidReturnInst(llvm::Value* value, llvm::Type* type) {
-        if (value == nullptr) {
-            LOG_WARN("Non-void function ", Context::getInstance().getCurrentFunctionName(),
-                     "() does not return a value.");
-            value = getNullValue(type);
-        }
-        return llvm::ReturnInst::Create(Context::getInstance().getContext(), getCastedValue(value, type),
-                                        Context::getInstance().getInsertBlock());
-    }
-
-    llvm::Instruction* createReturnInst(llvm::Value* value) {
-        const auto type = Context::getInstance().getReturnTypeOfCurrentFunction();
-        if (type == nullptr) {
-            LOG_ERROR("Unable to create return inst because type is nullptr.");
-            return nullptr;
-        }
-        return type->isVoidTy() ? getVoidReturnInst(value) : getNonVoidReturnInst(value, type);
     }
 
     // ----------------------------------------create store inst----------------------------------------

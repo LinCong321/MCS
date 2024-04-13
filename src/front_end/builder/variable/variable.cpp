@@ -1,7 +1,7 @@
 #include "variable.h"
 #include "utils/logger.h"
 #include "public/public.h"
-#include "instruction/instruction.h"
+#include "memory/memory.h"
 #include "constant/constant.h"
 #include "IR/context/context.h"
 

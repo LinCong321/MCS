@@ -2,7 +2,7 @@ set (
         SOURCE_FILES
         constant/constant.cpp
         function/function.cpp
-        instruction/instruction.cpp
+        memory/memory.cpp
         operation/operation.cpp
         public/public.cpp
         variable/variable.cpp

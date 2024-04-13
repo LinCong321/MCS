@@ -3,7 +3,7 @@
 namespace mcs {
     class CodeBlock {
     public:
-        explicit CodeBlock(llvm::BasicBlock* basicBlock, std::unique_ptr<SymbolTable> symbolTable);
+        explicit CodeBlock(llvm::BasicBlock* basicBlock, std::unique_ptr<SymbolTable> symbolTable = nullptr);
         ~CodeBlock() = default;
 
     public:

@@ -8,7 +8,9 @@ namespace mcs {
             LOG_ERROR("Unable to generate code because there is a nullptr in member pointers.");
             return nullptr;
         }
-        return createArithmeticOperation(lhs_->codeGen(), op_, rhs_->codeGen());
+        const auto lhs = lhs_->codeGen();
+        const auto rhs = rhs_->codeGen();
+        return createBinaryOperation(lhs, op_, rhs);
     }
 
     bool ArithExp::checkAllMemberPointers() const {

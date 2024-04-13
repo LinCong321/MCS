@@ -1,6 +1,6 @@
 #include "var_exp.h"
 #include "utils/logger.h"
-#include "builder/instruction/instruction.h"
+#include "builder/memory/memory.h"
 
 namespace mcs {
     llvm::Value* VarExp::codeGen() const {
