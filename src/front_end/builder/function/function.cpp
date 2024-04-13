@@ -27,13 +27,15 @@ namespace mcs {
                                         Context::getInstance().getInsertBlock());
     }
 
-    llvm::Instruction* createReturnInst(llvm::Value* value) {
+    llvm::Value* createReturnInst(llvm::Value* value) {
         const auto type = Context::getInstance().getReturnTypeOfCurrentFunction();
         if (type == nullptr) {
             LOG_ERROR("Cannot create return instruction because type is nullptr.");
             return nullptr;
         }
-        return type->isVoidTy() ? createVoidReturnInst(value) : createNonVoidReturnInst(value, type);
+        const auto returnInst = type->isVoidTy() ? createVoidReturnInst(value) : createNonVoidReturnInst(value, type);
+        Context::getInstance().clearInsertionPoint();
+        return returnInst;
     }
 
     // --------------------------------------------get function--------------------------------------------

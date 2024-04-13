@@ -24,7 +24,7 @@ namespace mcs {
     llvm::Value* getGlobalVariable(llvm::Type* type, const std::string& id, llvm::Value* value) {
         const auto variable = new llvm::GlobalVariable(Context::getInstance().getModule(), type, false,
                                                        llvm::GlobalVariable::LinkageTypes::InternalLinkage,
-                                                       getConstant(value, type), id);
+                                                       getConstantValue(value, type), id);
 
         if (value != nullptr && !llvm::isa<llvm::Constant>(value)) {
             createStoreInst(getCastedValue(value, type), variable);

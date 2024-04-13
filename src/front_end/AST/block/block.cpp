@@ -1,5 +1,6 @@
 #include "block.h"
 #include "utils/logger.h"
+#include "IR/context/context.h"
 
 namespace mcs {
     BlockItem::BlockItem(Node* node) : items_() {
@@ -11,6 +12,10 @@ namespace mcs {
             if (item == nullptr) {
                 LOG_ERROR("Unable to generate code because there is a nullptr in items_.");
                 return nullptr;
+            }
+            if (Context::getInstance().getInsertBlock() == nullptr) {
+                LOG_WARN("This item is discarded because the function has returned.");
+                continue;
             }
             item->codeGen();
         }

@@ -3,21 +3,8 @@
 #include "llvm/IR/Function.h"
 
 namespace mcs {
-    CodeBlock::CodeBlock(llvm::BasicBlock* basicBlock, std::unique_ptr<SymbolTable> symbolTable)
-        : basicBlock_(basicBlock), symbolTable_(nullptr) {
-        if (symbolTable == nullptr) {
-            symbolTable_ = std::make_unique<SymbolTable>();
-        } else {
-            symbolTable_ = std::move(symbolTable);
-        }
-    }
-
-    void CodeBlock::clearBasicBlock() {
-        basicBlock_ = nullptr;
-    }
-
-    std::unique_ptr<SymbolTable> CodeBlock::getSymbolTable() {
-        return std::move(symbolTable_);
+    void CodeBlock::setBasicBlock(llvm::BasicBlock* basicBlock) {
+        basicBlock_ = basicBlock;
     }
 
     bool CodeBlock::insertSymbol(const std::string& name, const Symbol& symbol) {

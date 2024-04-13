@@ -11,7 +11,7 @@ namespace mcs {
 
         Context::getInstance().pushBlock(Context::getInstance().getInsertBlock());
         block_->codeGen();
-        Context::getInstance().popBlock();
+        Context::getInstance().overwriteBlock();
 
         return nullptr;
     }

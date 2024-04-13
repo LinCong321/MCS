@@ -11,26 +11,33 @@ namespace mcs {
         static Context& getInstance();
 
     public:
-        bool popBlock();
         llvm::Module& getModule();
-        bool clearInsertionPoint();
         llvm::LLVMContext& getContext();
+
+    public:
+        bool popBlock();
+        bool overwriteBlock();
         void pushBlock(llvm::BasicBlock* basicBlock);
         bool insertBlock(llvm::BasicBlock* basicBlock);
+
+    public:
+        bool clearInsertionPoint();
+        llvm::BasicBlock* getInsertBlock() const;
         bool setInsertPoint(llvm::BasicBlock* basicBlock);
-        bool insertSymbol(const std::string& name, const Symbol& symbol);
 
     public:
         Scope getCurrentScope() const;
-        llvm::BasicBlock* getInsertBlock() const;
-        llvm::Function* getCurrentFunction() const;
         std::string getCurrentFunctionName() const;
-        bool findSymbol(const std::string& name) const;
         llvm::Type* getReturnTypeOfCurrentFunction() const;
+
+    public:
+        bool findSymbol(const std::string& name) const;
         bool getSymbol(const std::string& name, Symbol& symbol) const;
+        bool insertSymbol(const std::string& name, const Symbol& symbol);
 
     private:
-        bool moveCurrentSymbolTableToNewBlock(llvm::BasicBlock* basicBlock);
+        llvm::Function* getCurrentFunction() const;
+        bool setCurrentBasicBlock(llvm::BasicBlock* basicBlock);
         bool insertBlockIntoCurrentFunction(llvm::BasicBlock* basicBlock) const;
 
     private:

@@ -76,14 +76,14 @@ namespace mcs {
         }
     }
 
-    llvm::Constant* getConstant(const llvm::Value* value, llvm::Type* type) {
+    llvm::Constant* getConstantValue(const llvm::Value* value, llvm::Type* type) {
         static const std::unordered_map<Type, std::function<llvm::Constant*(const llvm::Value*)>> type2Func = {
             {Type::INT,     castToConstantInt},
             {Type::FLOAT,   castToConstantFloat},
         };
 
         if (value == nullptr || !llvm::isa<llvm::Constant>(value)) {
-            LOG_INFO("Return a null value from LLVM because the source value is nullptr or not a constant.");
+            LOG_INFO("Returns a null value because the source value is nullptr or is not a constant.");
             return getNullValue(type);
         }
 

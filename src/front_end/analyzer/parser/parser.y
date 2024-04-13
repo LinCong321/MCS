@@ -130,7 +130,7 @@ PrimaryExp      :   '(' Exp ')' { $$ = $2; }
 Exp             :   AddExp  { $$ = $1; }
                 ;
 
-LVal            :   IDENTIFIER  { $$ =  new mcs::LValue($1); }
+LVal            :   IDENTIFIER  { $$ = new mcs::LValue($1); }
                 ;
 
 Number          :   INT_CONST   { $$ = new mcs::IntNum($1); }
