@@ -3,6 +3,7 @@
 #include "IR/scope/scope.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/LLVMContext.h"
+#include "IR/loop_info/loop_info.h"
 #include "IR/code_block/code_block.h"
 
 namespace mcs {
@@ -26,6 +27,11 @@ namespace mcs {
         bool setInsertPoint(llvm::BasicBlock* basicBlock);
 
     public:
+        bool popLoopInfo();
+        void pushLoopInfo(const LoopInfo& loopInfo);
+        bool getCurrentLoopInfo(LoopInfo& loopInfo) const;
+
+    public:
         Scope getCurrentScope() const;
         std::string getCurrentFunctionName() const;
         llvm::Type* getReturnTypeOfCurrentFunction() const;
@@ -41,12 +47,13 @@ namespace mcs {
         bool insertBlockIntoCurrentFunction(llvm::BasicBlock* basicBlock) const;
 
     private:
-        Context() : context_(), module_("main", context_), blocks_() {}
+        Context() : context_(), module_("main", context_), blocks_(), loopInfo_() {}
         ~Context() = default;
 
     private:
         llvm::LLVMContext                       context_;
         llvm::Module                            module_;
         std::vector<std::unique_ptr<CodeBlock>> blocks_;
+        std::vector<LoopInfo>                   loopInfo_;
     };
 }

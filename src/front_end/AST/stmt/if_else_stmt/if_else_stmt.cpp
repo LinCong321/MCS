@@ -40,10 +40,10 @@ namespace mcs {
     }
 
     llvm::Value* IfElseStmt::createBranch(llvm::BasicBlock* trueBlock, llvm::BasicBlock* falseBlock) const {
-        if (elseStmt_ != nullptr) {
-            createBranchWithElse(trueBlock, falseBlock);
-        } else {
+        if (elseStmt_ == nullptr) {
             createBranchWithoutElse(trueBlock, falseBlock);
+        } else {
+            createBranchWithElse(trueBlock, falseBlock);
         }
         return nullptr;
     }
@@ -51,7 +51,7 @@ namespace mcs {
     bool IfElseStmt::createThenBranch(llvm::BasicBlock* elseBlock, llvm::BasicBlock* mergeBlock) const {
         Context::getInstance().insertBlock(elseBlock);
         thenStmt_->codeGen();
-        bool result = createBranchInst(elseBlock, mergeBlock);
+        const auto result = createBranchInst(elseBlock, mergeBlock);
         Context::getInstance().popBlock();
         return result;
     }
@@ -59,7 +59,7 @@ namespace mcs {
     bool IfElseStmt::createElseBranch(llvm::BasicBlock* thenBlock, llvm::BasicBlock* mergeBlock) const {
         Context::getInstance().insertBlock(thenBlock);
         elseStmt_->codeGen();
-        bool result = createBranchInst(thenBlock, mergeBlock);
+        const auto result = createBranchInst(thenBlock, mergeBlock);
         Context::getInstance().popBlock();
         return result;
     }
@@ -68,7 +68,8 @@ namespace mcs {
         const auto mergeBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto thenBranch = createThenBranch(thenBlock, mergeBlock);
         const auto elseBranch = createElseBranch(elseBlock, mergeBlock);
-        if (thenBranch | elseBranch) {
+
+        if (thenBranch || elseBranch) {
             Context::getInstance().setInsertPoint(mergeBlock);
         } else {
             Context::getInstance().clearInsertionPoint();

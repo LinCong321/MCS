@@ -13,9 +13,12 @@ set(
         start/start.cpp
         stmt/assign_stmt/assign_stmt.cpp
         stmt/block_stmt/block_stmt.cpp
+        stmt/break_stmt/break_stmt.cpp
+        stmt/continue_stmt/continue_stmt.cpp
         stmt/if_else_stmt/if_else_stmt.cpp
         stmt/null_stmt/null_stmt.cpp
         stmt/ret_stmt/ret_stmt.cpp
+        stmt/while_stmt/while_stmt.cpp
         var/var_def.cpp
         var/var_def_list.cpp
 )

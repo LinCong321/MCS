@@ -167,7 +167,8 @@ FuncDef         :   BType IDENTIFIER '(' ')' Block  { $$ = new mcs::FuncDef($1, 
                 |   VOID IDENTIFIER '(' ')' Block   { $$ = new mcs::FuncDef(new std::string("void"), $2, $5); }
                 ;
 
-Block           :   '{' BlockItem '}'   { $$ = $2; }
+Block           :   '{' '}'             { $$ = new mcs::BlockItem();}
+                |   '{' BlockItem '}'   { $$ = $2; }
                 ;
 
 BlockItem       :   Decl { $$ = new mcs::BlockItem($1); }
@@ -191,12 +192,15 @@ BlockItem       :   Decl { $$ = new mcs::BlockItem($1); }
 Stmt            :   BStmt                               { $$ = $1; }
                 |   IF '(' Cond ')' Stmt                { $$ = new mcs::IfElseStmt($3, $5); }
                 |   IF '(' Cond ')' WithElse ELSE Stmt  { $$ = new mcs::IfElseStmt($3, $5, $7); }
+                |   WHILE '(' Cond ')' Stmt             { $$ = new mcs::WhileStmt($3, $5); }
                 ;
 
 BStmt           :   LVal '=' Exp ';'    { $$ = new mcs::AssignStmt($1, $3); }
                 |   ';'                 { $$ = new mcs::NullStmt(); }
                 |   Exp ';'             { $$ = $1; }
                 |   Block               { $$ = new mcs::BlockStmt($1); }
+                |   BREAK ';'           { $$ = new mcs::BreakStmt(); }
+                |   CONTINUE ';'        { $$ = new mcs::ContinueStmt(); }
                 |   RETURN ';'          { $$ = new mcs::RetStmt(); }
                 |   RETURN Exp ';'      { $$ = new mcs::RetStmt($2); }
                 ;
@@ -225,6 +229,7 @@ RelExp          :   AddExp              { $$ = $1; }
                 ;
 
 WithElse        :   IF '(' Cond ')' WithElse ELSE WithElse  { $$ = new mcs::IfElseStmt($3, $5, $7); }
+                |   WHILE '(' Cond ')' WithElse             { $$ = new mcs::WhileStmt($3, $5); }
                 |   BStmt                                   { $$ = $1; }
                 ;
 

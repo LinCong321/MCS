@@ -7,6 +7,7 @@ namespace mcs {
 
     class BlockItem : public Block {
     public:
+        BlockItem() = default;
         explicit BlockItem(Node* node);
         ~BlockItem() override = default;
 

@@ -14,17 +14,17 @@ namespace mcs {
         if (value == nullptr) {
             LOG_WARN("The local variable \"", id, "\" in function ", Context::getInstance().getCurrentFunctionName(),
                      "() is not assigned an initial value.");
-            return variable;
+        } else {
+            createStoreInst(getCastedValue(value, type), variable);
         }
 
-        createStoreInst(getCastedValue(value, type), variable);
         return variable;
     }
 
     llvm::Value* getGlobalVariable(llvm::Type* type, const std::string& id, llvm::Value* value) {
         const auto variable = new llvm::GlobalVariable(Context::getInstance().getModule(), type, false,
                                                        llvm::GlobalVariable::LinkageTypes::InternalLinkage,
-                                                       getConstantValue(value, type), id);
+                                                       getConstant(value, type), id);
 
         if (value != nullptr && !llvm::isa<llvm::Constant>(value)) {
             createStoreInst(getCastedValue(value, type), variable);

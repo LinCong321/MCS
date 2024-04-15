@@ -58,7 +58,7 @@ namespace mcs {
                 llvm::BranchInst::Create(branchBlock, mergeBlock, lhs, Context::getInstance().getInsertBlock());
                 return std::make_pair(getBool(false), Context::getInstance().getInsertBlock());
             default:
-                LOG_ERROR("Unable to create branch instruction because there are not enough cases in switch.");
+                LOG_ERROR("Unable to get lhs node because there are not enough cases in switch.");
                 return {};
         }
     }

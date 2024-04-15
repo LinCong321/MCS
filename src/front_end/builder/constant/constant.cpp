@@ -76,7 +76,7 @@ namespace mcs {
         }
     }
 
-    llvm::Constant* getConstantValue(const llvm::Value* value, llvm::Type* type) {
+    llvm::Constant* getConstant(const llvm::Value* value, llvm::Type* type) {
         static const std::unordered_map<Type, std::function<llvm::Constant*(const llvm::Value*)>> type2Func = {
             {Type::INT,     castToConstantInt},
             {Type::FLOAT,   castToConstantFloat},

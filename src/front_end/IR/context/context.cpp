@@ -70,6 +70,27 @@ namespace mcs {
         return setCurrentBasicBlock(basicBlock);
     }
 
+    bool Context::popLoopInfo() {
+        if (loopInfo_.empty()) {
+            LOG_ERROR("Unable to pop loop information because loopInfo_ is empty.");
+            return false;
+        }
+        loopInfo_.pop_back();
+        return true;
+    }
+
+    void Context::pushLoopInfo(const LoopInfo& loopInfo) {
+        loopInfo_.emplace_back(loopInfo);
+    }
+
+    bool Context::getCurrentLoopInfo(LoopInfo& loopInfo) const {
+        if (loopInfo_.empty()) {
+            LOG_ERROR("Unable to get current loop information because loopInfo_ is empty.");
+            return false;
+        }
+        loopInfo = loopInfo_.back();
+    }
+
     Scope Context::getCurrentScope() const {
         if (blocks_.empty()) {
             LOG_ERROR("Unable to get current scope because blocks_ is empty.");

@@ -4,6 +4,7 @@ set(
         SOURCE_FILES
         code_block/code_block.cpp
         context/context.cpp
+        loop_info/loop_info.cpp
         scope/scope.cpp
         symbol/symbol.cpp
         symbol_table/symbol_table.cpp
