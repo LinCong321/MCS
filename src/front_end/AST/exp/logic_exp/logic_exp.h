@@ -17,7 +17,6 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
-        llvm::Value* createLogicalOperation() const;
         static llvm::PHINode* createPHINode(const std::vector<PhiNode>& nodes);
         PhiNode getLhsNode(llvm::BasicBlock* branchBlock, llvm::BasicBlock* mergeBlock) const;
         PhiNode getRhsNode(llvm::BasicBlock* branchBlock, llvm::BasicBlock* mergeBlock) const;

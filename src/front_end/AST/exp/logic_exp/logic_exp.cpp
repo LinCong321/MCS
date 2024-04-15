@@ -11,7 +11,16 @@ namespace mcs {
             LOG_ERROR("Unable to generate code because there is a nullptr in member pointers.");
             return nullptr;
         }
-        return createLogicalOperation();
+
+        const auto branchBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
+        const auto mergeBlock  = llvm::BasicBlock::Create(Context::getInstance().getContext());
+
+        std::vector<PhiNode> nodes;
+        nodes.emplace_back(getLhsNode(branchBlock, mergeBlock));
+        nodes.emplace_back(getRhsNode(branchBlock, mergeBlock));
+
+        Context::getInstance().setInsertPoint(mergeBlock);
+        return createPHINode(nodes);
     }
 
     bool LogicExp::checkAllMemberPointers() const {
@@ -24,18 +33,6 @@ namespace mcs {
             return false;
         }
         return true;
-    }
-
-    llvm::Value* LogicExp::createLogicalOperation() const {
-        const auto branchBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
-        const auto mergeBlock  = llvm::BasicBlock::Create(Context::getInstance().getContext());
-
-        std::vector<PhiNode> nodes;
-        nodes.emplace_back(getLhsNode(branchBlock, mergeBlock));
-        nodes.emplace_back(getRhsNode(branchBlock, mergeBlock));
-
-        Context::getInstance().setInsertPoint(mergeBlock);
-        return createPHINode(nodes);
     }
 
     llvm::PHINode* LogicExp::createPHINode(const std::vector<PhiNode>& nodes) {
