@@ -4,13 +4,19 @@ int x = 1;
 int y = 2 * x + 3;
 
 int f() {
-    int a = 3;
-    if (a && x || y) {
-        y = y + 1;
-    } else {
-        y = y - 1;
+    while (x == 1) {
+        if (x > 1) {
+            break;
+        }
+        x = x + 1;
+        if (x <= 1) {
+            continue;
+        } else {
+            x = x + 1;
+        }
+        x = x - 1;
     }
-    return y;
+    return x;
 }
 
 int main() {

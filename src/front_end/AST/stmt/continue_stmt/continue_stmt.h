@@ -10,5 +10,8 @@ namespace mcs {
 
     public:
         llvm::Value* codeGen() const override;
+
+    private:
+        static llvm::Value* createBranchInst(llvm::BasicBlock* basicBlock);
     };
 }

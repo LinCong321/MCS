@@ -1,6 +1,5 @@
 #include "while_stmt.h"
 #include "utils/logger.h"
-#include "IR/type/type.h"
 #include "IR/context/context.h"
 #include "llvm/IR/Instructions.h"
 #include "builder/public/public.h"
@@ -14,9 +13,9 @@ namespace mcs {
 
         const auto bodyBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto nextBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
-        const auto condBlock = getCondBlock(bodyBlock, nextBlock);
+        const auto condBlock = createCondBlock(bodyBlock, nextBlock);
 
-        Context::getInstance().pushLoopInfo(LoopInfo(condBlock, bodyBlock));
+        Context::getInstance().pushLoopInfo(LoopInfo(condBlock, nextBlock));
         createLoopBody(condBlock, bodyBlock);
         Context::getInstance().popLoopInfo();
 
@@ -36,6 +35,13 @@ namespace mcs {
         return true;
     }
 
+    llvm::BasicBlock* WhileStmt::getCondBlock() {
+        const auto condBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
+        llvm::BranchInst::Create(condBlock, Context::getInstance().getInsertBlock());
+        Context::getInstance().setInsertPoint(condBlock);
+        return condBlock;
+    }
+
     void WhileStmt::createLoopBody(llvm::BasicBlock* condBlock, llvm::BasicBlock* bodyBlock) const {
         Context::getInstance().insertBlock(bodyBlock);
         stmt_->codeGen();
@@ -45,10 +51,8 @@ namespace mcs {
         Context::getInstance().popBlock();
     }
 
-    llvm::BasicBlock* WhileStmt::getCondBlock(llvm::BasicBlock* bodyBlock, llvm::BasicBlock* nextBlock) const {
-        const auto condBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
-        llvm::BranchInst::Create(condBlock, Context::getInstance().getInsertBlock());
-        Context::getInstance().setInsertPoint(condBlock);
+    llvm::BasicBlock* WhileStmt::createCondBlock(llvm::BasicBlock* bodyBlock, llvm::BasicBlock* nextBlock) const {
+        const auto condBlock = getCondBlock();
         const auto condition = getCastedValue(cond_->codeGen(), Type::BOOL);
         llvm::BranchInst::Create(bodyBlock, nextBlock, condition, Context::getInstance().getInsertBlock());
         return condBlock;

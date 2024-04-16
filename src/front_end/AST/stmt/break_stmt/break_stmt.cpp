@@ -10,8 +10,11 @@ namespace mcs {
             LOG_ERROR("Unable to generate code because getting loop information failed.");
             return nullptr;
         }
+        return createBranchInst(loopInfo.getBreakBlock());
+    }
 
-        llvm::BranchInst::Create(loopInfo.getBreakBlock(), Context::getInstance().getInsertBlock());
+    llvm::Value* BreakStmt::createBranchInst(llvm::BasicBlock* basicBlock) {
+        llvm::BranchInst::Create(basicBlock, Context::getInstance().getInsertBlock());
         Context::getInstance().clearInsertionPoint();
         return nullptr;
     }

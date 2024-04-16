@@ -14,7 +14,7 @@ namespace mcs {
         const auto trueBlock  = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto falseBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto condition  = getCastedValue(cond_->codeGen(), Type::BOOL);
-        
+
         llvm::BranchInst::Create(trueBlock, falseBlock, condition, Context::getInstance().getInsertBlock());
         return createBranch(trueBlock, falseBlock);
     }

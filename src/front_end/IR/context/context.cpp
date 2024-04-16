@@ -89,6 +89,7 @@ namespace mcs {
             return false;
         }
         loopInfo = loopInfo_.back();
+        return true;
     }
 
     Scope Context::getCurrentScope() const {
