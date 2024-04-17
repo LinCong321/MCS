@@ -15,7 +15,6 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
-        static bool createBranchInst(llvm::BasicBlock* branchBlock, llvm::BasicBlock* mergeBlock);
         llvm::Value* createBranch(llvm::BasicBlock* trueBlock, llvm::BasicBlock* falseBlock) const;
 
     private:

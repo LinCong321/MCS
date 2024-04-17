@@ -1,7 +1,6 @@
 #include "function.h"
 #include "utils/logger.h"
 #include "public/public.h"
-#include "constant/constant.h"
 #include "IR/context/context.h"
 #include "llvm/IR/Instructions.h"
 
@@ -19,9 +18,9 @@ namespace mcs {
 
     llvm::ReturnInst* createNonVoidReturnInst(llvm::Value* value, llvm::Type* type) {
         if (value == nullptr) {
-            LOG_WARN("Non-void function ", Context::getInstance().getCurrentFunctionName(),
+            LOG_ERROR("Non-void function ", Context::getInstance().getCurrentFunctionName(),
                      "() does not return a value.");
-            value = getNullValue(type);
+            return nullptr;
         }
         return llvm::ReturnInst::Create(Context::getInstance().getContext(), getCastedValue(value, type),
                                         Context::getInstance().getInsertBlock());

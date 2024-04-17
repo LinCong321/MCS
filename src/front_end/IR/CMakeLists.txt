@@ -2,8 +2,8 @@ find_package(LLVM REQUIRED CONFIG)
 
 set(
         SOURCE_FILES
-        code_block/code_block.cpp
         context/context.cpp
+        insertion_point/insertion_point.cpp
         loop_info/loop_info.cpp
         scope/scope.cpp
         symbol/symbol.cpp

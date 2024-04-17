@@ -43,12 +43,11 @@ namespace mcs {
     }
 
     void WhileStmt::createLoopBody(llvm::BasicBlock* condBlock, llvm::BasicBlock* bodyBlock) const {
-        Context::getInstance().insertBlock(bodyBlock);
+        Context::getInstance().setInsertPoint(bodyBlock);
         stmt_->codeGen();
         if (Context::getInstance().getInsertBlock() != nullptr) {
             llvm::BranchInst::Create(condBlock, Context::getInstance().getInsertBlock());
         }
-        Context::getInstance().popBlock();
     }
 
     llvm::BasicBlock* WhileStmt::createCondBlock(llvm::BasicBlock* bodyBlock, llvm::BasicBlock* nextBlock) const {
