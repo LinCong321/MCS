@@ -64,7 +64,7 @@ namespace mcs {
     }
 
     llvm::Value* createNotOperation(llvm::Value* value) {
-        return llvm::BinaryOperator::CreateXor(getCastedValue(value, Type::BOOL), getBool(true), emptyString,
+        return llvm::BinaryOperator::CreateXor(getCastedValue(value, Type::BOOL), getConstantBool(true), emptyString,
                                                Context::getInstance().getInsertBlock());
     }
 

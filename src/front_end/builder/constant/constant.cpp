@@ -4,21 +4,21 @@
 #include "llvm/IR/Constants.h"
 
 namespace mcs {
-    // --------------------------------------------get basic type--------------------------------------------
+    // ----------------------------------------get basic type----------------------------------------
 
-    llvm::Constant* getInt32(int value) {
+    llvm::Constant* getConstantInt32(int value) {
         return llvm::ConstantInt::get(getLLVMType(Type::INT), value, true);
     }
 
-    llvm::Constant* getBool(bool value) {
+    llvm::Constant* getConstantBool(bool value) {
         return llvm::ConstantInt::get(getLLVMType(Type::BOOL), value);
     }
 
-    llvm::Constant* getFloat(float value) {
+    llvm::Constant* getConstantFloat(float value) {
         return llvm::ConstantFP::get(getLLVMType(Type::FLOAT), value);
     }
 
-    // --------------------------------------------get null value--------------------------------------------
+    // ----------------------------------------get null value----------------------------------------
 
     llvm::Constant* getNullValue(llvm::Type* type) {
         return llvm::Constant::getNullValue(type);
@@ -32,7 +32,7 @@ namespace mcs {
         return getNullValue(value->getType());
     }
 
-    // --------------------------------------------get constant--------------------------------------------
+    // ----------------------------------------get constant value----------------------------------------
 
     int getIntValue(const llvm::Value* value) {
         const auto constantInt = llvm::dyn_cast<llvm::ConstantInt>(value);
@@ -55,9 +55,9 @@ namespace mcs {
     llvm::Constant* castToConstantInt(const llvm::Value* value) {
         switch (getTypeOf(value)) {
             case Type::INT:
-                return getInt32(getIntValue(value));
+                return getConstantInt32(getIntValue(value));
             case Type::FLOAT:
-                return getInt32(static_cast<int>(getFloatValue(value)));
+                return getConstantInt32(static_cast<int>(getFloatValue(value)));
             default:
                 LOG_ERROR("Cannot cast to constant int because there are not enough cases in switch.");
                 return nullptr;
@@ -67,16 +67,16 @@ namespace mcs {
     llvm::Constant* castToConstantFloat(const llvm::Value* value) {
         switch (getTypeOf(value)) {
             case Type::INT:
-                return getFloat(static_cast<float>(getIntValue(value)));
+                return getConstantFloat(static_cast<float>(getIntValue(value)));
             case Type::FLOAT:
-                return getFloat(getFloatValue(value));
+                return getConstantFloat(getFloatValue(value));
             default:
                 LOG_ERROR("Cannot cast to constant float because there are not enough cases in switch.");
                 return nullptr;
         }
     }
 
-    llvm::Constant* getConstant(const llvm::Value* value, llvm::Type* type) {
+    llvm::Constant* getConstantValue(const llvm::Value* value, llvm::Type* type) {
         static const std::unordered_map<Type, std::function<llvm::Constant*(const llvm::Value*)>> type2Func = {
             {Type::INT,     castToConstantInt},
             {Type::FLOAT,   castToConstantFloat},

@@ -48,32 +48,6 @@ namespace mcs {
         }
     }
 
-    std::string InsertionPoint::getFunctionName(Scope scope) const {
-        const auto function = getFunction(scope);
-        if (function == nullptr) {
-            LOG_ERROR("Unable to get function name because function is nullptr.");
-            return {};
-        }
-        return function->getName().str();
-    }
-
-    llvm::Type* InsertionPoint::getFunctionReturnType(Scope scope) const {
-        const auto function = getFunction(scope);
-        if (function == nullptr) {
-            LOG_ERROR("Unable to get function return type because function is nullptr.");
-            return nullptr;
-        }
-        return function->getReturnType();
-    }
-
-    llvm::Function* InsertionPoint::getGlobalFunction() const {
-        if (globalBlock_ == nullptr) {
-            LOG_ERROR("Unable to get global function because globalBlock_ is nullptr.");
-            return nullptr;
-        }
-        return globalBlock_->getParent();
-    }
-
     llvm::Function* InsertionPoint::getFunction(Scope scope) const {
         switch (scope) {
             case Scope::GLOBAL:
@@ -84,6 +58,14 @@ namespace mcs {
                 LOG_ERROR("Unable to get function because scope is unknown.");
                 return nullptr;
         }
+    }
+
+    llvm::Function* InsertionPoint::getGlobalFunction() const {
+        if (globalBlock_ == nullptr) {
+            LOG_ERROR("Unable to get global function because globalBlock_ is nullptr.");
+            return nullptr;
+        }
+        return globalBlock_->getParent();
     }
 
     bool InsertionPoint::setFunction(llvm::BasicBlock* basicBlock) {

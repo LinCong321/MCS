@@ -1,8 +1,7 @@
 #include "if_else_stmt.h"
 #include "utils/logger.h"
 #include "IR/context/context.h"
-#include "llvm/IR/Instructions.h"
-#include "builder/public/public.h"
+#include "builder/instruction/instruction.h"
 
 namespace mcs {
     llvm::Value* IfElseStmt::codeGen() const {
@@ -13,9 +12,8 @@ namespace mcs {
 
         const auto trueBlock  = llvm::BasicBlock::Create(Context::getInstance().getContext());
         const auto falseBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
-        const auto condition  = getCastedValue(cond_->codeGen(), Type::BOOL);
+        createBranchInst(trueBlock, falseBlock, cond_->codeGen());
 
-        llvm::BranchInst::Create(trueBlock, falseBlock, condition, Context::getInstance().getInsertBlock());
         return createBranch(trueBlock, falseBlock);
     }
 
@@ -43,21 +41,13 @@ namespace mcs {
     bool IfElseStmt::createThenBranch(llvm::BasicBlock* thenBlock, llvm::BasicBlock* mergeBlock) const {
         Context::getInstance().setInsertPoint(thenBlock);
         thenStmt_->codeGen();
-        if (Context::getInstance().getInsertBlock() != nullptr) {
-            llvm::BranchInst::Create(mergeBlock, thenBlock);
-            return true;
-        }
-        return false;
+        return createJumpInst(mergeBlock) != nullptr;
     }
 
     bool IfElseStmt::createElseBranch(llvm::BasicBlock* elseBlock, llvm::BasicBlock* mergeBlock) const {
         Context::getInstance().setInsertPoint(elseBlock);
         elseStmt_->codeGen();
-        if (Context::getInstance().getInsertBlock() != nullptr) {
-            llvm::BranchInst::Create(mergeBlock, elseBlock);
-            return true;
-        }
-        return false;
+        return createJumpInst(mergeBlock) != nullptr;
     }
 
     void IfElseStmt::createBranchWithElse(llvm::BasicBlock* thenBlock, llvm::BasicBlock* elseBlock) const {

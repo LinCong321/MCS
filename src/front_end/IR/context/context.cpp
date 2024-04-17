@@ -81,11 +81,21 @@ namespace mcs {
     }
 
     std::string Context::getCurrentFunctionName() const {
-        return insertionPoint_.getFunctionName(getCurrentScope());
+        const auto function = insertionPoint_.getFunction(getCurrentScope());
+        if (function == nullptr) {
+            LOG_ERROR("Unable to get current function name because function is nullptr.");
+            return {};
+        }
+        return function->getName().str();
     }
 
     llvm::Type* Context::getReturnTypeOfCurrentFunction() const {
-        return insertionPoint_.getFunctionReturnType(getCurrentScope());
+        const auto function = insertionPoint_.getFunction(getCurrentScope());
+        if (function == nullptr) {
+            LOG_ERROR("Unable to get the return type of the current function because function is nullptr.");
+            return {};
+        }
+        return function->getReturnType();
     }
 
     bool Context::findSymbol(const std::string& name) const {

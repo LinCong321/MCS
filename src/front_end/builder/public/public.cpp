@@ -35,9 +35,9 @@ namespace mcs {
             case Type::BOOL:
                 return value;
             case Type::INT:
-                return createBinaryOperation(value, "!=", getInt32(0));
+                return createBinaryOperation(value, "!=", getConstantInt32(0));
             case Type::FLOAT:
-                return createBinaryOperation(value, "!=", getFloat(0));
+                return createBinaryOperation(value, "!=", getConstantFloat(0));
             default:
                 LOG_ERROR("Cannot cast to bool because there are not enough cases in switch.");
                 return nullptr;

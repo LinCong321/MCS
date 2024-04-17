@@ -13,7 +13,6 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
-        static llvm::BasicBlock* getCondBlock();
         void createLoopBody(llvm::BasicBlock* condBlock, llvm::BasicBlock* bodyBlock) const;
         llvm::BasicBlock* createCondBlock(llvm::BasicBlock* bodyBlock, llvm::BasicBlock* nextBlock) const;
 

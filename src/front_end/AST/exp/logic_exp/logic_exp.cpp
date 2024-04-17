@@ -1,7 +1,7 @@
 #include "logic_exp.h"
 #include "utils/logger.h"
 #include "IR/context/context.h"
-#include "llvm/IR/Instructions.h"
+#include "builder/instruction/instruction.h"
 #include "builder/public/public.h"
 #include "builder/constant/constant.h"
 
@@ -35,28 +35,14 @@ namespace mcs {
         return true;
     }
 
-    llvm::PHINode* LogicExp::createPHINode(const std::vector<PhiNode>& nodes) {
-        const auto phiNode = llvm::PHINode::Create(getLLVMType(Type::BOOL), nodes.size(), "",
-                                                   Context::getInstance().getInsertBlock());
-        if (phiNode == nullptr) {
-            LOG_ERROR("Unable to create PHINode because phiNode is nullptr.");
-            return nullptr;
-        }
-        for (const auto& node : nodes) {
-            phiNode->addIncoming(node.first, node.second);
-        }
-        return phiNode;
-    }
-
     LogicExp::PhiNode LogicExp::getLhsNode(llvm::BasicBlock* branchBlock, llvm::BasicBlock* mergeBlock) const {
-        const auto lhs = getCastedValue(lhs_->codeGen(), Type::BOOL);
         switch (op_) {
             case '|':
-                llvm::BranchInst::Create(mergeBlock, branchBlock, lhs, Context::getInstance().getInsertBlock());
-                return std::make_pair(getBool(true), Context::getInstance().getInsertBlock());
+                createBranchInst(mergeBlock, branchBlock, lhs_->codeGen());
+                return std::make_pair(getConstantBool(true), Context::getInstance().getInsertBlock());
             case '&':
-                llvm::BranchInst::Create(branchBlock, mergeBlock, lhs, Context::getInstance().getInsertBlock());
-                return std::make_pair(getBool(false), Context::getInstance().getInsertBlock());
+                createBranchInst(branchBlock, mergeBlock, lhs_->codeGen());
+                return std::make_pair(getConstantBool(false), Context::getInstance().getInsertBlock());
             default:
                 LOG_ERROR("Unable to get lhs node because there are not enough cases in switch.");
                 return {};
@@ -66,7 +52,7 @@ namespace mcs {
     LogicExp::PhiNode LogicExp::getRhsNode(llvm::BasicBlock* branchBlock, llvm::BasicBlock* mergeBlock) const {
         Context::getInstance().setInsertPoint(branchBlock);
         const auto rhs = getCastedValue(rhs_->codeGen(), Type::BOOL);
-        llvm::BranchInst::Create(mergeBlock, Context::getInstance().getInsertBlock());
+        createJumpInst(mergeBlock);
         return std::make_pair(rhs, Context::getInstance().getInsertBlock());
     }
 }

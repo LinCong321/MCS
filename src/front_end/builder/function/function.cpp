@@ -5,45 +5,13 @@
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
-    // --------------------------------------------create return inst--------------------------------------------
-
-    llvm::ReturnInst* createVoidReturnInst(llvm::Value* value) {
-        if (value != nullptr) {
-            LOG_ERROR("Void function ", Context::getInstance().getCurrentFunctionName(),
-                      "() should not return a value.");
-            return nullptr;
-        }
-        return llvm::ReturnInst::Create(Context::getInstance().getContext(), Context::getInstance().getInsertBlock());
-    }
-
-    llvm::ReturnInst* createNonVoidReturnInst(llvm::Value* value, llvm::Type* type) {
-        if (value == nullptr) {
-            LOG_ERROR("Non-void function ", Context::getInstance().getCurrentFunctionName(),
-                     "() does not return a value.");
-            return nullptr;
-        }
-        return llvm::ReturnInst::Create(Context::getInstance().getContext(), getCastedValue(value, type),
-                                        Context::getInstance().getInsertBlock());
-    }
-
-    llvm::Value* createReturnInst(llvm::Value* value) {
-        const auto type = Context::getInstance().getReturnTypeOfCurrentFunction();
-        if (type == nullptr) {
-            LOG_ERROR("Cannot create return instruction because type is nullptr.");
-            return nullptr;
-        }
-        const auto returnInst = type->isVoidTy() ? createVoidReturnInst(value) : createNonVoidReturnInst(value, type);
-        Context::getInstance().clearInsertionPoint();
-        return returnInst;
-    }
-
     // --------------------------------------------get function--------------------------------------------
 
-    llvm::Function* getFunction(Type retType, const std::string& name, const std::vector<llvm::Type*>& params) {
+    llvm::Function* getFunction(Type retType, const std::string& name, Params params) {
         return getFunction(getLLVMType(retType), name, params);
     }
 
-    llvm::Function* getFunction(llvm::Type* retType, const std::string& name, const std::vector<llvm::Type*>& params) {
+    llvm::Function* getFunction(llvm::Type* retType, const std::string& name, Params params) {
         const auto funcType = llvm::FunctionType::get(retType, params, false);
         const auto linkage  = (name == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
         const auto function = llvm::Function::Create(funcType, linkage, name, Context::getInstance().getModule());
@@ -53,8 +21,7 @@ namespace mcs {
 
     // --------------------------------------------create function--------------------------------------------
 
-    llvm::Function* createFunction(llvm::Type* retType, const std::string& name,
-                                   const std::vector<llvm::Type*>& params) {
+    llvm::Function* createFunction(llvm::Type* retType, const std::string& name, Params params) {
         if (Context::getInstance().findSymbol(name)) {
             LOG_ERROR("Cannot create function because its name (aka \"", name,
                       "\") already exists in the symbol table.");
@@ -62,7 +29,7 @@ namespace mcs {
         }
 
         const auto function = getFunction(retType, name, params);
-        if (!Context::getInstance().insertSymbol(name, Symbol(function))) {
+        if (!Context::getInstance().insertSymbol(name, Symbol())) {
             LOG_ERROR("Cannot create function because it cannot be inserted to the symbol table.");
             return nullptr;
         }
@@ -70,8 +37,7 @@ namespace mcs {
         return function;
     }
 
-    llvm::Function* createFunction(const std::string& retType, const std::string& name,
-                                   const std::vector<llvm::Type*>& params) {
+    llvm::Function* createFunction(const std::string& retType, const std::string& name, Params params) {
         return createFunction(getLLVMType(retType), name, params);
     }
 }

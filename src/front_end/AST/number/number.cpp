@@ -3,10 +3,10 @@
 
 namespace mcs {
     llvm::Value* IntNum::codeGen() const {
-        return getInt32(val_);
+        return getConstantInt32(val_);
     }
 
     llvm::Value* FloatNum::codeGen() const {
-        return getFloat(val_);
+        return getConstantFloat(val_);
     }
 }

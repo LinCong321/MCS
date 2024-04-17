@@ -1,8 +1,7 @@
 #include "while_stmt.h"
 #include "utils/logger.h"
 #include "IR/context/context.h"
-#include "llvm/IR/Instructions.h"
-#include "builder/public/public.h"
+#include "builder/instruction/instruction.h"
 
 namespace mcs {
     llvm::Value* WhileStmt::codeGen() const {
@@ -35,25 +34,17 @@ namespace mcs {
         return true;
     }
 
-    llvm::BasicBlock* WhileStmt::getCondBlock() {
-        const auto condBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
-        llvm::BranchInst::Create(condBlock, Context::getInstance().getInsertBlock());
-        Context::getInstance().setInsertPoint(condBlock);
-        return condBlock;
-    }
-
     void WhileStmt::createLoopBody(llvm::BasicBlock* condBlock, llvm::BasicBlock* bodyBlock) const {
         Context::getInstance().setInsertPoint(bodyBlock);
         stmt_->codeGen();
-        if (Context::getInstance().getInsertBlock() != nullptr) {
-            llvm::BranchInst::Create(condBlock, Context::getInstance().getInsertBlock());
-        }
+        createJumpInst(condBlock);
     }
 
     llvm::BasicBlock* WhileStmt::createCondBlock(llvm::BasicBlock* bodyBlock, llvm::BasicBlock* nextBlock) const {
-        const auto condBlock = getCondBlock();
-        const auto condition = getCastedValue(cond_->codeGen(), Type::BOOL);
-        llvm::BranchInst::Create(bodyBlock, nextBlock, condition, Context::getInstance().getInsertBlock());
+        const auto condBlock = llvm::BasicBlock::Create(Context::getInstance().getContext());
+        createJumpInst(condBlock);
+        Context::getInstance().setInsertPoint(condBlock);
+        createBranchInst(bodyBlock, nextBlock, cond_->codeGen());
         return condBlock;
     }
 }

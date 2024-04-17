@@ -17,12 +17,10 @@ namespace mcs {
 
     public:
         llvm::BasicBlock* getBlock(Scope scope) const;
-        std::string getFunctionName(Scope scope) const;
-        llvm::Type* getFunctionReturnType(Scope scope) const;
+        llvm::Function* getFunction(Scope scope) const;
 
     private:
         llvm::Function* getGlobalFunction() const;
-        llvm::Function* getFunction(Scope scope) const;
         bool setFunction(llvm::BasicBlock* basicBlock);
         bool resetBlock(llvm::BasicBlock* basicBlock, Scope scope);
 

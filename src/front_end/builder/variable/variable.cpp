@@ -1,9 +1,9 @@
 #include "variable.h"
 #include "utils/logger.h"
 #include "public/public.h"
-#include "memory/memory.h"
 #include "constant/constant.h"
 #include "IR/context/context.h"
+#include "instruction/instruction.h"
 
 namespace mcs {
     // --------------------------------------------declare variable--------------------------------------------
@@ -24,7 +24,7 @@ namespace mcs {
     llvm::Value* getGlobalVariable(llvm::Type* type, const std::string& id, llvm::Value* value) {
         const auto variable = new llvm::GlobalVariable(Context::getInstance().getModule(), type, false,
                                                        llvm::GlobalVariable::LinkageTypes::InternalLinkage,
-                                                       getConstant(value, type), id);
+                                                       getConstantValue(value, type), id);
 
         if (value != nullptr && !llvm::isa<llvm::Constant>(value)) {
             createStoreInst(getCastedValue(value, type), variable);
@@ -46,7 +46,7 @@ namespace mcs {
             return Symbol();
         }
 
-        return Symbol(it->second(type, id, value), type, isConstant);
+        return Symbol(type, it->second(type, id, value), isConstant);
     }
 
     bool declareVariable(llvm::Type* type, const std::string& id, llvm::Value* value, bool isConstant) {

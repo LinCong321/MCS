@@ -116,10 +116,11 @@ MulExp          :   UnaryExp            { $$ = $1; }
                 |   MulExp '%' UnaryExp { $$ = new mcs::ArithExp($1, '%', $3); }
                 ;
 
-UnaryExp        :   PrimaryExp      { $$ = $1; }
-                |   '+' UnaryExp    { $$ = new mcs::UnaryExp('+', $2); }
-                |   '-' UnaryExp    { $$ = new mcs::UnaryExp('-', $2); }
-                |   '!' UnaryExp    { $$ = new mcs::UnaryExp('!', $2); }
+UnaryExp        :   PrimaryExp          { $$ = $1; }
+                |   IDENTIFIER '(' ')'  { $$ = new mcs::FuncCallExp($1); }
+                |   '+' UnaryExp        { $$ = new mcs::UnaryExp('+', $2); }
+                |   '-' UnaryExp        { $$ = new mcs::UnaryExp('-', $2); }
+                |   '!' UnaryExp        { $$ = new mcs::UnaryExp('!', $2); }
                 ;
 
 PrimaryExp      :   '(' Exp ')' { $$ = $2; }

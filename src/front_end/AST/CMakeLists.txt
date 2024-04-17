@@ -3,6 +3,7 @@ set(
         block/block.cpp
         comp_unit/comp_unit.cpp
         exp/arith_exp/arith_exp.cpp
+        exp/func_call_exp/func_call_exp.cpp
         exp/logic_exp/logic_exp.cpp
         exp/rel_exp/rel_exp.cpp
         exp/unary_exp/unary_exp.cpp
