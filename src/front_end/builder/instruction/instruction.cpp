@@ -5,51 +5,12 @@
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
-    // ----------------------------------------create break inst----------------------------------------
-
-    llvm::Instruction* createBreakInst() {
-        LoopInfo loopInfo;
-        if (!Context::getInstance().getCurrentLoopInfo(loopInfo)) {
-            LOG_ERROR("Unable to generate code because getting loop information failed.");
-            return nullptr;
-        }
-        return createJumpInst(loopInfo.getBreakBlock());
-    }
-
-    // ----------------------------------------create continue inst----------------------------------------
-
-    llvm::Instruction* createContinueInst() {
-        LoopInfo loopInfo;
-        if (!Context::getInstance().getCurrentLoopInfo(loopInfo)) {
-            LOG_ERROR("Unable to generate code because getting loop information failed.");
-            return nullptr;
-        }
-        return createJumpInst(loopInfo.getContinueBlock());
-    }
-
-    // ----------------------------------------create alloca inst----------------------------------------
-
-    llvm::Instruction* createAllocaInst(llvm::Type* type) {
-        return new llvm::AllocaInst(type, 0, "", Context::getInstance().getInsertBlock());
-    }
-
-    // ----------------------------------------create load inst----------------------------------------
-
-    llvm::Instruction* createLoadInst(const std::string& id) {
-        Symbol symbol;
-        if (!Context::getInstance().getSymbol(id, symbol)) {
-            LOG_ERROR("The load instruction cannot be created because getting symbol \"", id, "\" failed.");
-            return nullptr;
-        }
-        return new llvm::LoadInst(symbol.getType(), symbol.getValue(), "", Context::getInstance().getInsertBlock());
-    }
-
     // ----------------------------------------create call inst----------------------------------------
 
     llvm::Instruction* createCallInst(const std::string& id) {
         const auto function = Context::getInstance().getModule().getFunction(id);
         if (function == nullptr) {
-            LOG_ERROR("Unable to generate code because function \"", id, "() does not exist.");
+            LOG_ERROR("Unable to create call instruction because function \"", id, "() does not exist.");
             return nullptr;
         }
         return llvm::CallInst::Create(function, "", Context::getInstance().getInsertBlock());
@@ -79,12 +40,29 @@ namespace mcs {
     llvm::Instruction* createReturnInst(llvm::Value* value) {
         const auto type = Context::getInstance().getReturnTypeOfCurrentFunction();
         if (type == nullptr) {
-            LOG_ERROR("Cannot create return instruction because type is nullptr.");
+            LOG_ERROR("Unable to create return instruction because type is nullptr.");
             return nullptr;
         }
         const auto returnInst = type->isVoidTy() ? createVoidReturnInst(value) : createNonVoidReturnInst(value, type);
         Context::getInstance().clearInsertionPoint();
         return returnInst;
+    }
+
+    // ----------------------------------------create alloca inst----------------------------------------
+
+    llvm::Instruction* createAllocaInst(llvm::Type* type) {
+        return new llvm::AllocaInst(type, 0, "", Context::getInstance().getInsertBlock());
+    }
+
+    // ----------------------------------------create load inst----------------------------------------
+
+    llvm::Instruction* createLoadInst(const std::string& id) {
+        Symbol symbol;
+        if (!Context::getInstance().getSymbol(id, symbol)) {
+            LOG_ERROR("The load instruction cannot be created because getting symbol \"", id, "\" failed.");
+            return nullptr;
+        }
+        return new llvm::LoadInst(symbol.getType(), symbol.getValue(), "", Context::getInstance().getInsertBlock());
     }
 
     // ----------------------------------------create store inst----------------------------------------
@@ -103,6 +81,38 @@ namespace mcs {
         return createStoreInst(getCastedValue(value, symbol.getType()), symbol.getValue());
     }
 
+    // ----------------------------------------create break inst----------------------------------------
+
+    llvm::Instruction* createBreakInst() {
+        LoopInfo loopInfo;
+        if (!Context::getInstance().getCurrentLoopInfo(loopInfo)) {
+            LOG_ERROR("Unable to create break instruction because getting loop information failed.");
+            return nullptr;
+        }
+        return createJumpInst(loopInfo.getBreakBlock());
+    }
+
+    // ----------------------------------------create continue inst----------------------------------------
+
+    llvm::Instruction* createContinueInst() {
+        LoopInfo loopInfo;
+        if (!Context::getInstance().getCurrentLoopInfo(loopInfo)) {
+            LOG_ERROR("Unable to create continue instruction because getting loop information failed.");
+            return nullptr;
+        }
+        return createJumpInst(loopInfo.getContinueBlock());
+    }
+
+    // ----------------------------------------create jump inst----------------------------------------
+
+    llvm::Instruction* createJumpInst(llvm::BasicBlock* basicBlock) {
+        if (Context::getInstance().getInsertBlock() == nullptr) {
+            LOG_INFO("The current basic block has been terminated, so there is no need to create a jump instruction.");
+            return nullptr;
+        }
+        return llvm::BranchInst::Create(basicBlock, Context::getInstance().getInsertBlock());
+    }
+
     // ----------------------------------------create phi node----------------------------------------
 
     llvm::PHINode* getPHINode(size_t size) {
@@ -119,16 +129,6 @@ namespace mcs {
             phiNode->addIncoming(node.first, node.second);
         }
         return phiNode;
-    }
-
-    // ----------------------------------------create jump inst----------------------------------------
-
-    llvm::Instruction* createJumpInst(llvm::BasicBlock* basicBlock) {
-        if (Context::getInstance().getInsertBlock() == nullptr) {
-            LOG_INFO("The current basic block has been terminated, so there is no need to create a jump instruction.");
-            return nullptr;
-        }
-        return llvm::BranchInst::Create(basicBlock, Context::getInstance().getInsertBlock());
     }
 
     // ----------------------------------------create branch inst----------------------------------------
