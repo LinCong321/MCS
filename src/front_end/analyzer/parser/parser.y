@@ -20,6 +20,8 @@
     int                 intVal;
     mcs::BlockItem*     blockItem;
     mcs::CompUnit*      compUnit;
+    mcs::FuncParam*     funcParam;
+    mcs::FuncParams*    funcParams;
     mcs::LValue*        lValue;
     mcs::Node*          node;
     mcs::VarDef*        varDef;
@@ -31,7 +33,7 @@
 %token  IF INT RETURN VOID WHILE
 %token  LE GE EQ NE AND OR
 
-%token<strVal>      IDENTIFIER
+%token<strVal>      ID
 %token<intVal>      INT_CONST
 %token<floatVal>    FLOAT_CONST
 
@@ -43,6 +45,8 @@
 %type<node>         ConstExp AddExp MulExp UnaryExp PrimaryExp Exp
 %type<lValue>       LVal
 %type<node>         Number VarDecl InitVal FuncDef Block Stmt BStmt
+%type<funcParams>   FuncFParams
+%type<funcParam>    FuncFParam
 %type<blockItem>    BlockItem
 %type<node>         Cond LOrExp LAndExp EqExp RelExp WithElse
 
@@ -96,7 +100,7 @@ ConstDefList    :   ConstDef    { $$ = new mcs::VarDefList($1); }
                     }
                 ;
 
-ConstDef        :   IDENTIFIER '=' ConstInitVal { $$ = new mcs::VarDef($1, $3); }
+ConstDef        :   ID '=' ConstInitVal { $$ = new mcs::VarDef($1, $3); }
                 ;
 
 ConstInitVal    :   ConstExp    { $$ = $1; }
@@ -116,11 +120,11 @@ MulExp          :   UnaryExp            { $$ = $1; }
                 |   MulExp '%' UnaryExp { $$ = new mcs::ArithExp($1, '%', $3); }
                 ;
 
-UnaryExp        :   PrimaryExp          { $$ = $1; }
-                |   IDENTIFIER '(' ')'  { $$ = new mcs::FuncCallExp($1); }
-                |   '+' UnaryExp        { $$ = new mcs::UnaryExp('+', $2); }
-                |   '-' UnaryExp        { $$ = new mcs::UnaryExp('-', $2); }
-                |   '!' UnaryExp        { $$ = new mcs::UnaryExp('!', $2); }
+UnaryExp        :   PrimaryExp      { $$ = $1; }
+                |   ID '(' ')'      { $$ = new mcs::FuncCallExp($1); }
+                |   '+' UnaryExp    { $$ = new mcs::UnaryExp('+', $2); }
+                |   '-' UnaryExp    { $$ = new mcs::UnaryExp('-', $2); }
+                |   '!' UnaryExp    { $$ = new mcs::UnaryExp('!', $2); }
                 ;
 
 PrimaryExp      :   '(' Exp ')' { $$ = $2; }
@@ -131,7 +135,7 @@ PrimaryExp      :   '(' Exp ')' { $$ = $2; }
 Exp             :   AddExp  { $$ = $1; }
                 ;
 
-LVal            :   IDENTIFIER  { $$ = new mcs::LValue($1); }
+LVal            :   ID  { $$ = new mcs::LValue($1); }
                 ;
 
 Number          :   INT_CONST   { $$ = new mcs::IntNum($1); }
@@ -158,14 +162,29 @@ VarDefList      :   VarDef  { $$ = new mcs::VarDefList($1); }
                     }
                 ;
 
-VarDef          :   IDENTIFIER              { $$ = new mcs::VarDef($1); }
-                |   IDENTIFIER '=' InitVal  { $$ = new mcs::VarDef($1, $3); }
+VarDef          :   ID              { $$ = new mcs::VarDef($1); }
+                |   ID '=' InitVal  { $$ = new mcs::VarDef($1, $3); }
 
 InitVal         :   Exp { $$ = $1; }
                 ;
 
-FuncDef         :   BType IDENTIFIER '(' ')' Block  { $$ = new mcs::FuncDef($1, $2, $5); }
-                |   VOID IDENTIFIER '(' ')' Block   { $$ = new mcs::FuncDef(new std::string("void"), $2, $5); }
+FuncDef         :   BType ID '(' ')' Block              { $$ = new mcs::FuncDef($1, $2, $5); }
+                |   BType ID '(' FuncFParams ')' Block  { $$ = new mcs::FuncDef($1, $2, $4, $6); }
+                |   VOID ID '(' ')' Block               { $$ = new mcs::FuncDef(new std::string("void"), $2, $5); }
+                |   VOID ID '(' FuncFParams ')' Block   { $$ = new mcs::FuncDef(new std::string("void"), $2, $4, $6); }
+                ;
+
+FuncFParams     :   FuncFParam  { $$ = new mcs::FuncParams($1); }
+                |   FuncFParams ',' FuncFParam {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "FuncFParams is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($3);
+                    }
+                ;
+
+FuncFParam      :   BType ID    { $$ = new mcs::FuncParam($1, $2); }
                 ;
 
 Block           :   '{' '}'             { $$ = new mcs::BlockItem();}

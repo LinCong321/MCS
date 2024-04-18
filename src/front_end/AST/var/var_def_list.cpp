@@ -3,7 +3,7 @@
 #include "builder/variable/variable.h"
 
 namespace mcs {
-    VarDefList::VarDefList(VarDef* varDef) {
+    VarDefList::VarDefList(VarDef* varDef) : isConstant_(false), type_(nullptr), defList_() {
         pushBack(varDef);
     }
 
@@ -19,7 +19,7 @@ namespace mcs {
                 return nullptr;
             }
             if (!declareVariable(*type_, def->getId(), def->getValue(), isConstant_)) {
-                LOG_ERROR("Unable to generate code because the variable cannot be declared.");
+                LOG_ERROR("Unable to generate code because variable \"", def->getId(), "\" cannot be declared.");
                 return nullptr;
             }
         }

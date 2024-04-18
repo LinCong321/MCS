@@ -10,7 +10,7 @@ namespace mcs {
     llvm::Instruction* createCallInst(const std::string& id) {
         const auto function = Context::getInstance().getModule().getFunction(id);
         if (function == nullptr) {
-            LOG_ERROR("Unable to create call instruction because function \"", id, "() does not exist.");
+            LOG_ERROR("Unable to create call instruction because function ", id, "() does not exist.");
             return nullptr;
         }
         return llvm::CallInst::Create(function, "", Context::getInstance().getInsertBlock());
@@ -43,9 +43,7 @@ namespace mcs {
             LOG_ERROR("Unable to create return instruction because type is nullptr.");
             return nullptr;
         }
-        const auto returnInst = type->isVoidTy() ? createVoidReturnInst(value) : createNonVoidReturnInst(value, type);
-        Context::getInstance().clearInsertionPoint();
-        return returnInst;
+        return type->isVoidTy() ? createVoidReturnInst(value) : createNonVoidReturnInst(value, type);
     }
 
     // ----------------------------------------create alloca inst----------------------------------------

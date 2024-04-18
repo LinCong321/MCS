@@ -12,6 +12,9 @@ namespace mcs {
         llvm::Value* codeGen() const override;
 
     private:
+        llvm::Instruction* getReturnInst() const;
+
+    private:
         std::unique_ptr<Node> retVal_;
     };
 }

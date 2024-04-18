@@ -8,7 +8,9 @@ set(
         exp/rel_exp/rel_exp.cpp
         exp/unary_exp/unary_exp.cpp
         exp/var_exp/var_exp.cpp
-        func/func_def.cpp
+        func/func_args/func_args.cpp
+        func/func_def/func_def.cpp
+        func/func_params/func_params.cpp
         lvalue/lvalue.cpp
         number/number.cpp
         start/start.cpp

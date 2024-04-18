@@ -37,7 +37,7 @@ FLOAT_CONST [0-9]*\.?[0-9]+([Ee][+-]?[0-9]+)?
 "&&"            { return AND; }
 "||"            { return OR; }
 
-{IDENTIFIER}    { yylval.strVal = new std::string(yytext); return IDENTIFIER; }
+{IDENTIFIER}    { yylval.strVal = new std::string(yytext); return ID; }
 {INT_CONST}     { yylval.intVal = std::stoi(yytext, nullptr, 0); return INT_CONST; }
 {FLOAT_CONST}   { yylval.floatVal = std::stof(yytext); return FLOAT_CONST; }
 

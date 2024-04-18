@@ -3,7 +3,7 @@
 int x = 1;
 int y = 2 * x + 3;
 
-int f() {
+int f(int a, int b) {
     while (x == 1) {
         if (x > 1) {
             break;
@@ -20,6 +20,5 @@ int f() {
 }
 
 int main() {
-    int a = f() - 5;
-    return a;
+    return 0;
 }
