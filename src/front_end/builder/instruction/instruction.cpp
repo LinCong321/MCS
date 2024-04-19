@@ -5,17 +5,6 @@
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
-    // ----------------------------------------create call inst----------------------------------------
-
-    llvm::Instruction* createCallInst(const std::string& id) {
-        const auto function = Context::getInstance().getModule().getFunction(id);
-        if (function == nullptr) {
-            LOG_ERROR("Unable to create call instruction because function ", id, "() does not exist.");
-            return nullptr;
-        }
-        return llvm::CallInst::Create(function, "", Context::getInstance().getInsertBlock());
-    }
-
     // ----------------------------------------create return inst----------------------------------------
 
     llvm::ReturnInst* createVoidReturnInst(llvm::Value* value) {
@@ -44,6 +33,36 @@ namespace mcs {
             return nullptr;
         }
         return type->isVoidTy() ? createVoidReturnInst(value) : createNonVoidReturnInst(value, type);
+    }
+
+    // ----------------------------------------create call inst----------------------------------------
+
+    llvm::Value* getValue(const std::vector<llvm::Value*>& values, size_t pos) {
+        if (pos >= values.size()) {
+            LOG_ERROR("Unable to get value because pos is ", pos, "which exceeds values' size of ", values.size(), ".");
+            return nullptr;
+        }
+        return values[pos];
+    }
+
+    std::vector<llvm::Value*> getCastedArgs(const llvm::iterator_range<llvm::Function::arg_iterator>& args,
+                                            const std::vector<llvm::Value*>& values) {
+        std::vector<llvm::Value*> castedValues;
+        size_t pos = 0;
+        for (const auto& arg : args) {
+            castedValues.emplace_back(getCastedValue(getValue(values, pos++), arg.getType()));
+        }
+        return std::move(castedValues);
+    }
+
+    llvm::Instruction* createCallInst(const std::string& id, const std::vector<llvm::Value*>& values) {
+        const auto function = Context::getInstance().getModule().getFunction(id);
+        if (function == nullptr) {
+            LOG_ERROR("Unable to create call instruction because function ", id, "() does not exist.");
+            return nullptr;
+        }
+        return llvm::CallInst::Create(function, getCastedArgs(function->args(), values), "",
+                                      Context::getInstance().getInsertBlock());
     }
 
     // ----------------------------------------create alloca inst----------------------------------------

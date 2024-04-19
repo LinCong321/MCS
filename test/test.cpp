@@ -20,5 +20,6 @@ int f(int a, int b) {
 }
 
 int main() {
+    int a = f(3.14, x + y);
     return 0;
 }

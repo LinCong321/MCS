@@ -20,6 +20,7 @@
     int                 intVal;
     mcs::BlockItem*     blockItem;
     mcs::CompUnit*      compUnit;
+    mcs::FuncArgsExp*   funcArgsExp;
     mcs::FuncParam*     funcParam;
     mcs::FuncParams*    funcParams;
     mcs::LValue*        lValue;
@@ -45,6 +46,7 @@
 %type<node>         ConstExp AddExp MulExp UnaryExp PrimaryExp Exp
 %type<lValue>       LVal
 %type<node>         Number VarDecl InitVal FuncDef Block Stmt BStmt
+%type<funcArgsExp>  FuncRParams
 %type<funcParams>   FuncFParams
 %type<funcParam>    FuncFParam
 %type<blockItem>    BlockItem
@@ -120,11 +122,12 @@ MulExp          :   UnaryExp            { $$ = $1; }
                 |   MulExp '%' UnaryExp { $$ = new mcs::ArithExp($1, '%', $3); }
                 ;
 
-UnaryExp        :   PrimaryExp      { $$ = $1; }
-                |   ID '(' ')'      { $$ = new mcs::FuncCallExp($1); }
-                |   '+' UnaryExp    { $$ = new mcs::UnaryExp('+', $2); }
-                |   '-' UnaryExp    { $$ = new mcs::UnaryExp('-', $2); }
-                |   '!' UnaryExp    { $$ = new mcs::UnaryExp('!', $2); }
+UnaryExp        :   PrimaryExp              { $$ = $1; }
+                |   ID '(' ')'              { $$ = new mcs::FuncCallExp($1); }
+                |	ID '(' FuncRParams ')'  { $$ = new mcs::FuncCallExp($1, $3); }
+                |   '+' UnaryExp            { $$ = new mcs::UnaryExp('+', $2); }
+                |   '-' UnaryExp            { $$ = new mcs::UnaryExp('-', $2); }
+                |   '!' UnaryExp            { $$ = new mcs::UnaryExp('!', $2); }
                 ;
 
 PrimaryExp      :   '(' Exp ')' { $$ = $2; }
@@ -140,6 +143,16 @@ LVal            :   ID  { $$ = new mcs::LValue($1); }
 
 Number          :   INT_CONST   { $$ = new mcs::IntNum($1); }
                 |   FLOAT_CONST { $$ = new mcs::FloatNum($1); }
+                ;
+
+FuncRParams     :   Exp { $$ = new mcs::FuncArgsExp($1); }
+                |   FuncRParams ',' Exp {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "FuncRParams is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($3);
+                    }
                 ;
 
 VarDecl         :   BType VarDefList ';' {

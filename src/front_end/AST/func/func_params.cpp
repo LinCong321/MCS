@@ -1,4 +1,4 @@
-#include "func_params.h"
+#include "front_end/AST/func/func_params.h"
 #include "utils/logger.h"
 
 namespace mcs {
@@ -27,7 +27,7 @@ namespace mcs {
     }
 
     bool FuncParams::readEach(const std::function<void(const FuncParam&)>& function) const {
-        for (const auto &funcParam: funcParams_) {
+        for (const auto& funcParam: funcParams_) {
             if (funcParam == nullptr) {
                 LOG_ERROR("Unable to read each because funcParam is nullptr.");
                 return false;

@@ -3,8 +3,8 @@
 #include "llvm/IR/Instruction.h"
 
 namespace mcs {
-    llvm::Instruction* createCallInst(const std::string& id);
     llvm::Instruction* createReturnInst(llvm::Value* value = nullptr);
+    llvm::Instruction* createCallInst(const std::string& id, const std::vector<llvm::Value*>& values);
 
     llvm::Instruction* createAllocaInst(llvm::Type* type);
     llvm::Instruction* createLoadInst(const std::string& id);

@@ -3,14 +3,14 @@ set(
         block/block.cpp
         comp_unit/comp_unit.cpp
         exp/arith_exp/arith_exp.cpp
+        exp/func_args_exp/func_args_exp.cpp
         exp/func_call_exp/func_call_exp.cpp
         exp/logic_exp/logic_exp.cpp
         exp/rel_exp/rel_exp.cpp
         exp/unary_exp/unary_exp.cpp
         exp/var_exp/var_exp.cpp
-        func/func_args/func_args.cpp
-        func/func_def/func_def.cpp
-        func/func_params/func_params.cpp
+        func/func_def.cpp
+        func/func_params.cpp
         lvalue/lvalue.cpp
         number/number.cpp
         start/start.cpp

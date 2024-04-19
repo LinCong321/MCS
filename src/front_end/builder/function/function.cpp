@@ -6,21 +6,9 @@
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
-    // --------------------------------------------get function--------------------------------------------
+    // ----------------------------------------create function params----------------------------------------
 
-    std::vector<llvm::Type*> getTypesOf(const Params& params) {
-        std::vector<llvm::Type*> types;
-        for (const auto& param : params) {
-            types.emplace_back(param.getType());
-        }
-        return types;
-    }
-
-    llvm::Function::LinkageTypes getLinkageType(const std::string& name) {
-        return (name == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
-    }
-
-    std::string getId(const Params& params, size_t pos) {
+    std::string getId(const std::vector<Symbol>& params, size_t pos) {
         if (pos >= params.size()) {
             LOG_ERROR("Unable to get ID because pos is ", pos, " which exceeds params' size of ", params.size(), ".");
             return {};
@@ -28,7 +16,7 @@ namespace mcs {
         return params[pos].getName();
     }
 
-    bool createFunctionParams(llvm::Function* function, const Params& params) {
+    bool createFunctionParams(llvm::Function* function, const std::vector<Symbol>& params) {
         if (function == nullptr) {
             LOG_ERROR("Unable to create function params because function is nullptr.");
             return false;
@@ -45,13 +33,27 @@ namespace mcs {
         return true;
     }
 
-    llvm::Function* getFunction(Type retType, const std::string& name, const Params& params) {
+    // --------------------------------------------get function--------------------------------------------
+
+    std::vector<llvm::Type*> getTypesOf(const std::vector<Symbol>& params) {
+        std::vector<llvm::Type*> types;
+        for (const auto& param : params) {
+            types.emplace_back(param.getType());
+        }
+        return types;
+    }
+
+    llvm::Function::LinkageTypes getLinkage(const std::string& name) {
+        return (name == "main") ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
+    }
+
+    llvm::Function* getFunction(Type retType, const std::string& name, const std::vector<Symbol>& params) {
         return getFunction(getLLVMType(retType), name, params);
     }
 
-    llvm::Function* getFunction(llvm::Type* retType, const std::string& name, const Params& params) {
+    llvm::Function* getFunction(llvm::Type* retType, const std::string& name, const std::vector<Symbol>& params) {
         const auto function = llvm::Function::Create(llvm::FunctionType::get(retType, getTypesOf(params), false),
-                                                     getLinkageType(name), name, Context::getInstance().getModule());
+                                                     getLinkage(name), name, Context::getInstance().getModule());
         Context::getInstance().pushBlock(llvm::BasicBlock::Create(Context::getInstance().getContext(), "", function));
         createFunctionParams(function, params);
         return function;
@@ -59,7 +61,7 @@ namespace mcs {
 
     // --------------------------------------------create function--------------------------------------------
 
-    llvm::Function* createFunction(llvm::Type* retType, const std::string& name, const Params& params) {
+    llvm::Function* createFunction(llvm::Type* retType, const std::string& name, const std::vector<Symbol>& params) {
         if (Context::getInstance().findSymbol(name)) {
             LOG_ERROR("Cannot create function because its name (aka \"", name,
                       "\") already exists in the symbol table.");
@@ -75,7 +77,8 @@ namespace mcs {
         return function;
     }
 
-    llvm::Function* createFunction(const std::string& retType, const std::string& name, const Params& params) {
+    llvm::Function* createFunction(const std::string& retType, const std::string& name,
+                                   const std::vector<Symbol>& params) {
         return createFunction(getLLVMType(retType), name, params);
     }
 }

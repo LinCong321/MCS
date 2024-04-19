@@ -1,8 +1,8 @@
 #pragma once
 
+#include "func_params.h"
 #include "AST/node/node.h"
 #include "IR/symbol/symbol.h"
-#include "AST/func/func_params/func_params.h"
 
 namespace mcs {
     class FuncDef : public Node {

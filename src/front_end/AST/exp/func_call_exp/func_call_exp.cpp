@@ -9,7 +9,7 @@ namespace mcs {
             LOG_ERROR("Unable to generate code because there is a nullptr in member pointers.");
             return nullptr;
         }
-        return createCallInst(*id_);
+        return createCallInst(*id_, getArgs());
     }
 
     bool FuncCallExp::checkAllMemberPointers() const {
@@ -18,5 +18,17 @@ namespace mcs {
             return false;
         }
         return true;
+    }
+
+    std::vector<llvm::Value*> FuncCallExp::getArgs() const {
+        std::vector<llvm::Value*> args;
+
+        if (funcArgs_ != nullptr) {
+            funcArgs_->readEach([&args](const auto& node) {
+                args.emplace_back(node.codeGen());
+            });
+        }
+
+        return std::move(args);
     }
 }

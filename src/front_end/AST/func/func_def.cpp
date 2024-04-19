@@ -43,6 +43,6 @@ namespace mcs {
             });
         }
 
-        return params;
+        return std::move(params);
     }
 }
