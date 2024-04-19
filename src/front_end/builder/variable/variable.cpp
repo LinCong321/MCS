@@ -33,7 +33,7 @@ namespace mcs {
         return variable;
     }
 
-    Symbol getVariable(llvm::Type* type, const std::string& id, llvm::Value* value, bool isConstant) {
+    Symbol getVariable(bool isConstant, llvm::Type* type, const std::string& id, llvm::Value* value) {
         using Function = std::function<llvm::Value*(llvm::Type*, const std::string& id, llvm::Value*)>;
         static const std::unordered_map<Scope, Function> scope2Func = {
             {Scope::LOCAL,  getLocalVariable},
@@ -43,10 +43,10 @@ namespace mcs {
         const auto it = scope2Func.find(Context::getInstance().getCurrentScope());
         if (it == scope2Func.end()) {
             LOG_ERROR("Unable to get variable because the scope type is unknown.");
-            return Symbol();
+            return {};
         }
 
-        return Symbol(type, it->second(type, id, value), isConstant);
+        return {isConstant, type, it->second(type, id, value)};
     }
 
     bool declareVariable(llvm::Type* type, const std::string& id, llvm::Value* value, bool isConstant) {
@@ -57,7 +57,7 @@ namespace mcs {
             return false;
         }
 
-        const auto variable = getVariable(type, id, value, isConstant);
+        const auto variable = getVariable(isConstant, type, id, value);
         if (!Context::getInstance().insertSymbol(id, variable)) {
             LOG_ERROR("Unable to declare ", scope, " variable. Because it cannot be inserted into ", scope,
                       " symbol table and its id is \"", id, "\".");

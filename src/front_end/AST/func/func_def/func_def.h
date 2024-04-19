@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AST/node/node.h"
+#include "IR/symbol/symbol.h"
 #include "AST/func/func_params/func_params.h"
 
 namespace mcs {
@@ -19,7 +20,7 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
-        std::vector<std::pair<llvm::Type*, std::string>> getParams() const;
+        std::vector<Symbol> getParams() const;
 
     private:
         std::unique_ptr<std::string>    retType_;

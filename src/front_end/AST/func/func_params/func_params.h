@@ -1,6 +1,7 @@
 #pragma once
 
-#include "llvm/IR/Type.h"
+#include <memory>
+#include <functional>
 
 namespace mcs {
     class FuncParam {
@@ -24,7 +25,7 @@ namespace mcs {
 
     public:
         void pushBack(FuncParam* funcParam);
-        bool readEach(const std::function<bool(const std::unique_ptr<FuncParam>&)>& function) const;
+        bool readEach(const std::function<void(const FuncParam&)>& function) const;
 
     private:
         std::vector<std::unique_ptr<FuncParam>> funcParams_;

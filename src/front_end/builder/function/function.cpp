@@ -8,10 +8,10 @@
 namespace mcs {
     // --------------------------------------------get function--------------------------------------------
 
-    std::vector<llvm::Type*> getTypes(const Params& params) {
+    std::vector<llvm::Type*> getTypesOf(const Params& params) {
         std::vector<llvm::Type*> types;
         for (const auto& param : params) {
-            types.emplace_back(param.first);
+            types.emplace_back(param.getType());
         }
         return types;
     }
@@ -21,11 +21,11 @@ namespace mcs {
     }
 
     std::string getId(const Params& params, size_t pos) {
-        if (pos > params.size()) {
+        if (pos >= params.size()) {
             LOG_ERROR("Unable to get ID because pos is ", pos, " which exceeds params' size of ", params.size(), ".");
             return {};
         }
-        return params[pos].second;
+        return params[pos].getName();
     }
 
     bool createFunctionParams(llvm::Function* function, const Params& params) {
@@ -50,7 +50,7 @@ namespace mcs {
     }
 
     llvm::Function* getFunction(llvm::Type* retType, const std::string& name, const Params& params) {
-        const auto function = llvm::Function::Create(llvm::FunctionType::get(retType, getTypes(params), false),
+        const auto function = llvm::Function::Create(llvm::FunctionType::get(retType, getTypesOf(params), false),
                                                      getLinkageType(name), name, Context::getInstance().getModule());
         Context::getInstance().pushBlock(llvm::BasicBlock::Create(Context::getInstance().getContext(), "", function));
         createFunctionParams(function, params);

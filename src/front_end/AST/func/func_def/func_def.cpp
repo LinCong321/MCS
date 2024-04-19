@@ -34,19 +34,13 @@ namespace mcs {
         return true;
     }
 
-    std::vector<std::pair<llvm::Type*, std::string>> FuncDef::getParams() const {
-        std::vector<std::pair<llvm::Type*, std::string>> params;
-
-        const auto function = [&params](const auto& funcParam) {
-            if (funcParam != nullptr) {
-                params.emplace_back(getLLVMType(funcParam->getType()), funcParam->getName());
-                return true;
-            }
-            return false;
-        };
+    std::vector<Symbol> FuncDef::getParams() const {
+        std::vector<Symbol> params;
 
         if (funcParams_ != nullptr) {
-            funcParams_->readEach(function);
+            funcParams_->readEach([&params](const auto& funcParam) {
+                params.emplace_back(getLLVMType(funcParam.getType()), funcParam.getName());
+            });
         }
 
         return params;
