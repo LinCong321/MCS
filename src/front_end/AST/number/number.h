@@ -1,31 +1,19 @@
 #pragma once
 
+#include "IR/type/type.h"
 #include "AST/node/node.h"
 
 namespace mcs {
-    class Number : public Node {};
-
-    class IntNum : public Number {
+    class Number : public Node {
     public:
-        explicit IntNum(int32_t val) : val_(val) {}
-        ~IntNum() override = default;
-
-    public:
-        llvm::Value* codeGen() const override;
-
-    private:
-        int32_t val_;
+        virtual Type getType() const = 0;
     };
 
-    class FloatNum : public Number {
-    public:
-        explicit FloatNum(float val) : val_(val) {}
-        ~FloatNum() override = default;
+    Type getTypeOf(Node* node);
 
-    public:
-        llvm::Value* codeGen() const override;
-
-    private:
-        float val_;
-    };
+    std::unique_ptr<Number> getNumber(char op, Node* val);
+    std::unique_ptr<Number> getNumber(Node* node, Type type);
+    std::unique_ptr<Number> getNumber(const std::string& name);
+    std::unique_ptr<Number> getNumber(Node* lhs, char op, Node* rhs);
+    std::unique_ptr<Number> getNumber(Node* node, const std::string& str);
 }

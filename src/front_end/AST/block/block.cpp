@@ -14,12 +14,22 @@ namespace mcs {
                 return nullptr;
             }
             if (Context::getInstance().getInsertBlock() == nullptr) {
-                LOG_WARN("This item is discarded because the function has returned.");
-                continue;
+                LOG_WARN("Since the function has returned, all subsequent items in the block are discarded.");
+                return nullptr;
             }
             item->codeGen();
         }
         return nullptr;
+    }
+
+    void BlockItem::constFold(std::unique_ptr<Node>&) {
+        for (auto& item : items_) {
+            if (item == nullptr) {
+                LOG_ERROR("Unable to fold constant because there is a nullptr in items_.");
+                return;
+            }
+            item->constFold(item);
+        }
     }
 
     void BlockItem::pushBack(Node* node) {

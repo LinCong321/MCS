@@ -1,5 +1,6 @@
 #include "unary_exp.h"
 #include "utils/logger.h"
+#include "number/number.h"
 #include "builder/operation/operation.h"
 
 namespace mcs {
@@ -9,6 +10,16 @@ namespace mcs {
             return nullptr;
         }
         return createUnaryOperation(op_, val_->codeGen());
+    }
+
+    void UnaryExp::constFold(std::unique_ptr<Node>& node) {
+        if (val_ != nullptr) {
+            val_->constFold(val_);
+        }
+        auto number = getNumber(op_, val_.get());
+        if (number != nullptr) {
+            node = std::move(number);
+        }
     }
 
     bool UnaryExp::checkAllMemberPointers() const {

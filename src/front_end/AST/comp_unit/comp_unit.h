@@ -10,6 +10,7 @@ namespace mcs {
 
     public:
         llvm::Value* codeGen() const override;
+        void constFold(std::unique_ptr<Node>& node) override;
 
     public:
         void pushBack(Node* node);

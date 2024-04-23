@@ -7,5 +7,6 @@ namespace mcs {
     public:
         virtual ~Node() = default;
         virtual llvm::Value* codeGen() const = 0;
+        virtual void constFold(std::unique_ptr<Node>& node) = 0;
     };
 }

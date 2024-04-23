@@ -11,6 +11,7 @@ namespace mcs {
 
     public:
         llvm::Value* codeGen() const override;
+        void constFold(std::unique_ptr<Node>& node) override {}
 
     private:
         using PhiNode = std::pair<llvm::Value*, llvm::BasicBlock*>;

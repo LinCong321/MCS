@@ -2,11 +2,12 @@
 #include "IR/context/context.h"
 #include "analyzer/parser/parser.hpp"
 
-void codeGen(const std::unique_ptr<mcs::Node>& ast) {
+void codeGen(std::unique_ptr<mcs::Node>& ast) {
     if (ast == nullptr) {
         LOG_ERROR("ast is nullptr.");
         return;
     }
+    ast->constFold(ast);
     ast->codeGen();
     mcs::Context::getInstance().getModule().print(llvm::outs(), nullptr);
 }

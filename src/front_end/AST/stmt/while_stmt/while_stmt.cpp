@@ -22,6 +22,12 @@ namespace mcs {
         return nullptr;
     }
 
+    void WhileStmt::constFold(std::unique_ptr<Node>&) {
+        if (stmt_ != nullptr) {
+            stmt_->constFold(stmt_);
+        }
+    }
+
     bool WhileStmt::checkAllMemberPointers() const {
         if (cond_ == nullptr) {
             LOG_ERROR("cond_ is nullptr.");

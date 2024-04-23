@@ -1,25 +1,14 @@
 // clang -S -emit-llvm test/test.cpp -o test/test.ll
 
-int x = 1;
-int y = 2 * x + 3;
+const float x = 1 * 2 + 3;
+const int y = 3.1;
+const int a = x * -y / 2;
 
-int f(int a, int b) {
-    while (x == 1) {
-        if (x > 1) {
-            break;
-        } else {
-            x = x - 1;
-        }
-        x = x + 1;
-        if (x <= 1 || y >= 1) {
-            continue;
-        }
-        x = x - 1;
-    }
-    return y;
+int f() {
+    return a * 10 - y;
 }
 
 int main() {
-    int a = f(3.14, x + y);
+
     return 0;
 }

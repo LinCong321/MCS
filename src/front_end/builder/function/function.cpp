@@ -10,7 +10,7 @@ namespace mcs {
 
     std::string getId(const std::vector<Symbol>& params, size_t pos) {
         if (pos >= params.size()) {
-            LOG_ERROR("Unable to get ID because pos is ", pos, " which exceeds params' size of ", params.size(), ".");
+            LOG_ERROR("Unable to get ID because pos is ", pos, ", which exceeds params' size of ", params.size(), ".");
             return {};
         }
         return params[pos].getName();

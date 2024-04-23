@@ -6,6 +6,7 @@
 #include "builder/constant/constant.h"
 #include "builder/function/function.h"
 #include "builder/instruction/instruction.h"
+#include "number/constant_table/constant_table.h"
 
 namespace {
     const auto MAX_PRIORITY = 65535;
@@ -34,6 +35,14 @@ namespace mcs {
 
         Context::getInstance().popBlock();
         return value;
+    }
+
+    void Start::constFold(std::unique_ptr<Node>&) {
+        ConstantTable::getInstance().create();
+        if (compUnit_ != nullptr) {
+            compUnit_->constFold(compUnit_);
+        }
+        ConstantTable::getInstance().remove();
     }
 
     bool Start::checkAllMemberPointers() const {

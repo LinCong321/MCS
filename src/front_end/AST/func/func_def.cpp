@@ -3,6 +3,7 @@
 #include "IR/context/context.h"
 #include "builder/public/public.h"
 #include "builder/function/function.h"
+#include "number/constant_table/constant_table.h"
 
 namespace mcs {
     llvm::Value* FuncDef::codeGen() const {
@@ -16,6 +17,14 @@ namespace mcs {
         Context::getInstance().popBlock();
 
         return function;
+    }
+
+    void FuncDef::constFold(std::unique_ptr<Node>&) {
+        ConstantTable::getInstance().create();
+        if (block_ != nullptr) {
+            block_->constFold(block_);
+        }
+        ConstantTable::getInstance().remove();
     }
 
     bool FuncDef::checkAllMemberPointers() const {

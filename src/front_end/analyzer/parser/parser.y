@@ -18,11 +18,14 @@
 %union {
     float               floatVal;
     int                 intVal;
+    mcs::ArraySize*     arraySize;
     mcs::BlockItem*     blockItem;
     mcs::CompUnit*      compUnit;
     mcs::FuncArgsExp*   funcArgsExp;
     mcs::FuncParam*     funcParam;
     mcs::FuncParams*    funcParams;
+    mcs::InitVal*       initVal;
+    mcs::InitValList*   initValList;
     mcs::LValue*        lValue;
     mcs::Node*          node;
     mcs::VarDef*        varDef;
@@ -39,13 +42,16 @@
 %token<floatVal>    FLOAT_CONST
 
 %type<compUnit>     CompUnit
-%type<node>         Decl ConstDecl ConstInitVal
+%type<node>         Decl ConstDecl
 %type<strVal>       BType VOID
 %type<varDefList>   ConstDefList VarDefList
 %type<varDef>       ConstDef VarDef
+%type<arraySize>    ConstExpList
+%type<initVal>      ConstInitVal InitVal
+%type<initValList>  ConstInitValList InitValList
 %type<node>         ConstExp AddExp MulExp UnaryExp PrimaryExp Exp
 %type<lValue>       LVal
-%type<node>         Number VarDecl InitVal FuncDef Block Stmt BStmt
+%type<node>         Number VarDecl FuncDef Block Stmt BStmt
 %type<funcArgsExp>  FuncRParams
 %type<funcParams>   FuncFParams
 %type<funcParam>    FuncFParam
@@ -102,10 +108,33 @@ ConstDefList    :   ConstDef    { $$ = new mcs::VarDefList($1); }
                     }
                 ;
 
-ConstDef        :   ID '=' ConstInitVal { $$ = new mcs::VarDef($1, $3); }
+ConstDef        :   ID '=' ConstInitVal                 { $$ = new mcs::VarDef($1, $3); }
+                |   ID ConstExpList '=' ConstInitVal    { $$ = new mcs::VarDef($1, $2, $4); }
                 ;
 
-ConstInitVal    :   ConstExp    { $$ = $1; }
+ConstExpList    :   '[' ConstExp ']'    { $$ = new mcs::ArraySize($2); }
+                |   ConstExpList '[' ConstExp ']' {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "ConstExpList is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($3);
+                    }
+                ;
+
+ConstInitVal    :   ConstExp                    { $$ = new mcs::InitVal($1); }
+                |   '{' '}'                     { $$ = new mcs::InitVal(); }
+                |   '{' ConstInitValList '}'    { $$ = new mcs::InitVal($2); }
+                ;
+
+ConstInitValList:   ConstInitVal    { $$ = new mcs::InitValList($1); }
+                |   ConstInitValList ',' ConstInitVal {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "ConstInitValList is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($3);
+                    }
                 ;
 
 ConstExp        :   AddExp  { $$ = $1; }
@@ -175,10 +204,25 @@ VarDefList      :   VarDef  { $$ = new mcs::VarDefList($1); }
                     }
                 ;
 
-VarDef          :   ID              { $$ = new mcs::VarDef($1); }
-                |   ID '=' InitVal  { $$ = new mcs::VarDef($1, $3); }
+VarDef          :   ID                          { $$ = new mcs::VarDef($1); }
+                |   ID '=' InitVal              { $$ = new mcs::VarDef($1, $3); }
+                |   ID ConstExpList             { $$ = new mcs::VarDef($1, $2); }
+                |   ID ConstExpList '=' InitVal { $$ = new mcs::VarDef($1, $2, $4); }
+                ;
 
-InitVal         :   Exp { $$ = $1; }
+InitVal         :   Exp                 { $$ = new mcs::InitVal($1); }
+                |   '{' '}'             { $$ = new mcs::InitVal(); }
+                |   '{' InitValList '}' { $$ = new mcs::InitVal($2); }
+                ;
+
+InitValList     :   InitVal { $$ = new mcs::InitValList($1); }
+                |   InitValList ',' InitVal {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "InitValList is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($3);
+                    }
                 ;
 
 FuncDef         :   BType ID '(' ')' Block              { $$ = new mcs::FuncDef($1, $2, $5); }

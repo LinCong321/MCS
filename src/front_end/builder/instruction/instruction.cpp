@@ -39,7 +39,8 @@ namespace mcs {
 
     llvm::Value* getValue(const std::vector<llvm::Value*>& values, size_t pos) {
         if (pos >= values.size()) {
-            LOG_ERROR("Unable to get value because pos is ", pos, "which exceeds values' size of ", values.size(), ".");
+            LOG_ERROR("Unable to get value because pos is ", pos, ", which exceeds values' size of ", values.size(),
+                      ".");
             return nullptr;
         }
         return values[pos];
@@ -133,7 +134,7 @@ namespace mcs {
     // ----------------------------------------create phi node----------------------------------------
 
     llvm::PHINode* getPHINode(size_t size) {
-        return llvm::PHINode::Create(getLLVMType(Type::BOOL), size, "",Context::getInstance().getInsertBlock());
+        return llvm::PHINode::Create(getLLVMType(Type::BOOL), size, "", Context::getInstance().getInsertBlock());
     }
 
     llvm::Instruction* createPHINode(const std::vector<std::pair<llvm::Value*, llvm::BasicBlock*>>& nodes) {

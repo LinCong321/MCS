@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AST/exp/exp.h"
+#include "IR/type/type.h"
 
 namespace mcs {
     class ArithExp : public Exp {
@@ -10,6 +11,7 @@ namespace mcs {
 
     public:
         llvm::Value* codeGen() const override;
+        void constFold(std::unique_ptr<Node>& node) override;
 
     private:
         bool checkAllMemberPointers() const;

@@ -17,9 +17,18 @@ namespace mcs {
         return createBranch(trueBlock, falseBlock);
     }
 
+    void IfElseStmt::constFold(std::unique_ptr<Node>&) {
+        if (thenStmt_ != nullptr) {
+            thenStmt_->constFold(thenStmt_);
+        }
+        if (elseStmt_ != nullptr) {
+            elseStmt_->constFold(elseStmt_);
+        }
+    }
+
     bool IfElseStmt::checkAllMemberPointers() const {
         if (cond_ == nullptr) {
-            LOG_ERROR("condition_ is nullptr.");
+            LOG_ERROR("cond_ is nullptr.");
             return false;
         }
         if (thenStmt_ == nullptr) {

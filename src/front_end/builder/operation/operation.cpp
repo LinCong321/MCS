@@ -161,7 +161,7 @@ namespace mcs {
         const auto targetType = std::max(std::max(getTypeOf(lhs), getTypeOf(rhs)), Type::INT);
         const auto it = type2Func.find(targetType);
         if (it == type2Func.end()) {
-            LOG_ERROR("Unable to create binary operation because target type (aka ", targetType,
+            LOG_ERROR("Unable to create binary operation because the target type (aka ", targetType,
                       ") is not in type2Func table.");
             return nullptr;
         }

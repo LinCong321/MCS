@@ -1,4 +1,4 @@
-#include "front_end/AST/func/func_params.h"
+#include "func_params.h"
 #include "utils/logger.h"
 
 namespace mcs {

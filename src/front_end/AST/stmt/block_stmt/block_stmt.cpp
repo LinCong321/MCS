@@ -1,6 +1,7 @@
 #include "block_stmt.h"
 #include "utils/logger.h"
 #include "IR/context/context.h"
+#include "number/constant_table/constant_table.h"
 
 namespace mcs {
     llvm::Value* BlockStmt::codeGen() const {
@@ -14,6 +15,14 @@ namespace mcs {
         Context::getInstance().deleteSymbolTable();
 
         return nullptr;
+    }
+
+    void BlockStmt::constFold(std::unique_ptr<Node>&) {
+        ConstantTable::getInstance().create();
+        if (block_ != nullptr) {
+            block_->constFold(block_);
+        }
+        ConstantTable::getInstance().remove();
     }
 
     bool BlockStmt::checkAllMemberPointers() const {

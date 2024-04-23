@@ -27,6 +27,25 @@ namespace mcs {
         return nullptr;
     }
 
+    void VarDefList::constFold(std::unique_ptr<Node>& node) {
+        if (!checkAllMemberPointers()) {
+            LOG_ERROR("Unable to fold constant because there is a nullptr in member pointers.");
+            return;
+        }
+
+        if (!isConstant_) {
+            return;
+        }
+
+        for (auto& def : defList_) {
+            if (def == nullptr) {
+                LOG_ERROR("Unable to generate code because there is a nullptr in defList_.");
+                return;
+            }
+            def->constFold(*type_);
+        }
+    }
+
     void VarDefList::pushBack(VarDef* varDef) {
         defList_.emplace_back(varDef);
     }
