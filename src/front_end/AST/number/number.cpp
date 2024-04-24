@@ -9,23 +9,12 @@ namespace mcs {
         return (number != nullptr) ? number->getType() : Type::UNKNOWN;
     }
 
-    std::unique_ptr<Number> getNumber(char op, Node* val) {
-        switch (getTypeOf(val)) {
+    std::unique_ptr<Number> getNumber(char op, Node* node) {
+        switch (getTypeOf(node)) {
             case Type::INT:
-                return std::make_unique<IntNum>(op, val);
+                return std::make_unique<IntNum>(op, node);
             case Type::FLOAT:
-                return std::make_unique<FloatNum>(op, val);
-            default:
-                return nullptr;
-        }
-    }
-
-    std::unique_ptr<Number> getNumber(Node* node, Type type) {
-        switch (type) {
-            case Type::INT:
-                return std::make_unique<IntNum>(node);
-            case Type::FLOAT:
-                return std::make_unique<FloatNum>(node);
+                return std::make_unique<FloatNum>(op, node);
             default:
                 return nullptr;
         }
@@ -45,6 +34,17 @@ namespace mcs {
                 return std::make_unique<IntNum>(lhs, op, rhs);
             case Type::FLOAT:
                 return std::make_unique<FloatNum>(lhs, op, rhs);
+            default:
+                return nullptr;
+        }
+    }
+
+    std::unique_ptr<Number> getNumber(Node* node, Type type) {
+        switch (type) {
+            case Type::INT:
+                return std::make_unique<IntNum>(node);
+            case Type::FLOAT:
+                return std::make_unique<FloatNum>(node);
             default:
                 return nullptr;
         }

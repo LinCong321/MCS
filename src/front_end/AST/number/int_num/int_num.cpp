@@ -40,21 +40,21 @@ namespace mcs {
         }
     }
 
-    int IntNum::getInitVal(char op, Node* val) {
+    int IntNum::getIntVal(char op, Node* node) {
         switch (op) {
             case '+':
-                return +getIntVal(val);
+                return +getIntVal(node);
             case '-':
-                return -getIntVal(val);
+                return -getIntVal(node);
             case '!':
-                return !getIntVal(val);
+                return !getIntVal(node);
             default:
-                LOG_ERROR("Unable to get init val because there are not enough cases in switch.");
+                LOG_ERROR("Unable to get int val because there are not enough cases in switch.");
                 return 0;
         }
     }
 
-    int IntNum::getInitVal(Node* lhs, char op, Node* rhs) {
+    int IntNum::getIntVal(Node* lhs, char op, Node* rhs) {
         switch (op) {
             case '+':
                 return getIntVal(lhs) + getIntVal(rhs);
@@ -67,7 +67,7 @@ namespace mcs {
             case '%':
                 return getIntVal(lhs) % getIntVal(rhs);
             default:
-                LOG_ERROR("Unable to get init val because there are not enough cases in switch.");
+                LOG_ERROR("Unable to get int val because there are not enough cases in switch.");
                 return 0;
         }
     }

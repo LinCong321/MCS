@@ -38,11 +38,9 @@ namespace mcs {
         }
 
         for (auto& def : defList_) {
-            if (def == nullptr) {
-                LOG_ERROR("Unable to generate code because there is a nullptr in defList_.");
-                return;
+            if (def != nullptr) {
+                def->constFold(*type_);
             }
-            def->constFold(*type_);
         }
     }
 

@@ -40,21 +40,21 @@ namespace mcs {
         }
     }
 
-    float FloatNum::getInitVal(char op, Node* val) {
+    float FloatNum::getFloatVal(char op, Node* node) {
         switch (op) {
             case '+':
-                return +getFloatVal(val);
+                return +getFloatVal(node);
             case '-':
-                return -getFloatVal(val);
+                return -getFloatVal(node);
             case '!':
-                return !static_cast<bool>(getFloatVal(val));
+                return !static_cast<bool>(getFloatVal(node));
             default:
-                LOG_ERROR("Unable to get init val because there are not enough cases in switch.");
+                LOG_ERROR("Unable to get float val because there are not enough cases in switch.");
                 return 0;
         }
     }
 
-    float FloatNum::getInitVal(Node* lhs, char op, Node* rhs) {
+    float FloatNum::getFloatVal(Node* lhs, char op, Node* rhs) {
         switch (op) {
             case '+':
                 return getFloatVal(lhs) + getFloatVal(rhs);
@@ -65,7 +65,7 @@ namespace mcs {
             case '/':
                 return getFloatVal(lhs) / getFloatVal(rhs);
             default:
-                LOG_ERROR("Unable to get init val because there are not enough cases in switch.");
+                LOG_ERROR("Unable to get float val because there are not enough cases in switch.");
                 return 0;
         }
     }

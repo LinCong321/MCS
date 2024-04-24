@@ -19,11 +19,9 @@ namespace mcs {
 
     void CompUnit::constFold(std::unique_ptr<Node>&) {
         for (auto& unit : units_) {
-            if (unit == nullptr) {
-                LOG_ERROR("Unable to fold constant because there is a nullptr in units_.");
-                return;
+            if (unit != nullptr) {
+                unit->constFold(unit);
             }
-            unit->constFold(unit);
         }
     }
 

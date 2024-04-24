@@ -24,11 +24,9 @@ namespace mcs {
 
     void BlockItem::constFold(std::unique_ptr<Node>&) {
         for (auto& item : items_) {
-            if (item == nullptr) {
-                LOG_ERROR("Unable to fold constant because there is a nullptr in items_.");
-                return;
+            if (item != nullptr) {
+                item->constFold(item);
             }
-            item->constFold(item);
         }
     }
 

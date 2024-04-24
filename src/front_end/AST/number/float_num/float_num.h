@@ -10,8 +10,8 @@ namespace mcs {
 
     public:
         explicit FloatNum(Node* node) : val_(getFloatVal(node)) {}
-        FloatNum(char op, Node* val) : val_(getInitVal(op, val)) {}
-        FloatNum(Node* lhs, char op, Node* rhs) : val_(getInitVal(lhs, op, rhs)) {}
+        FloatNum(char op, Node* node) : val_(getFloatVal(op, node)) {}
+        FloatNum(Node* lhs, char op, Node* rhs) : val_(getFloatVal(lhs, op, rhs)) {}
 
     public:
         Type getType() const override;
@@ -23,8 +23,8 @@ namespace mcs {
 
     private:
         static float getFloatVal(Node* node);
-        static float getInitVal(char op, Node* val);
-        static float getInitVal(Node* lhs, char op, Node* rhs);
+        static float getFloatVal(char op, Node* node);
+        static float getFloatVal(Node* lhs, char op, Node* rhs);
 
     private:
         float val_;

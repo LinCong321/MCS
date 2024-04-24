@@ -10,8 +10,8 @@ namespace mcs {
 
     public:
         explicit IntNum(Node* node) : val_(getIntVal(node)) {}
-        IntNum(char op, Node* val) : val_(getInitVal(op, val)) {}
-        IntNum(Node* lhs, char op, Node* rhs) : val_(getInitVal(lhs, op, rhs)) {}
+        IntNum(char op, Node* node) : val_(getIntVal(op, node)) {}
+        IntNum(Node* lhs, char op, Node* rhs) : val_(getIntVal(lhs, op, rhs)) {}
 
     public:
         Type getType() const override;
@@ -23,8 +23,8 @@ namespace mcs {
 
     private:
         static int getIntVal(Node* node);
-        static int getInitVal(char op, Node* val);
-        static int getInitVal(Node* lhs, char op, Node* rhs);
+        static int getIntVal(char op, Node* node);
+        static int getIntVal(Node* lhs, char op, Node* rhs);
 
     private:
         int32_t val_;
