@@ -1,8 +1,21 @@
 #include "var_def.h"
 #include "utils/logger.h"
-#include "number/constant_table/constant_table.h"
+#include "number/number.h"
 
 namespace mcs {
+    void VarDef::constFold() {
+        if (arraySize_ != nullptr) {
+            arraySize_->constFold();
+        }
+        if (initVal_ != nullptr) {
+            initVal_->constFold();
+        }
+    }
+
+    Node* VarDef::getInitVal() const {
+        return initVal_ != nullptr ? initVal_->getValue() : nullptr;
+    }
+
     std::string VarDef::getId() const {
         if (id_ == nullptr) {
             LOG_ERROR("Unable to get ID because id_ is nullptr.");
@@ -13,7 +26,6 @@ namespace mcs {
 
     llvm::Value* VarDef::getValue() const {
         if (initVal_ == nullptr) {
-            LOG_ERROR("Unable to get value because initVal_ is nullptr.");
             return nullptr;
         }
 
@@ -26,12 +38,15 @@ namespace mcs {
         return value->codeGen();
     }
 
-    void VarDef::constFold(const std::string& type) {
-        if (initVal_ == nullptr) {
-            LOG_ERROR("Unable to fold constant because initVal_ is nullptr.");
-            return;
+    std::vector<int> VarDef::getArraySize() const {
+        std::vector<int> size;
+
+        if (arraySize_ != nullptr) {
+            arraySize_->readEach([&size](Node& node) {
+                size.emplace_back(getValueOfIntNum(&node));
+            });
         }
-        initVal_->constFold();
-        ConstantTable::getInstance().insert(getId(), getNumber(initVal_->getValue(), type));
+
+        return std::move(size);
     }
 }

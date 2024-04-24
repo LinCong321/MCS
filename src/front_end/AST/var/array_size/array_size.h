@@ -9,7 +9,9 @@ namespace mcs {
         ~ArraySize() = default;
 
     public:
+        void constFold();
         void pushBack(Node* node);
+        bool readEach(const std::function<void(Node&)>& function) const;
 
     private:
         std::vector<std::unique_ptr<Node>> arraySize_;

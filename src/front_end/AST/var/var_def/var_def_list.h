@@ -20,6 +20,7 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
+        void constFold(VarDef& varDef) const;
 
     private:
         bool isConstant_;

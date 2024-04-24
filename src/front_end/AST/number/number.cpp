@@ -9,6 +9,11 @@ namespace mcs {
         return (number != nullptr) ? number->getType() : Type::UNKNOWN;
     }
 
+    int getValueOfIntNum(Node* node) {
+        const auto intNum = dynamic_cast<IntNum*>(node);
+        return (intNum != nullptr) ? intNum->getValue() : -1;
+    }
+
     std::unique_ptr<Number> getNumber(char op, Node* node) {
         switch (getTypeOf(node)) {
             case Type::INT:

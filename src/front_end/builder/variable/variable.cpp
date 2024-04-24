@@ -6,7 +6,7 @@
 #include "instruction/instruction.h"
 
 namespace mcs {
-    // --------------------------------------------declare variable--------------------------------------------
+    // ----------------------------------------get variable----------------------------------------
 
     llvm::Value* getLocalVariable(llvm::Type* type, const std::string& id, llvm::Value* value) {
         const auto variable = createAllocaInst(type);
@@ -49,7 +49,13 @@ namespace mcs {
         return {isConstant, type, it->second(type, id, value)};
     }
 
-    bool declareVariable(llvm::Type* type, const std::string& id, llvm::Value* value, bool isConstant) {
+    // ----------------------------------------declare variable----------------------------------------
+
+    bool declareVariable(llvm::Type* type, const std::string& id, llvm::Value* value) {
+        return declareVariable(false, type, id, value);
+    }
+
+    bool declareVariable(bool isConstant, llvm::Type* type, const std::string& id, llvm::Value* value) {
         const auto scope = Context::getInstance().getCurrentScope();
         if (Context::getInstance().findSymbol(id)) {
             LOG_ERROR("Unable to declare ", scope, " variable. Because its id (aka \"", id,
@@ -67,7 +73,8 @@ namespace mcs {
         return true;
     }
 
-    bool declareVariable(const std::string& type, const std::string& id, llvm::Value* value, bool isConstant) {
-        return declareVariable(getLLVMType(type), id, value, isConstant);
+    bool declareVariable(bool isConstant, const std::string& type, const std::string& id,
+                         const std::vector<int>& arraySize, llvm::Value* value) {
+        return declareVariable(isConstant, getLLVMType(type, arraySize), id, value);
     }
 }

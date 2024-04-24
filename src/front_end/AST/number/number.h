@@ -11,6 +11,8 @@ namespace mcs {
 
     Type getTypeOf(Node* node);
 
+    int getValueOfIntNum(Node* node);
+
     std::unique_ptr<Number> getNumber(char op, Node* node);
     std::unique_ptr<Number> getNumber(const std::string& name);
     std::unique_ptr<Number> getNumber(Node* lhs, char op, Node* rhs);

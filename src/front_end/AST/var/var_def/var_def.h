@@ -15,9 +15,13 @@ namespace mcs {
         ~VarDef() = default;
 
     public:
+        void constFold();
+
+    public:
+        Node* getInitVal() const;
         std::string getId() const;
         llvm::Value* getValue() const;
-        void constFold(const std::string& type);
+        std::vector<int> getArraySize() const;
 
     private:
         std::unique_ptr<std::string>    id_;

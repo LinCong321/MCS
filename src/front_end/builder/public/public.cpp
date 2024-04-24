@@ -19,13 +19,32 @@ namespace mcs {
             case Type::FLOAT:
                 return llvm::Type::getFloatTy(Context::getInstance().getContext());
             default:
-                LOG_ERROR("Unable to get casted type because there are not enough cases in switch.");
+                LOG_ERROR("Unable to get LLVM type because there are not enough cases in switch.");
                 return nullptr;
         }
     }
 
     llvm::Type* getLLVMType(const std::string& str) {
         return getLLVMType(getTypeOf(str));
+    }
+
+    llvm::Type* getLLVMType(llvm::Type* type, const std::vector<int>& arraySize) {
+        llvm::ArrayType* arrayType = nullptr;
+
+        for (auto it = arraySize.crbegin(); it != arraySize.crend(); it++) {
+            if (*it < 0) {
+                LOG_ERROR("Unable to get LLVM type because array dimensions are negative integers!");
+                return nullptr;
+            }
+            arrayType = llvm::ArrayType::get(type, *it);
+            type = arrayType;
+        }
+
+        return arrayType != nullptr ? arrayType : type;
+    }
+
+    llvm::Type* getLLVMType(const std::string& str, const std::vector<int>& arraySize) {
+        return getLLVMType(getLLVMType(str), arraySize);
     }
 
     // ----------------------------------------get casted value----------------------------------------
