@@ -1,6 +1,6 @@
 #pragma once
 
-#include "front_end/AST/var/var_def/var_def.h"
+#include "var_def.h"
 #include "IR/scope/scope.h"
 #include "IR/symbol/symbol.h"
 
@@ -20,7 +20,6 @@ namespace mcs {
 
     private:
         bool checkAllMemberPointers() const;
-        void constFold(VarDef& varDef) const;
 
     private:
         bool isConstant_;

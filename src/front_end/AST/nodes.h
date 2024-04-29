@@ -23,5 +23,4 @@
 #include "stmt/null_stmt/null_stmt.h"
 #include "stmt/ret_stmt/ret_stmt.h"
 #include "stmt/while_stmt/while_stmt.h"
-#include "var/var_def/var_def.h"
 #include "var/var_def/var_def_list.h"

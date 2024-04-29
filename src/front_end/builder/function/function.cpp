@@ -10,7 +10,7 @@ namespace mcs {
 
     std::string getId(const std::vector<Symbol>& params, size_t pos) {
         if (pos >= params.size()) {
-            LOG_ERROR("Unable to get ID because pos is ", pos, ", which exceeds params' size of ", params.size(), ".");
+            LOG_ERROR("Unable to get ID because pos = ", pos, " exceeds number of parameters = ", params.size(), ".");
             return {};
         }
         return params[pos].getName();
@@ -24,7 +24,7 @@ namespace mcs {
 
         size_t pos = 0;
         for (auto& arg : function->args()) {
-            if (!declareVariable(arg.getType(), getId(params, pos++), &arg)) {
+            if (!declareVariable(false, arg.getType(), getId(params, pos++), &arg)) {
                 LOG_ERROR("Unable to create function params because the variable cannot be declared.");
                 return false;
             }

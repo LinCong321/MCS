@@ -1,7 +1,5 @@
 #include "var_def_list.h"
 #include "utils/logger.h"
-#include "builder/variable/variable.h"
-#include "number/constant_table/constant_table.h"
 
 namespace mcs {
     VarDefList::VarDefList(VarDef* varDef) : isConstant_(false), type_(nullptr), defList_() {
@@ -16,13 +14,10 @@ namespace mcs {
 
         for (const auto& def : defList_) {
             if (def == nullptr) {
-                LOG_ERROR("Unable to generate code because there is a nullptr in defList_.");
+                LOG_ERROR("Unable to declare variables because there is a nullptr in defList_.");
                 return nullptr;
             }
-            if (!declareVariable(isConstant_, *type_, def->getId(), def->getArraySize(), def->getValue())) {
-                LOG_ERROR("Unable to generate code because variable \"", def->getId(), "\" cannot be declared.");
-                return nullptr;
-            }
+            def->declare(isConstant_, *type_);
         }
 
         return nullptr;
@@ -35,7 +30,7 @@ namespace mcs {
         }
         for (auto& def : defList_) {
             if (def != nullptr) {
-                constFold(*def);
+                def->constFold(isConstant_, *type_);
             }
         }
     }
@@ -55,12 +50,5 @@ namespace mcs {
             return false;
         }
         return true;
-    }
-
-    void VarDefList::constFold(VarDef& varDef) const {
-        varDef.constFold();
-        if (isConstant_) {
-            ConstantTable::getInstance().insert(varDef.getId(), getNumber(varDef.getInitVal(), *type_));
-        }
     }
 }

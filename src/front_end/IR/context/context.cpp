@@ -106,6 +106,15 @@ namespace mcs {
         return tables_.back().checkExist(name);
     }
 
+    llvm::Type* Context::getSymbolType(const std::string& name) const {
+        Symbol symbol;
+        if (!getSymbol(name, symbol)) {
+            LOG_ERROR("Unable to get symbol type because getting symbol \"", name, "\" failed.");
+            return nullptr;
+        }
+        return symbol.getType();
+    }
+
     bool Context::getSymbol(const std::string& name, Symbol& symbol) const {
         for (auto it = tables_.crbegin(); it != tables_.crend(); it++) {
             if (it->checkExist(name)) {

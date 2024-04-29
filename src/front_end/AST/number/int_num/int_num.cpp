@@ -35,7 +35,7 @@ namespace mcs {
             case Type::FLOAT:
                 return toInt<FloatNum*>(node);
             default:
-                LOG_ERROR("Unable to get int val because there are not enough cases in switch.");
+                LOG_ERROR("Unable to get int val because node is not a constant.");
                 return 0;
         }
     }

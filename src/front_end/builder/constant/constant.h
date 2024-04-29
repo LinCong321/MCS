@@ -11,4 +11,5 @@ namespace mcs {
     llvm::Constant* getNullValue(const llvm::Value* value);
 
     llvm::Constant* getConstantValue(const llvm::Value* value, llvm::Type* type);
+    llvm::Constant* getConstantArray(std::vector<llvm::Constant*> constants, llvm::Type* type);
 }

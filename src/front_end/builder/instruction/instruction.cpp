@@ -39,8 +39,7 @@ namespace mcs {
 
     llvm::Value* getValue(const std::vector<llvm::Value*>& values, size_t pos) {
         if (pos >= values.size()) {
-            LOG_ERROR("Unable to get value because pos is ", pos, ", which exceeds values' size of ", values.size(),
-                      ".");
+            LOG_ERROR("Unable to get value because pos = ", pos, " exceeds number of values = ", values.size(), ".");
             return nullptr;
         }
         return values[pos];
@@ -64,95 +63,5 @@ namespace mcs {
         }
         return llvm::CallInst::Create(function, getCastedArgs(function->args(), values), "",
                                       Context::getInstance().getInsertBlock());
-    }
-
-    // ----------------------------------------create alloca inst----------------------------------------
-
-    llvm::Instruction* createAllocaInst(llvm::Type* type) {
-        return new llvm::AllocaInst(type, 0, "", Context::getInstance().getInsertBlock());
-    }
-
-    // ----------------------------------------create load inst----------------------------------------
-
-    llvm::Instruction* createLoadInst(const std::string& id) {
-        Symbol symbol;
-        if (!Context::getInstance().getSymbol(id, symbol)) {
-            LOG_ERROR("The load instruction cannot be created because getting symbol \"", id, "\" failed.");
-            return nullptr;
-        }
-        return new llvm::LoadInst(symbol.getType(), symbol.getValue(), "", Context::getInstance().getInsertBlock());
-    }
-
-    // ----------------------------------------create store inst----------------------------------------
-
-    llvm::Instruction* createStoreInst(llvm::Value* value, llvm::Value* variable) {
-        return new llvm::StoreInst(value, variable, false, Context::getInstance().getInsertBlock());
-    }
-
-    llvm::Instruction* createStoreInst(llvm::Value* value, const std::string& id) {
-        Symbol symbol;
-        if (!Context::getInstance().getSymbol(id, symbol) || symbol.isConstant()) {
-            LOG_ERROR("The store instruction cannot be created because getting symbol \"", id,
-                      "\" failed or it is a constant.");
-            return nullptr;
-        }
-        return createStoreInst(getCastedValue(value, symbol.getType()), symbol.getValue());
-    }
-
-    // ----------------------------------------create break inst----------------------------------------
-
-    llvm::Instruction* createBreakInst() {
-        LoopInfo loopInfo;
-        if (!Context::getInstance().getCurrentLoopInfo(loopInfo)) {
-            LOG_ERROR("Unable to create break instruction because getting loop information failed.");
-            return nullptr;
-        }
-        return createJumpInst(loopInfo.getBreakBlock());
-    }
-
-    // ----------------------------------------create continue inst----------------------------------------
-
-    llvm::Instruction* createContinueInst() {
-        LoopInfo loopInfo;
-        if (!Context::getInstance().getCurrentLoopInfo(loopInfo)) {
-            LOG_ERROR("Unable to create continue instruction because getting loop information failed.");
-            return nullptr;
-        }
-        return createJumpInst(loopInfo.getContinueBlock());
-    }
-
-    // ----------------------------------------create jump inst----------------------------------------
-
-    llvm::Instruction* createJumpInst(llvm::BasicBlock* basicBlock) {
-        if (Context::getInstance().getInsertBlock() == nullptr) {
-            LOG_INFO("The current basic block has been terminated, so there is no need to create a jump instruction.");
-            return nullptr;
-        }
-        return llvm::BranchInst::Create(basicBlock, Context::getInstance().getInsertBlock());
-    }
-
-    // ----------------------------------------create phi node----------------------------------------
-
-    llvm::PHINode* getPHINode(size_t size) {
-        return llvm::PHINode::Create(getLLVMType(Type::BOOL), size, "", Context::getInstance().getInsertBlock());
-    }
-
-    llvm::Instruction* createPHINode(const std::vector<std::pair<llvm::Value*, llvm::BasicBlock*>>& nodes) {
-        const auto phiNode = getPHINode(nodes.size());
-        if (phiNode == nullptr) {
-            LOG_ERROR("Unable to create PHINode because phiNode is nullptr.");
-            return nullptr;
-        }
-        for (const auto& node : nodes) {
-            phiNode->addIncoming(node.first, node.second);
-        }
-        return phiNode;
-    }
-
-    // ----------------------------------------create branch inst----------------------------------------
-
-    llvm::Instruction* createBranchInst(llvm::BasicBlock* ifTrue, llvm::BasicBlock* ifFalse, llvm::Value* cond) {
-        return llvm::BranchInst::Create(ifTrue, ifFalse, getCastedValue(cond, Type::BOOL),
-                                        Context::getInstance().getInsertBlock());
     }
 }

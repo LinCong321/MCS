@@ -1,7 +1,7 @@
 #include "while_stmt.h"
 #include "utils/logger.h"
 #include "IR/context/context.h"
-#include "builder/instruction/instruction.h"
+#include "builder/branch/branch.h"
 
 namespace mcs {
     llvm::Value* WhileStmt::codeGen() const {

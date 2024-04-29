@@ -1,8 +1,10 @@
 set (
         SOURCE_FILES
+        branch/branch.cpp
         constant/constant.cpp
         function/function.cpp
         instruction/instruction.cpp
+        memory/memory.cpp
         operation/operation.cpp
         public/public.cpp
         variable/variable.cpp

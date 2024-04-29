@@ -41,6 +41,7 @@ namespace mcs {
 
     public:
         bool findSymbol(const std::string& name) const;
+        llvm::Type* getSymbolType(const std::string& name) const;
         bool getSymbol(const std::string& name, Symbol& symbol) const;
         bool insertSymbol(const std::string& name, const Symbol& symbol);
 

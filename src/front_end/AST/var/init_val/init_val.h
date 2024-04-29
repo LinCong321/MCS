@@ -16,11 +16,19 @@ namespace mcs {
 
     public:
         void constFold();
-        Node* getValue() const;
+        bool isNode() const;
+        Node* getNode() const;
+        InitValList* getInitValList() const;
+
+    private:
+        void constFoldForNode();
+        void constFoldForInitValList();
 
     private:
         std::variant<std::unique_ptr<Node>, std::unique_ptr<InitValList>> initVal_;
     };
+
+    // ----------------------------------------------------------------------------------------------------
 
     class InitValList {
     public:
@@ -31,7 +39,10 @@ namespace mcs {
         explicit InitValList(InitVal* initVal);
 
     public:
+        void constFold();
         void pushBack(InitVal* initVal);
+        void readEach(const std::function<void(const InitVal*)>& function) const;
+        void readEach(const std::function<void(size_t, const InitVal*)>& function) const;
 
     private:
         std::vector<std::unique_ptr<InitVal>> initValList_;

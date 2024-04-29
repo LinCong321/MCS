@@ -29,7 +29,6 @@ set(
         var/init_val/init_val.cpp
         var/var_def/var_def.cpp
         var/var_def/var_def_list.cpp
-
 )
 
 include_directories(${AST_DIR})

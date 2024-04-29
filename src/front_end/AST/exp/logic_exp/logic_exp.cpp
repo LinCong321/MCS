@@ -2,8 +2,8 @@
 #include "utils/logger.h"
 #include "IR/context/context.h"
 #include "builder/public/public.h"
+#include "builder/branch/branch.h"
 #include "builder/constant/constant.h"
-#include "builder/instruction/instruction.h"
 
 namespace mcs {
     llvm::Value* LogicExp::codeGen() const {
