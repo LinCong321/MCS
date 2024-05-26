@@ -2,6 +2,7 @@
 
 %{
     #include "parser/parser.hpp"
+    void yyerror(const char* s);
 %}
 
 %s          COMMENT
@@ -41,6 +42,13 @@ FLOAT_CONST [0-9]*\.?[0-9]+([Ee][+-]?[0-9]+)?
 {INT_CONST}     { yylval.intVal = std::stoi(yytext, nullptr, 0); return INT_CONST; }
 {FLOAT_CONST}   { yylval.floatVal = std::stof(yytext); return FLOAT_CONST; }
 
-.               { return yytext[0]; }
+
+[-*<>=!+/%,;()\[\]{}]   { return yytext[0]; }
+.                       { yyerror("Unknown character"); return 0; }
 
 %%
+
+void yyerror(const char* s) {
+    fprintf(stderr, "Error: %s at line %d on symbol \'%s\'\n", s, yylineno, yytext);
+    exit(1);
+}

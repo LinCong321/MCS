@@ -17,9 +17,15 @@ add_library(ir ${SOURCE_FILES})
 
 llvm_map_components_to_libnames(
         LLVM_LIBS
+        ${LLVM_TARGETS_TO_BUILD}
         support
         core
         irreader
+        passes
+        codegen
+        mc
+        mcparser
+        option
 )
 
 target_link_libraries(ir ${LLVM_LIBS} utils)

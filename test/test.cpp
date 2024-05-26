@@ -1,12 +1,17 @@
 // clang -S -emit-llvm test/test.cpp -o test/test.ll
 
-int a[10] = {1, 2, 3};
-//const int b[5] = {4, 5};
-
-void f() {
-    //int c[10] = {1, 2, 3};
+int fib(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+    if (n == 1 || n == 2) {
+        return 1;
+    }
+    return fib(n - 1) + fib(n - 2);
 }
 
 int main() {
+    int n = 10;
+    int m = fib(n) + 1;
     return 0;
 }

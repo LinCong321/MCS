@@ -1,6 +1,7 @@
 project(src)
 
 set(SRC_DIR         ${PROJECT_SOURCE_DIR})
+set(BACK_END_DIR    ${SRC_DIR}/back_end)
 set(FRONT_END_DIR   ${SRC_DIR}/front_end)
 set(UTILS_DIR       ${SRC_DIR}/utils)
 
@@ -15,7 +16,8 @@ add_executable(compiler main.cpp)
 
 target_include_directories(compiler PRIVATE ${FRONT_END_DIR})
 
-target_link_libraries(compiler analyzer)
+target_link_libraries(compiler analyzer back_end)
 
+add_subdirectory(back_end)
 add_subdirectory(front_end)
 add_subdirectory(utils)
