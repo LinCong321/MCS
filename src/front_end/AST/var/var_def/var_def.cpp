@@ -16,12 +16,22 @@ namespace mcs {
         }
     }
 
-    bool VarDef::declare(bool isConstant, const std::string& type) const {
-        if (isArray()) {
-            return declare(isConstant, getLLVMType(type, getArraySize()));
-        } else {
-            return declareVariable(isConstant, type, getId(), getValue());
+    bool VarDef::declare(bool isConstant, const std::string& str) const {
+        if (!isArray()) {
+            return declareVariable(isConstant, str, getId(), getValue());
         }
+
+        const auto type = getLLVMType(str, getArraySize());
+        if (Context::getInstance().getCurrentScope() == Scope::GLOBAL && isConstant) {
+            return declareArray(isConstant, type, getId(), getInitializer(type, initVal_.get()));
+        }
+
+        if (!declareArray(isConstant, type, getId())) {
+            LOG_ERROR("Array \"", getId(), " declaration failed!");
+            return false;
+        }
+
+        return initializeArray(type);
     }
 
     void VarDef::constFold() {
@@ -35,29 +45,6 @@ namespace mcs {
 
     bool VarDef::isArray() const {
         return arraySize_.has_value();
-    }
-
-    bool VarDef::declare(bool isConstant, llvm::Type* type) const {
-        if (isConstant && Context::getInstance().getCurrentScope() == Scope::GLOBAL) {
-            return declareArray(isConstant, type, getId(), getInitializer(type, initVal_.get()));
-        }
-
-        if (!declareArray(isConstant, type, getId())) {
-            LOG_ERROR("Array \"", getId(), " declaration failed!");
-            return false;
-        }
-
-        if (initVal_ != nullptr) {
-            std::vector<size_t> index;
-            return initializeArray(type, index, initVal_.get());
-        }
-
-        if (Context::getInstance().getCurrentScope() == Scope::LOCAL) {
-            LOG_WARN("The local array \"", getId(), "\" in function ", Context::getInstance().getCurrentFunctionName(),
-                     "() is not assigned an initial value.");
-        }
-
-        return true;
     }
 
     Node* VarDef::getNode() const {
@@ -123,6 +110,20 @@ namespace mcs {
         });
 
         return getConstantArray(std::move(initializer), type);
+    }
+
+    bool VarDef::initializeArray(llvm::Type* type) const {
+        if (initVal_ != nullptr) {
+            std::vector<size_t> index;
+            return initializeArray(type, index, initVal_.get());
+        }
+
+        if (Context::getInstance().getCurrentScope() == Scope::LOCAL) {
+            LOG_INFO("The local array \"", getId(), "\" in function ", Context::getInstance().getCurrentFunctionName(),
+                     "() is not assigned an initial value.");
+        }
+
+        return true;
     }
 
     bool VarDef::initializeArray(llvm::Type* type, std::vector<size_t>& index, const Node* node) const {

@@ -168,6 +168,13 @@ Exp             :   AddExp  { $$ = $1; }
                 ;
 
 LVal            :   ID  { $$ = new mcs::LValue($1); }
+                |   LVal '[' Exp ']' {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "LVal is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($3);
+                    }
                 ;
 
 Number          :   INT_CONST   { $$ = new mcs::IntNum($1); }

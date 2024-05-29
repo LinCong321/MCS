@@ -17,14 +17,11 @@ namespace mcs {
 
     public:
         void constFold(bool isConstant, const std::string& type);
-        bool declare(bool isConstant, const std::string& type) const;
+        bool declare(bool isConstant, const std::string& str) const;
 
     private:
         void constFold();
         bool isArray() const;
-        bool declare(bool isConstant, llvm::Type* type) const;
-
-    private:
         Node* getNode() const;
         std::string getId() const;
         llvm::Value* getValue() const;
@@ -36,6 +33,7 @@ namespace mcs {
         static llvm::Constant* getInitializer(llvm::Type* type, const InitValList* initValList);
 
     private:
+        bool initializeArray(llvm::Type* type) const;
         bool initializeArray(llvm::Type* type, std::vector<size_t>& index, const Node* node) const;
         bool initializeArray(llvm::Type* type, std::vector<size_t>& index, const InitVal* initVal) const;
         bool initializeArray(llvm::Type* type, std::vector<size_t>& index, const InitValList* initValList) const;

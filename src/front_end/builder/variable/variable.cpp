@@ -32,7 +32,7 @@ namespace mcs {
         const auto variable = createAllocaInst(type);
 
         if (value == nullptr) {
-            LOG_WARN("The local variable \"", id, "\" in function ", Context::getInstance().getCurrentFunctionName(),
+            LOG_INFO("The local variable \"", id, "\" in function ", Context::getInstance().getCurrentFunctionName(),
                      "() is not assigned an initial value.");
         } else {
             createStoreInst(getCastedValue(value, type), variable);

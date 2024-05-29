@@ -14,26 +14,27 @@ namespace mcs {
 
     // ----------------------------------------create load inst----------------------------------------
 
-    llvm::Instruction* createLoadInst(const std::string& id) {
+    llvm::Instruction* createLoadInst(llvm::Type* type, llvm::Value* value) {
+        return new llvm::LoadInst(type, value, "", Context::getInstance().getInsertBlock());
+    }
+
+    llvm::Instruction* createLoadInst(const std::string& id, const std::vector<llvm::Value*>& indices) {
         Symbol symbol;
+
         if (!Context::getInstance().getSymbol(id, symbol)) {
             LOG_ERROR("Use of undeclared identifier \"", id, "\".");
             return nullptr;
         }
-        return new llvm::LoadInst(symbol.getType(), symbol.getValue(), "", Context::getInstance().getInsertBlock());
+
+        if (indices.empty()) {
+            return createLoadInst(symbol.getType(), symbol.getValue());
+        } else {
+            return createLoadInst(getLLVMType(symbol.getType()),
+                                  createGetElementPtrInst(symbol.getType(), symbol.getValue(), indices));
+        }
     }
 
     // ------------------------------------create get element ptr inst------------------------------------
-
-    llvm::Instruction* createGetElementPtrInst(llvm::Type* type, llvm::Value* value,
-                                               const std::vector<size_t>& index) {
-        std::vector<llvm::Value*> indices(1, getConstantInt32(0));
-        for (const auto& idx : index) {
-            indices.emplace_back(getConstantInt32(static_cast<int>(idx)));
-        }
-        return llvm::GetElementPtrInst::CreateInBounds(type, value, indices, "",
-                                                       Context::getInstance().getInsertBlock());
-    }
 
     llvm::Instruction* createGetElementPtrInst(const std::string& id, const std::vector<size_t>& index) {
         Symbol symbol;
@@ -41,7 +42,20 @@ namespace mcs {
             LOG_ERROR("Unable to create get element pointer instruction because getting symbol \"", id, "\" failed.");
             return nullptr;
         }
-        return createGetElementPtrInst(symbol.getType(), symbol.getValue(), index);
+
+        std::vector<llvm::Value*> indices;
+        for (const auto& idx : index) {
+            indices.emplace_back(getConstantInt32(static_cast<int>(idx)));
+        }
+
+        return createGetElementPtrInst(symbol.getType(), symbol.getValue(), indices);
+    }
+
+    llvm::Instruction* createGetElementPtrInst(llvm::Type* type, llvm::Value* value,
+                                               std::vector<llvm::Value*> indices) {
+        indices.insert(indices.begin(), getConstantInt32(0));
+        return llvm::GetElementPtrInst::CreateInBounds(type, value, indices, "",
+                                                       Context::getInstance().getInsertBlock());
     }
 
     // ----------------------------------------create store inst----------------------------------------
@@ -50,7 +64,8 @@ namespace mcs {
         return new llvm::StoreInst(value, variable, false, Context::getInstance().getInsertBlock());
     }
 
-    llvm::Instruction* createStoreInst(llvm::Value* value, const std::string& id) {
+    llvm::Instruction* createStoreInst(llvm::Value* value, const std::string& id,
+                                       const std::vector<llvm::Value*>& indices) {
         Symbol symbol;
 
         if (!Context::getInstance().getSymbol(id, symbol)) {
@@ -63,16 +78,11 @@ namespace mcs {
             return nullptr;
         }
 
-        return createStoreInst(getCastedValue(value, symbol.getType()), symbol.getValue());
-    }
-
-    llvm::Instruction* createStoreInst(llvm::Value* value, const std::string& id, const std::vector<size_t>& index) {
-        Symbol symbol;
-        if (!Context::getInstance().getSymbol(id, symbol) || symbol.isConstant()) {
-            LOG_ERROR("The store instruction cannot be created because getting symbol \"", id,
-                      "\" failed or it is a constant.");
-            return nullptr;
+        if (indices.empty()) {
+            return createStoreInst(getCastedValue(value, symbol.getType()), symbol.getValue());
+        } else {
+            return createStoreInst(getCastedValue(value, getLLVMType(symbol.getType())),
+                                   createGetElementPtrInst(symbol.getType(), symbol.getValue(), indices));
         }
-        return createStoreInst(value, createGetElementPtrInst(symbol.getType(), symbol.getValue(), index));
     }
 }

@@ -9,7 +9,7 @@ namespace mcs {
             LOG_ERROR("Unable to generate code because there is a nullptr in member pointers.");
             return nullptr;
         }
-        return createLoadInst(lvalue_->getId());
+        return createLoadInst(lvalue_->getId(), lvalue_->getIndices());
     }
 
     void VarExp::constFold(std::unique_ptr<Node>& node) {

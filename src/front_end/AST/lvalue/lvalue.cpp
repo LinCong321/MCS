@@ -9,4 +9,22 @@ namespace mcs {
         }
         return *id_;
     }
+
+    void LValue::pushBack(Node* node) {
+        indices_.emplace_back(node);
+    }
+
+    std::vector<llvm::Value*> LValue::getIndices() const {
+        std::vector<llvm::Value*> indices;
+
+        for (const auto& index : indices_) {
+            if (index == nullptr) {
+                LOG_ERROR("Unable to get indices because index is nullptr.");
+                return {};
+            }
+            indices.emplace_back(index->codeGen());
+        }
+
+        return std::move(indices);
+    }
 }

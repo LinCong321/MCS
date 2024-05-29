@@ -4,6 +4,7 @@
 
 namespace mcs {
     llvm::Type* getLLVMType(Type type);
+    llvm::Type* getLLVMType(llvm::Type* type);
     llvm::Type* getLLVMType(const std::string& str);
     llvm::Type* getLLVMType(const llvm::Value* value);
     llvm::Type* getLLVMType(const std::string& str, const std::vector<int>& arraySize);

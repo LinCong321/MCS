@@ -24,6 +24,19 @@ namespace mcs {
         }
     }
 
+    llvm::Type* getLLVMType(llvm::Type* type) {
+        do {
+            if (type == nullptr) {
+                LOG_ERROR("Unable to get LLVM type because type is nullptr.");
+                return nullptr;
+            }
+            if (!type->isArrayTy()) {
+                return type;
+            }
+            type = type->getArrayElementType();
+        } while(true);
+    }
+
     llvm::Type* getLLVMType(const std::string& str) {
         return getLLVMType(getTypeOf(str));
     }

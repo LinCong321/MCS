@@ -9,8 +9,11 @@ namespace mcs {
 
     public:
         std::string getId() const;
+        void pushBack(Node* node);
+        std::vector<llvm::Value*> getIndices() const;
 
     private:
         std::unique_ptr<std::string> id_;
+        std::vector<std::unique_ptr<Node>> indices_;
     };
 }
