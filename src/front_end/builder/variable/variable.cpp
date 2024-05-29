@@ -95,33 +95,8 @@ namespace mcs {
                                         (constant != nullptr) ? constant : getNullValue(type), id);
     }
 
-    void assignValues(llvm::Value* value, std::vector<size_t>& index, llvm::Constant* constant) {
-        const auto type = getLLVMType(constant);
-        if (!llvm::isa<llvm::ArrayType>(type)) {
-            //createStoreInst(getConstantValue(constant, type), createGetElementPtrInst(value, index));
-            return;
-        }
-
-        if (type == nullptr || constant == nullptr) {
-            LOG_ERROR("Unable to assign values because type is nullptr or constant is nullptr.");
-            return;
-        }
-
-        const auto size = type->getArrayNumElements();
-        for (size_t pos = 0; pos < size; pos++) {
-            index.emplace_back(pos);
-            assignValues(value, index, constant->getAggregateElement(pos));
-            index.pop_back();
-        }
-    }
-
-    llvm::Value* getLocalArray(bool isConstant, llvm::Type* type, const std::string&, llvm::Constant* constant) {
-        const auto array = createAllocaInst(type);
-        if (isConstant) {
-            std::vector<size_t> index;
-            assignValues(array, index, constant);
-        }
-        return array;
+    llvm::Value* getLocalArray(bool, llvm::Type* type, const std::string&, llvm::Constant*) {
+        return createAllocaInst(type);
     }
 
     Symbol getArray(bool isConstant, llvm::Type* type, const std::string& id, llvm::Constant* constant) {
