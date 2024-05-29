@@ -24,6 +24,10 @@ namespace mcs {
         return llvm::Constant::getNullValue(type);
     }
 
+    llvm::Constant* getNullValue(const std::string& type) {
+        return getNullValue(getLLVMType(type));
+    }
+
     llvm::Constant* getNullValue(const llvm::Value* value) {
         if (value == nullptr) {
             LOG_ERROR("Unable to get null value because the source value is nullptr.");

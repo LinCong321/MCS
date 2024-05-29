@@ -8,6 +8,7 @@ namespace mcs {
     llvm::Constant* getConstantFloat(float value);
 
     llvm::Constant* getNullValue(llvm::Type* type);
+    llvm::Constant* getNullValue(const std::string& type);
     llvm::Constant* getNullValue(const llvm::Value* value);
 
     llvm::Constant* getConstantValue(const llvm::Value* value, llvm::Type* type);

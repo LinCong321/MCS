@@ -7,7 +7,22 @@
 #include "llvm/IR/Instructions.h"
 
 namespace mcs {
-    // ----------------------------------------get variable----------------------------------------
+    // ----------------------------------------declare function param----------------------------------------
+
+    bool declareFunctionParam(llvm::Type* type, const std::string& id, llvm::Value* value) {
+        if (Context::getInstance().findSymbol(id)) {
+            LOG_ERROR("Unable to declare the function parameter. Because its id (aka \"", id,
+                      "\") already exists in local symbol table.");
+            return false;
+        }
+
+        const auto param = createAllocaInst(type);
+        createStoreInst(value, param);
+
+        return Context::getInstance().insertSymbol(id, Symbol(false, type, param));
+    }
+
+    // --------------------------------------------get variable--------------------------------------------
 
     llvm::Constant* getInitializer(llvm::Value* value, llvm::Type* type) {
         if (value == nullptr || !llvm::isa<llvm::Constant>(value)) {
@@ -67,12 +82,6 @@ namespace mcs {
             return false;
         }
 
-        if (isConstant && value == nullptr) {
-            LOG_ERROR("Unable to declare ", scope, " constant. ",
-                      "Because it is not assigned an initial value and its id is \"", id, "\".");
-            return false;
-        }
-
         const auto variable = getVariable(isConstant, type, id, value);
         if (!Context::getInstance().insertSymbol(id, variable)) {
             LOG_ERROR("Unable to declare ", scope, " variable. ",
@@ -95,24 +104,16 @@ namespace mcs {
                                         (constant != nullptr) ? constant : getNullValue(type), id);
     }
 
-    llvm::Value* getLocalArray(bool, llvm::Type* type, const std::string&, llvm::Constant*) {
-        return createAllocaInst(type);
-    }
-
     Symbol getArray(bool isConstant, llvm::Type* type, const std::string& id, llvm::Constant* constant) {
-        using Function = std::function<llvm::Value*(bool, llvm::Type*, const std::string&, llvm::Constant*)>;
-        static const std::unordered_map<Scope, Function> scope2Func = {
-            {Scope::GLOBAL, getGlobalArray},
-            {Scope::LOCAL,  getLocalArray},
-        };
-
-        const auto it = scope2Func.find(Context::getInstance().getCurrentScope());
-        if (it == scope2Func.end()) {
-            LOG_ERROR("Unable to get array because the scope type is unknown.");
-            return {};
+        switch (Context::getInstance().getCurrentScope()) {
+            case Scope::GLOBAL:
+                return {isConstant, type, getGlobalArray(isConstant, type, id, constant)};
+            case Scope::LOCAL:
+                return {isConstant, type, createAllocaInst(type)};
+            default:
+                LOG_ERROR("Unable to get variable because the scope type is unknown.");
+                return {};
         }
-
-        return {isConstant, type, it->second(isConstant, type, id, constant)};
     }
 
     // --------------------------------------------declare array--------------------------------------------

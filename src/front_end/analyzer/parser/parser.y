@@ -16,47 +16,49 @@
 %parse-param { std::unique_ptr<mcs::Node>& ast }
 
 %union {
-    float               floatVal;
-    int                 intVal;
-    mcs::ArraySize*     arraySize;
-    mcs::BlockItem*     blockItem;
-    mcs::CompUnit*      compUnit;
-    mcs::FuncArgsExp*   funcArgsExp;
-    mcs::FuncParam*     funcParam;
-    mcs::FuncParams*    funcParams;
-    mcs::InitVal*       initVal;
-    mcs::InitValList*   initValList;
-    mcs::LValue*        lValue;
-    mcs::Node*          node;
-    mcs::VarDef*        varDef;
-    mcs::VarDefList*    varDefList;
-    std::string*        strVal;
+    float                   floatVal;
+    int                     intVal;
+    mcs::ArraySize*         arraySize;
+    mcs::BlockItem*         blockItem;
+    mcs::CompUnit*          compUnit;
+    mcs::FuncArgsExp*       funcArgsExp;
+    mcs::FuncParam*         funcParam;
+    mcs::FuncParams*        funcParams;
+    mcs::FuncParamArray*    funcParamArray;
+    mcs::InitVal*           initVal;
+    mcs::InitValList*       initValList;
+    mcs::LValue*            lValue;
+    mcs::Node*              node;
+    mcs::VarDef*            varDef;
+    mcs::VarDefList*        varDefList;
+    std::string*            strVal;
 }
 
 %token  BREAK CONST CONTINUE ELSE FLOAT
 %token  IF INT RETURN VOID WHILE
 %token  LE GE EQ NE AND OR
 
-%token<strVal>      ID
-%token<intVal>      INT_CONST
-%token<floatVal>    FLOAT_CONST
+%token<strVal>          ID
+%token<intVal>          INT_CONST
+%token<floatVal>        FLOAT_CONST
 
-%type<compUnit>     CompUnit
-%type<node>         Decl ConstDecl
-%type<strVal>       BType VOID
-%type<varDefList>   ConstDefList VarDefList
-%type<varDef>       ConstDef VarDef
-%type<arraySize>    ConstExpList
-%type<initVal>      ConstInitVal InitVal
-%type<initValList>  ConstInitValList InitValList
-%type<node>         ConstExp AddExp MulExp UnaryExp PrimaryExp Exp
-%type<lValue>       LVal
-%type<node>         Number VarDecl FuncDef Block Stmt BStmt
-%type<funcArgsExp>  FuncRParams
-%type<funcParams>   FuncFParams
-%type<funcParam>    FuncFParam
-%type<blockItem>    BlockItem
-%type<node>         Cond LOrExp LAndExp EqExp RelExp WithElse
+%type<compUnit>         CompUnit
+%type<node>             Decl ConstDecl
+%type<strVal>           BType VOID
+%type<varDefList>       ConstDefList VarDefList
+%type<varDef>           ConstDef VarDef
+%type<arraySize>        ConstExpList
+%type<initVal>          ConstInitVal InitVal
+%type<initValList>      ConstInitValList InitValList
+%type<node>             ConstExp AddExp MulExp UnaryExp PrimaryExp Exp
+%type<lValue>           LVal
+%type<node>             Number VarDecl FuncDef Block Stmt BStmt
+%type<funcArgsExp>      FuncRParams
+%type<funcParams>       FuncFParams
+%type<funcParam>        FuncFParam
+%type<funcParamArray>   FuncFParamArray
+%type<blockItem>        BlockItem
+%type<node>             Cond LOrExp LAndExp EqExp RelExp WithElse
 
 %%
 
@@ -248,10 +250,21 @@ FuncFParams     :   FuncFParam  { $$ = new mcs::FuncParams($1); }
                     }
                 ;
 
-FuncFParam      :   BType ID    { $$ = new mcs::FuncParam($1, $2); }
+FuncFParam      :   BType ID                    { $$ = new mcs::FuncParam($1, $2); }
+                |   BType ID FuncFParamArray    { $$ = new mcs::FuncParam($1, $2, $3); }
                 ;
 
-Block           :   '{' '}'             { $$ = new mcs::BlockItem();}
+FuncFParamArray :   '[' ']'  { $$ = new mcs::FuncParamArray(); }
+                |   FuncFParamArray '[' ConstExp ']' {
+                        if ($1 == nullptr) {
+                            yyerror(ast, "FuncFParamArray is nullptr.");
+                            return 0;
+                        }
+                        $1->pushBack($3);
+                    }
+                ;
+
+Block           :   '{' '}'             { $$ = new mcs::BlockItem(); }
                 |   '{' BlockItem '}'   { $$ = $2; }
                 ;
 

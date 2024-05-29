@@ -41,14 +41,6 @@ namespace mcs {
         return getLLVMType(getTypeOf(str));
     }
 
-    llvm::Type* getLLVMType(const llvm::Value* value) {
-        if (value == nullptr) {
-            LOG_ERROR("Unable to get LLVM type because value is nullptr.");
-            return nullptr;
-        }
-        return value->getType();
-    }
-
     llvm::Type* getLLVMType(llvm::Type* type, const std::vector<int>& arraySize) {
         llvm::ArrayType* arrayType = nullptr;
 
@@ -66,6 +58,16 @@ namespace mcs {
 
     llvm::Type* getLLVMType(const std::string& str, const std::vector<int>& arraySize) {
         return getLLVMType(getLLVMType(str), arraySize);
+    }
+
+    // ----------------------------------------get pointer type----------------------------------------
+
+    llvm::Type* getPointerType(llvm::Type* type) {
+        return llvm::PointerType::get(type, 0);
+    }
+
+    llvm::Type* getPointerType(const std::string& str, const std::vector<int>& arraySize) {
+        return getPointerType(getLLVMType(str, arraySize));
     }
 
     // ----------------------------------------get casted value----------------------------------------

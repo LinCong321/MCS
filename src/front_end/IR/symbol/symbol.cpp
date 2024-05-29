@@ -2,10 +2,14 @@
 
 namespace mcs {
     Symbol::Symbol(llvm::Type* type, std::string name)
-        : isConstant_(false), type_(type), name_(std::move(name)), value_(nullptr) {}
+        : isConstant_(false), type_(type), name_(std::move(name)), value_(nullptr) {
+        // Do nothing.
+    }
 
     Symbol::Symbol(bool isConstant, llvm::Type* type, llvm::Value* value)
-        : isConstant_(isConstant), type_(type), name_(), value_(value) {}
+        : isConstant_(isConstant), type_(type), name_(), value_(value) {
+        // Do nothing.
+    }
 
     bool Symbol::isConstant() const {
         return isConstant_;

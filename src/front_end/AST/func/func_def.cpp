@@ -1,8 +1,12 @@
 #include "func_def.h"
-#include "utils/logger.h"
-#include "IR/context/context.h"
+
 #include "builder/public/public.h"
 #include "builder/function/function.h"
+#include "builder/constant/constant.h"
+#include "builder/instruction/instruction.h"
+
+#include "utils/logger.h"
+#include "IR/context/context.h"
 #include "number/constant_table/constant_table.h"
 
 namespace mcs {
@@ -13,7 +17,12 @@ namespace mcs {
         }
 
         const auto function = createFunction(*retType_, *name_, getParams());
+
         block_->codeGen();
+
+        if (Context::getInstance().getInsertBlock() != nullptr) {
+            appendRetStmt();
+        }
         Context::getInstance().popBlock();
 
         return function;
@@ -21,10 +30,24 @@ namespace mcs {
 
     void FuncDef::constFold(std::unique_ptr<Node>&) {
         ConstantTable::getInstance().create();
+
+        if (funcParams_ != nullptr) {
+            funcParams_->constFold();
+        }
         if (block_ != nullptr) {
             block_->constFold(block_);
         }
+
         ConstantTable::getInstance().remove();
+    }
+
+    void FuncDef::appendRetStmt() const {
+        if (*retType_ == "void") {
+            createReturnInst();
+            return;
+        }
+        LOG_WARN("Non-void function ", Context::getInstance().getCurrentFunctionName(), "() does not return a value.");
+        createReturnInst(getNullValue(*retType_));
     }
 
     bool FuncDef::checkAllMemberPointers() const {
@@ -48,7 +71,7 @@ namespace mcs {
 
         if (funcParams_ != nullptr) {
             funcParams_->readEach([&params](const auto& funcParam) {
-                params.emplace_back(getLLVMType(funcParam.getType()), funcParam.getName());
+                params.emplace_back(getPointerType(funcParam.getType(), funcParam.getIndices()), funcParam.getName());
             });
         }
 

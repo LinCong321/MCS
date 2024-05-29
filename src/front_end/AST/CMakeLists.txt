@@ -10,7 +10,8 @@ set(
         exp/unary_exp/unary_exp.cpp
         exp/var_exp/var_exp.cpp
         func/func_def.cpp
-        func/func_params.cpp
+        func/func_param/func_param.cpp
+        func/func_param/func_params.cpp
         lvalue/lvalue.cpp
         number/constant_table/constant_table.cpp
         number/float_num/float_num.cpp
@@ -29,6 +30,8 @@ set(
         var/init_val/init_val.cpp
         var/var_def/var_def.cpp
         var/var_def/var_def_list.cpp
+        func/func_param/func_param.h
+        func/func_param/func_param.cpp
 )
 
 include_directories(${AST_DIR})

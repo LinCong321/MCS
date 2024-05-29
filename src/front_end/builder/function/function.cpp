@@ -24,7 +24,7 @@ namespace mcs {
 
         size_t pos = 0;
         for (auto& arg : function->args()) {
-            if (!declareVariable(false, arg.getType(), getId(params, pos++), &arg)) {
+            if (!declareFunctionParam(arg.getType(), getId(params, pos++), &arg)) {
                 LOG_ERROR("Unable to create function params because the variable cannot be declared.");
                 return false;
             }

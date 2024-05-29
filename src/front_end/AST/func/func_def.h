@@ -1,8 +1,8 @@
 #pragma once
 
-#include "func_params.h"
 #include "AST/node/node.h"
 #include "IR/symbol/symbol.h"
+#include "func_param/func_params.h"
 
 namespace mcs {
     class FuncDef : public Node {
@@ -20,6 +20,7 @@ namespace mcs {
         void constFold(std::unique_ptr<Node>& node) override;
 
     private:
+        void appendRetStmt() const;
         bool checkAllMemberPointers() const;
         std::vector<Symbol> getParams() const;
 

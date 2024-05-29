@@ -2,24 +2,16 @@
 #include "utils/logger.h"
 
 namespace mcs {
-    std::string FuncParam::getType() const {
-        if (type_ == nullptr) {
-            LOG_ERROR("Unable to get type because type_ is nullptr.");
-            return {};
-        }
-        return *type_;
-    }
-
-    std::string FuncParam::getName() const {
-        if (name_ == nullptr) {
-            LOG_ERROR("Unable to get name because name_ is nullptr.");
-            return {};
-        }
-        return *name_;
-    }
-
     FuncParams::FuncParams(FuncParam* funcParam) : funcParams_() {
         pushBack(funcParam);
+    }
+
+    void FuncParams::constFold() const {
+        for (const auto& funcParam: funcParams_) {
+            if (funcParam != nullptr) {
+                funcParam->constFold();
+            }
+        }
     }
 
     void FuncParams::pushBack(FuncParam* funcParam) {
