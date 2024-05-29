@@ -1,6 +1,6 @@
 ## LLVM 版本最低要求：16.0.6
 
-## Linux环境搭建：
+## Linux 环境搭建：
 ```
 sudo apt install cmake
 sudo apt install build-essential
