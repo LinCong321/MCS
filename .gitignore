@@ -4,3 +4,4 @@ src/front_end/analyzer/lexer/*.cpp
 src/front_end/analyzer/parser/*.cpp
 src/front_end/analyzer/parser/*.hpp
 test/*.ll
+result*
