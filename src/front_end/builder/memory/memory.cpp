@@ -17,7 +17,7 @@ namespace mcs {
     llvm::Instruction* createLoadInst(const std::string& id) {
         Symbol symbol;
         if (!Context::getInstance().getSymbol(id, symbol)) {
-            LOG_ERROR("The load instruction cannot be created because getting symbol \"", id, "\" failed.");
+            LOG_ERROR("Use of undeclared identifier \"", id, "\".");
             return nullptr;
         }
         return new llvm::LoadInst(symbol.getType(), symbol.getValue(), "", Context::getInstance().getInsertBlock());
@@ -52,11 +52,17 @@ namespace mcs {
 
     llvm::Instruction* createStoreInst(llvm::Value* value, const std::string& id) {
         Symbol symbol;
-        if (!Context::getInstance().getSymbol(id, symbol) || symbol.isConstant()) {
-            LOG_ERROR("The store instruction cannot be created because getting symbol \"", id,
-                      "\" failed or it is a constant.");
+
+        if (!Context::getInstance().getSymbol(id, symbol)) {
+            LOG_ERROR("Use of undeclared identifier \"", id, "\".");
             return nullptr;
         }
+
+        if (symbol.isConstant()) {
+            LOG_ERROR("Cannot assign value to const variable \"", id, "\".");
+            return nullptr;
+        }
+
         return createStoreInst(getCastedValue(value, symbol.getType()), symbol.getValue());
     }
 

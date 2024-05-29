@@ -31,7 +31,6 @@ namespace mcs {
 
     llvm::Instruction* createJumpInst(llvm::BasicBlock* basicBlock) {
         if (Context::getInstance().getInsertBlock() == nullptr) {
-            LOG_INFO("The current basic block has been terminated, so there is no need to create a jump instruction.");
             return nullptr;
         }
         return llvm::BranchInst::Create(basicBlock, Context::getInstance().getInsertBlock());

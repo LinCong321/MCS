@@ -17,11 +17,12 @@ namespace mcs {
     }
 
     bool VarDef::declare(bool isConstant, const std::string& type) const {
-        if (isArray()) {
-            return declare(isConstant, getLLVMType(type, getArraySize()));
-        } else {
-            return declareVariable(isConstant, type, getId(), getValue());
-        }
+//        if (isArray()) {
+//            return declare(isConstant, getLLVMType(type, getArraySize()));
+//        } else {
+//            return declareVariable(isConstant, type, getId(), getValue());
+//        }
+        return isConstant ? constDecl(type) : varDecl(type);
     }
 
     void VarDef::constFold() {
@@ -37,7 +38,19 @@ namespace mcs {
         return arraySize_.has_value();
     }
 
-    bool VarDef::initializeArray(llvm::Type* type) const {
+    bool VarDef::initialize(llvm::Type* type) const {
+        if (initVal_ == nullptr) {
+            if (Context::getInstance().getCurrentScope() == Scope::LOCAL) {
+                LOG_WARN("The local variable \"", getId(), "\" is not assigned an initial value.");
+            }
+            return true;
+        }
+
+        if (!isArray()) {
+            createStoreInst(getCastedValue(getValue(), type), getId());
+            return true;
+        }
+
         std::vector<size_t> index;
         return initializeArray(type, index, initVal_.get());
     }
@@ -46,7 +59,7 @@ namespace mcs {
         if (isConstant) {
             return declareArray(isConstant, type, getId(), getInitializer(type, initVal_.get()));
         } else {
-            return declareArray(isConstant, type, getId()) && initializeArray(type);
+            return declareArray(isConstant, type, getId()) && initialize(type);
         }
     }
 
@@ -65,7 +78,6 @@ namespace mcs {
     llvm::Value* VarDef::getValue() const {
         const auto node = getNode();
         if (node == nullptr) {
-            LOG_ERROR("Unable to get value because node is nullptr.");
             return nullptr;
         }
         return node->codeGen();
@@ -83,12 +95,46 @@ namespace mcs {
         return std::move(size);
     }
 
+    bool VarDef::varDecl(const std::string& str) const {
+        if (Context::getInstance().getCurrentScope() == Scope::LOCAL) {
+            const auto type = isArray() ? getLLVMType(str, getArraySize()) : getLLVMType(str);
+            const auto var = createAllocaInst(type);
+            Context::getInstance().insertSymbol(getId(), Symbol(false, type, var));
+            return initialize(type);
+        }
+
+        const auto type = isArray() ? getLLVMType(str, getArraySize()) : getLLVMType(str);
+        const auto var = new llvm::GlobalVariable(Context::getInstance().getModule(), type, true,
+                                                  llvm::GlobalValue::LinkageTypes::InternalLinkage,
+                                                  getNullValue(type), getId());
+
+        Context::getInstance().insertSymbol(getId(), Symbol(false, type, var));
+        return initialize(type);
+    }
+
+    bool VarDef::constDecl(const std::string& str) const {
+        if (Context::getInstance().getCurrentScope() == Scope::LOCAL) {
+            const auto type = isArray() ? getLLVMType(str, getArraySize()) : getLLVMType(str);
+            const auto var = createAllocaInst(type);
+            Context::getInstance().insertSymbol(getId(), Symbol(true, type, var));
+            return true;
+        }
+
+        const auto type = isArray() ? getLLVMType(str, getArraySize()) : getLLVMType(str);
+        const auto var = new llvm::GlobalVariable(Context::getInstance().getModule(), type, true,
+                                                  llvm::GlobalValue::LinkageTypes::InternalLinkage,
+                                                  getInitializer(type, initVal_.get()), getId());
+
+        Context::getInstance().insertSymbol(getId(), Symbol(false, type, var));
+        return true;
+    }
+
     llvm::Constant* VarDef::getInitializer(llvm::Type* type, const Node* node) {
         if (node == nullptr) {
             LOG_ERROR("Unable to get initializer because node is nullptr.");
             return nullptr;
         }
-        return getConstantValue(node->codeGen(), type);
+        return llvm::cast<llvm::Constant>(node->codeGen());
     }
 
     llvm::Constant* VarDef::getInitializer(llvm::Type* type, const InitVal* initVal) {
