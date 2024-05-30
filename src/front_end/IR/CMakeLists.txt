@@ -5,6 +5,7 @@ set(
         context/context.cpp
         insertion_point/insertion_point.cpp
         loop_info/loop_info.cpp
+        parameter/parameter.cpp
         scope/scope.cpp
         symbol/symbol.cpp
         symbol_table/symbol_table.cpp

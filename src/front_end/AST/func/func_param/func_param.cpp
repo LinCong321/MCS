@@ -4,23 +4,23 @@
 
 namespace mcs {
     void FuncParamArray::constFold() {
-        for (auto& index : indices_) {
-            if (index != nullptr) {
-                index->constFold(index);
+        for (auto& size : size_) {
+            if (size != nullptr) {
+                size->constFold(size);
             }
         }
     }
 
     void FuncParamArray::pushBack(Node* node) {
-        indices_.emplace_back(node);
+        size_.emplace_back(node);
     }
 
-    std::vector<int> FuncParamArray::getIndices() const {
-        std::vector<int> indices;
-        for (const auto& index : indices_) {
-            indices.emplace_back(getValueOfIntNum(index.get()));
+    std::vector<int> FuncParamArray::getSize() const {
+        std::vector<int> result;
+        for (const auto& size : size_) {
+            result.emplace_back(getValueOfIntNum(size.get()));
         }
-        return std::move(indices);
+        return std::move(result);
     }
 
     void FuncParam::constFold() const {
@@ -45,11 +45,7 @@ namespace mcs {
         return *name_;
     }
 
-    std::vector<int> FuncParam::getIndices() const {
-        if (array_ == nullptr) {
-            LOG_ERROR("Unable to get indices because array_ is nullptr.");
-            return {};
-        }
-        return array_->getIndices();
+    std::optional<std::vector<int>> FuncParam::getArraySize() const {
+        return array_ != nullptr ? std::optional<std::vector<int>>(array_->getSize()) : std::nullopt;
     }
 }

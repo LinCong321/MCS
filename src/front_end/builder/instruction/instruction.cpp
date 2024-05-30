@@ -37,12 +37,18 @@ namespace mcs {
 
     // ----------------------------------------create call inst----------------------------------------
 
-    llvm::Value* getValue(const std::vector<llvm::Value*>& values, size_t pos) {
+    llvm::Value* getValue(const std::vector<llvm::Value*>& values, size_t& pos, llvm::Type* type) {
         if (pos >= values.size()) {
             LOG_ERROR("Unable to get value because pos = ", pos, " exceeds number of values = ", values.size(), ".");
             return nullptr;
         }
-        return values[pos];
+
+        if (type == nullptr) {
+            LOG_ERROR("Unable to get value because type is nullptr.");
+            return nullptr;
+        }
+
+        return type->isPointerTy() ? values[pos++] : getCastedValue(values[pos++], type);
     }
 
     std::vector<llvm::Value*> getCastedArgs(const llvm::iterator_range<llvm::Function::arg_iterator>& args,
@@ -50,7 +56,7 @@ namespace mcs {
         std::vector<llvm::Value*> castedValues;
         size_t pos = 0;
         for (const auto& arg : args) {
-            castedValues.emplace_back(getCastedValue(getValue(values, pos++), arg.getType()));
+            castedValues.emplace_back(getValue(values, pos, arg.getType()));
         }
         return std::move(castedValues);
     }
@@ -58,9 +64,17 @@ namespace mcs {
     llvm::Instruction* createCallInst(const std::string& id, const std::vector<llvm::Value*>& values) {
         const auto function = Context::getInstance().getModule().getFunction(id);
         if (function == nullptr) {
-            LOG_ERROR("Unable to create call instruction because function ", id, "() does not exist.");
+            LOG_ERROR("The call instruction cannot be created because the function ", id, "() does not exist.");
             return nullptr;
         }
+
+        if (function->arg_size() != values.size()) {
+            LOG_ERROR("The call instruction cannot be created because the number of actual arguments = ", values.size(),
+                      " is not equal to the number of formal parameters of the function ", id, "() = ",
+                      function->arg_size(), ".");
+            return nullptr;
+        }
+
         return llvm::CallInst::Create(function, getCastedArgs(function->args(), values), "",
                                       Context::getInstance().getInsertBlock());
     }

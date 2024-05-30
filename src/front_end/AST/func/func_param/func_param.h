@@ -11,10 +11,10 @@ namespace mcs {
     public:
         void constFold();
         void pushBack(Node* node);
-        std::vector<int> getIndices() const;
+        std::vector<int> getSize() const;
 
     private:
-        std::vector<std::unique_ptr<Node>> indices_;
+        std::vector<std::unique_ptr<Node>> size_;
     };
 
     class FuncParam {
@@ -27,7 +27,7 @@ namespace mcs {
         void constFold() const;
         std::string getType() const;
         std::string getName() const;
-        std::vector<int> getIndices() const;
+        std::optional<std::vector<int>> getArraySize() const;
 
     private:
         std::unique_ptr<std::string> type_;

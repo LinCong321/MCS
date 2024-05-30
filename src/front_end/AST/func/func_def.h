@@ -1,8 +1,8 @@
 #pragma once
 
 #include "AST/node/node.h"
-#include "IR/symbol/symbol.h"
 #include "func_param/func_params.h"
+#include "IR/parameter/parameter.h"
 
 namespace mcs {
     class FuncDef : public Node {
@@ -22,7 +22,7 @@ namespace mcs {
     private:
         void appendRetStmt() const;
         bool checkAllMemberPointers() const;
-        std::vector<Symbol> getParams() const;
+        std::vector<Parameter> getParams() const;
 
     private:
         std::unique_ptr<std::string>    retType_;

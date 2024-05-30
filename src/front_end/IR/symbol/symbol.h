@@ -5,23 +5,21 @@
 namespace mcs {
     class Symbol {
     public:
-        Symbol() : isConstant_(false), type_(nullptr), name_(), value_(nullptr) {}
+        Symbol() : isConstant_(false), type_(nullptr), value_(nullptr), pointerElementType_(nullptr) {}
+        Symbol(bool isConstant, llvm::Type* type, llvm::Value* value, llvm::Type* pointerElementType = nullptr)
+            : isConstant_(isConstant), type_(type), value_(value), pointerElementType_(pointerElementType) {}
         ~Symbol() = default;
-
-    public:
-        Symbol(llvm::Type* type, std::string name);
-        Symbol(bool isConstant, llvm::Type* type, llvm::Value* value);
 
     public:
         bool isConstant() const;
         llvm::Type* getType() const;
-        std::string getName() const;
         llvm::Value* getValue() const;
+        llvm::Type* getPointerElementType() const;
 
     private:
-        bool    isConstant_;
-        llvm::Type*   type_;
-        std::string   name_;
-        llvm::Value* value_;
+        bool            isConstant_;
+        llvm::Type*     type_;
+        llvm::Value*    value_;
+        llvm::Type*     pointerElementType_;
     };
 }

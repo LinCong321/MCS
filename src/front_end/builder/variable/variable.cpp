@@ -9,17 +9,19 @@
 namespace mcs {
     // ----------------------------------------declare function param----------------------------------------
 
-    bool declareFunctionParam(llvm::Type* type, const std::string& id, llvm::Value* value) {
-        if (Context::getInstance().findSymbol(id)) {
-            LOG_ERROR("Unable to declare the function parameter. Because its id (aka \"", id,
+    bool declareFunctionParam(const Parameter& parameter, llvm::Value* value) {
+        if (Context::getInstance().findSymbol(parameter.getName())) {
+            LOG_ERROR("Unable to declare the function parameter. Because its id (aka \"", parameter.getName(),
                       "\") already exists in local symbol table.");
             return false;
         }
 
+        const auto type = getPointerType(parameter.getType(), parameter.getArraySize());
         const auto param = createAllocaInst(type);
         createStoreInst(value, param);
 
-        return Context::getInstance().insertSymbol(id, Symbol(false, type, param));
+        const auto symbol = Symbol(false, type, param, getLLVMType(parameter.getType(), parameter.getArraySize()));
+        return Context::getInstance().insertSymbol(parameter.getName(), symbol);
     }
 
     // --------------------------------------------get variable--------------------------------------------

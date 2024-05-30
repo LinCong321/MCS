@@ -66,12 +66,12 @@ namespace mcs {
         return true;
     }
 
-    std::vector<Symbol> FuncDef::getParams() const {
-        std::vector<Symbol> params;
+    std::vector<Parameter> FuncDef::getParams() const {
+        std::vector<Parameter> params;
 
         if (funcParams_ != nullptr) {
             funcParams_->readEach([&params](const auto& funcParam) {
-                params.emplace_back(getPointerType(funcParam.getType(), funcParam.getIndices()), funcParam.getName());
+                params.emplace_back(funcParam.getType(), funcParam.getName(), funcParam.getArraySize());
             });
         }
 

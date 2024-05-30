@@ -24,8 +24,12 @@ namespace mcs {
         }
     }
 
-    llvm::Type* getLLVMType(llvm::Type* type) {
-        do {
+    llvm::Type* getLLVMType(const std::string& str) {
+        return getLLVMType(getTypeOf(str));
+    }
+
+    llvm::Type* getLLVMType(llvm::Type* type, size_t size) {
+        while (size > 0) {
             if (type == nullptr) {
                 LOG_ERROR("Unable to get LLVM type because type is nullptr.");
                 return nullptr;
@@ -33,12 +37,9 @@ namespace mcs {
             if (!type->isArrayTy()) {
                 return type;
             }
-            type = type->getArrayElementType();
-        } while(true);
-    }
-
-    llvm::Type* getLLVMType(const std::string& str) {
-        return getLLVMType(getTypeOf(str));
+            type = type->getArrayElementType(), size--;
+        }
+        return type;
     }
 
     llvm::Type* getLLVMType(llvm::Type* type, const std::vector<int>& arraySize) {
@@ -56,8 +57,12 @@ namespace mcs {
         return arrayType != nullptr ? arrayType : type;
     }
 
-    llvm::Type* getLLVMType(const std::string& str, const std::vector<int>& arraySize) {
-        return getLLVMType(getLLVMType(str), arraySize);
+    llvm::Type* getLLVMType(const std::string& str, const std::optional<std::vector<int>>& arraySize) {
+        const auto type = getLLVMType(str);
+        if (!arraySize.has_value()) {
+            return type;
+        }
+        return getLLVMType(type, arraySize.value());
     }
 
     // ----------------------------------------get pointer type----------------------------------------
@@ -66,8 +71,12 @@ namespace mcs {
         return llvm::PointerType::get(type, 0);
     }
 
-    llvm::Type* getPointerType(const std::string& str, const std::vector<int>& arraySize) {
-        return getPointerType(getLLVMType(str, arraySize));
+    llvm::Type* getPointerType(const std::string& str, const std::optional<std::vector<int>>& arraySize) {
+        const auto type = getLLVMType(str);
+        if (!arraySize.has_value()) {
+            return type;
+        }
+        return getPointerType(getLLVMType(type, arraySize.value()));
     }
 
     // ----------------------------------------get casted value----------------------------------------

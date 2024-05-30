@@ -30,8 +30,6 @@ set(
         var/init_val/init_val.cpp
         var/var_def/var_def.cpp
         var/var_def/var_def_list.cpp
-        func/func_param/func_param.h
-        func/func_param/func_param.cpp
 )
 
 include_directories(${AST_DIR})
