@@ -10,6 +10,7 @@ set(ANALYZER_DIR    ${FRONT_END_DIR}/analyzer)
 set(AST_DIR         ${FRONT_END_DIR}/AST)
 set(BUILDER_DIR     ${FRONT_END_DIR}/builder)
 set(IR_DIR          ${FRONT_END_DIR}/IR)
+set(LIB_DIR         ${FRONT_END_DIR}/lib)
 
 include_directories(${SRC_DIR})
 
