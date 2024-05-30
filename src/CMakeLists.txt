@@ -17,7 +17,7 @@ add_executable(compiler main.cpp)
 
 target_include_directories(compiler PRIVATE ${FRONT_END_DIR})
 
-target_link_libraries(compiler analyzer back_end)
+target_link_libraries(compiler analyzer middle_end back_end)
 
 add_subdirectory(front_end)
 add_subdirectory(middle_end)

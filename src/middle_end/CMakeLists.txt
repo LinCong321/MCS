@@ -11,3 +11,7 @@ set (
 include_directories(${MIDDLE_END_DIR})
 
 add_library(middle_end ${SOURCE_FILES})
+
+target_include_directories(middle_end PRIVATE ${FRONT_END_DIR})
+
+target_link_libraries(middle_end ir)

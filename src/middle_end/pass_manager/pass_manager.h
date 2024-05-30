@@ -1,11 +1,15 @@
-#ifndef SYSY_COMPILER_PASSES_HELLO_WORLD_PASS_H
-#define SYSY_COMPILER_PASSES_HELLO_WORLD_PASS_H
+#pragma once
 
-#include <llvm/IR/PassManager.h>
+namespace mcs {
+    class PassManager {
+    public:
+        static PassManager& getInstance();
 
-class HelloWorldPass : public llvm::PassInfoMixin<HelloWorldPass> {
-public:
-    llvm::PreservedAnalyses run(llvm::Function &F, llvm::FunctionAnalysisManager &AM);
-};
+    public:
+        void run();
 
-#endif //SYSY_COMPILER_PASSES_HELLO_WORLD_PASS_H
+    private:
+        PassManager() = default;
+        ~PassManager() = default;
+    };
+}

@@ -1,10 +1,19 @@
-#include <llvm/IR/PassManager.h>
-#include "log.h"
 #include "pass_manager.h"
+#include "IR/context/context.h"
+#include "llvm/IR/LegacyPassManager.h"
+#include "llvm/Transforms/IPO/PassManagerBuilder.h"
 
-using namespace llvm;
+namespace mcs {
+    PassManager& PassManager::getInstance() {
+        static PassManager self;
+        return self;
+    }
 
-PreservedAnalyses HelloWorldPass::run(Function &F, FunctionAnalysisManager &AM) {
-    log("hello pass") << F.getName().str() << std::endl;
-    return PreservedAnalyses::all();
+    void PassManager::run() {
+        llvm::legacy::PassManager passManager;
+        llvm::PassManagerBuilder passManagerBuilder;
+        passManagerBuilder.OptLevel = 3;
+        passManagerBuilder.populateModulePassManager(passManager);
+        passManager.run(Context::getInstance().getModule());
+    }
 }

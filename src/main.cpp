@@ -2,6 +2,7 @@
 #include "IR/context/context.h"
 #include "analyzer/parser/parser.hpp"
 #include "back_end/generator/generator.h"
+#include "middle_end/pass_manager/pass_manager.h"
 
 void codeGen(std::unique_ptr<mcs::Node>& ast) {
     if (ast == nullptr) {
@@ -13,11 +14,18 @@ void codeGen(std::unique_ptr<mcs::Node>& ast) {
     mcs::Context::getInstance().getModule().print(llvm::outs(), nullptr);
 }
 
+void optimizeAndGenerate() {
+    mcs::PassManager::getInstance().run();
+    std::cout << "********************************************************************************\n";
+    mcs::Context::getInstance().getModule().print(llvm::outs(), nullptr);
+    mcs::generate("../../result.s");
+}
+
 int main() {
     freopen("../../test/test.cpp", "r", stdin);
     std::unique_ptr<mcs::Node> ast;
     yyparse(ast);
     codeGen(ast);
-    mcs::generate("../../result.s");
+    optimizeAndGenerate();
     return 0;
 }
