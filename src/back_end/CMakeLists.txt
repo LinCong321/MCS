@@ -2,6 +2,10 @@ project(back_end)
 
 set (
         SOURCE_FILES
+        allocation_order/allocation_order.cpp
+        live_debug_variables/live_debug_variables.cpp
+        reg_alloc/reg_alloc.cpp
+        reg_alloc/reg_alloc_base.cpp
         generator/generator.cpp
 )
 
