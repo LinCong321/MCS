@@ -7,7 +7,6 @@ void sort(int a[], int l, int r) {
     }
 
     int i = l, j = r, mid = a[(l + r) / 2];
-    a[1] = 2;
     while (i < j) {
         i = i + 1;
         while (a[i] < mid) {

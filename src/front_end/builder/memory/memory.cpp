@@ -14,25 +14,35 @@ namespace mcs {
 
     // ----------------------------------------create load inst----------------------------------------
 
-    llvm::Type* getActualType(const Symbol& symbol) {
-        const auto type = symbol.getType();
+    std::pair<llvm::Type*, llvm::Value*> handlePointer(const Symbol& symbol, std::vector<llvm::Value*>& indices) {
+        auto type = symbol.getType();
         if (type == nullptr) {
-            LOG_ERROR("Unable to get actual type because type is nullptr.");
-            return nullptr;
+            LOG_ERROR("Unable to handle pointer because type is nullptr.");
+            return std::make_pair(nullptr, nullptr);
         }
-        return type->isPointerTy() ? symbol.getPointerElementType() : type;
+
+        auto value = symbol.getValue();
+        if (type->isPointerTy()) {
+            type = symbol.getPointerElementType();
+            value = createGetElementPtrInst(type, symbol.getValue(), {indices.front()});
+            indices.erase(indices.begin());
+        }
+
+        return std::make_pair(type, value);
     }
 
-    llvm::Type* getCurrentType(const Symbol& symbol, size_t size) {
-        const auto type = symbol.getType();
-        if (type == nullptr) {
-            LOG_ERROR("Unable to get current type because type is nullptr.");
-            return nullptr;
+    std::pair<llvm::Type*, llvm::Value*> getTypeAndVariable(const Symbol& symbol, std::vector<llvm::Value*> indices) {
+        if (indices.empty()) {
+            return std::make_pair(symbol.getType(), symbol.getValue());
         }
-        if (!type->isPointerTy()) {
-            return getLLVMType(type, size);
+
+        const auto [type, variable] = handlePointer(symbol, indices);
+        if (indices.empty()) {
+            return std::make_pair(type, variable);
         }
-        return size ? getLLVMType(symbol.getPointerElementType(), size - 1) : type;
+
+        indices.insert(indices.begin(), getConstantInt32(0));
+        return std::make_pair(getLLVMType(type, indices.size() - 1), createGetElementPtrInst(type, variable, indices));
     }
 
     llvm::Instruction* createLoadInst(const std::string& id, const std::vector<llvm::Value*>& indices) {
@@ -43,16 +53,12 @@ namespace mcs {
             return nullptr;
         }
 
-        auto variable = symbol.getValue();
-        if (!indices.empty()) {
-            variable = createGetElementPtrInst(getActualType(symbol), symbol.getValue(), indices);
-        }
+        const auto [type, variable] = getTypeAndVariable(symbol, indices);
 
-        const auto type = getCurrentType(symbol, indices.size());
         if (!type->isArrayTy()) {
             return new llvm::LoadInst(type, variable, "", Context::getInstance().getInsertBlock());
         } else {
-            return createGetElementPtrInst(type, variable, std::vector<llvm::Value*>(1, getConstantInt32(0)));
+            return createGetElementPtrInst(type, variable, std::vector<llvm::Value*>(2, getConstantInt32(0)));
         }
     }
 
@@ -76,12 +82,9 @@ namespace mcs {
             return nullptr;
         }
 
-        auto variable = symbol.getValue();
-        if (!indices.empty()) {
-            variable = createGetElementPtrInst(getActualType(symbol), symbol.getValue(), indices);
-        }
+        const auto [type, variable] = getTypeAndVariable(symbol, indices);
 
-        return createStoreInst(getCastedValue(value, getCurrentType(symbol, indices.size())), variable);
+        return createStoreInst(getCastedValue(value, type), variable);
     }
 
     // ------------------------------------create get element ptr inst------------------------------------
@@ -93,7 +96,7 @@ namespace mcs {
             return nullptr;
         }
 
-        std::vector<llvm::Value*> indices;
+        std::vector<llvm::Value*> indices(1, getConstantInt32(0));
         for (const auto& idx : index) {
             indices.emplace_back(getConstantInt32(static_cast<int>(idx)));
         }
@@ -102,16 +105,7 @@ namespace mcs {
     }
 
     llvm::Instruction* createGetElementPtrInst(llvm::Type* type, llvm::Value* value,
-                                               std::vector<llvm::Value*> indices) {
-        if (type == nullptr) {
-            LOG_ERROR("Unable to create get element ptr instruction because type is nullptr.");
-            return nullptr;
-        }
-
-        if (type->isArrayTy()) {
-            indices.insert(indices.begin(), getConstantInt32(0));
-        }
-
+                                               const std::vector<llvm::Value*>& indices) {
         return llvm::GetElementPtrInst::CreateInBounds(type, value, indices, "",
                                                        Context::getInstance().getInsertBlock());
     }

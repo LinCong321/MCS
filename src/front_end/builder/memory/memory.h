@@ -11,5 +11,6 @@ namespace mcs {
                                        const std::vector<llvm::Value*>& indices);
 
     llvm::Instruction* createGetElementPtrInst(const std::string& id, const std::vector<size_t>& index);
-    llvm::Instruction* createGetElementPtrInst(llvm::Type* type, llvm::Value* value, std::vector<llvm::Value*> indices);
+    llvm::Instruction* createGetElementPtrInst(llvm::Type* type, llvm::Value* value,
+                                               const std::vector<llvm::Value*>& indices);
 }
